@@ -7,7 +7,7 @@ terraform {
   cloud {
     organization = "ananableu"
     workspaces {
-      name = "aviatrix-misc"
+      name = "aviatrix-shared"
     }
   }
 }

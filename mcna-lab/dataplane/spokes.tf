@@ -1,6 +1,6 @@
 module "we_spoke_prd" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  //version = "1.4.2"
+  version = "1.5.0"
   count = local.features.deploy_azr_we_spoke_prd ? 1 : 0
 
   cloud           = "Azure"
@@ -15,7 +15,7 @@ module "we_spoke_prd" {
 
 module "we_spoke_dev" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  //version = "1.4.2"
+  version = "1.5.0"
   count = local.features.deploy_azr_we_spoke_dev ? 1 : 0
 
   cloud           = "Azure"
@@ -26,12 +26,12 @@ module "we_spoke_dev" {
   transit_gw      = module.azure_transit_we.transit_gateway.gw_name
   ha_gw           = false
   network_domain  = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat  = true
+  single_ip_snat  = false
 }
 
 module "we_spoke_vpn" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  //version = "1.4.2"
+  version = "1.5.0"
   count = local.features.deploy_azr_vpn_spoke ? 1 : 0
 
   cloud           = "Azure"
@@ -86,7 +86,7 @@ module "controller-vpn-spoke-peering" {
 
 module "ne_spoke_prd" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  //version = "1.4.2"
+  version = "1.5.0"
   count = local.features.deploy_azr_ne_spoke ? 1 : 0
 
   cloud           = "Azure"

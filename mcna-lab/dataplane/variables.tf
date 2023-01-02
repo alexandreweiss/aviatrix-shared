@@ -103,5 +103,7 @@ locals {
     deploy_azr_we_spoke_dev = true
     // West Europe GCP
     deploy_gcp_we_spoke = false
+    // W365 spoke
+    deploy_azr_we_spoke_w365 = true
   }
 }

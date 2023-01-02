@@ -38,7 +38,7 @@
 
 module "edge-site-b" {
   source  = "terraform-aviatrix-modules/mc-edge/aviatrix"
-  version = "v1.1.2"
+  //version = "v1.1.2"
 
   site_id        = "siteB"
   //network_domain = "siteB"
@@ -50,7 +50,7 @@ module "edge-site-b" {
       transit_gws = {
         transit1 = {
           name                        = module.azure_transit_we.transit_gateway.gw_name,
-          attached                    = true,
+          attached                    = false,
           enable_jumbo_frame          = false,
           enable_over_private_network = true
         }

@@ -1,6 +1,5 @@
 provider "aviatrix" {
-  //controller_ip = var.controller_ip
-  controller_ip = "192.168.10.4"
+  controller_ip = var.controller_ip
   username = "admin"
   password = var.admin_password
 }

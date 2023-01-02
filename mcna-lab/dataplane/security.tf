@@ -16,6 +16,10 @@ resource "aviatrix_segmentation_network_domain" "branch_nd" {
   domain_name = "branch"
 }
 
+resource "aviatrix_segmentation_network_domain" "w365_nd" {
+  domain_name = "w365"
+}
+
 resource "aviatrix_segmentation_network_domain" "sited_nd" {
   domain_name = "siteD"
 }
@@ -45,6 +49,11 @@ resource "aviatrix_segmentation_network_domain_connection_policy" "branch_prd" {
   domain_name_2 = aviatrix_segmentation_network_domain.prd_nd.domain_name
 }
 
+resource "aviatrix_segmentation_network_domain_connection_policy" "branch_w365" {
+  domain_name_1 = aviatrix_segmentation_network_domain.branch_nd.domain_name
+  domain_name_2 = aviatrix_segmentation_network_domain.w365_nd.domain_name
+}
+
 resource "aviatrix_segmentation_network_domain_connection_policy" "branch_sitea" {
   domain_name_1 = aviatrix_segmentation_network_domain.branch_nd.domain_name
   domain_name_2 = aviatrix_segmentation_network_domain.sitea_nd.domain_name
@@ -68,7 +77,7 @@ resource "aviatrix_vpn_user" "aweiss" {
 
 
 // Smart Groups
-resource "aviatrix_app_domain" "catch-all" {
+resource "aviatrix_smart_group" "catch-all" {
   name = "catch-all"
   selector {
     match_expressions {
@@ -77,7 +86,7 @@ resource "aviatrix_app_domain" "catch-all" {
   }
 }
 
-resource "aviatrix_app_domain" "ferme" {
+resource "aviatrix_smart_group" "ferme" {
   name = "ferme"
   selector {
     match_expressions {
@@ -86,7 +95,7 @@ resource "aviatrix_app_domain" "ferme" {
   }
 }
 
-resource "aviatrix_app_domain" "app1-front" {
+resource "aviatrix_smart_group" "app1-front" {
   name = "app1-front"
   selector {
     match_expressions {
@@ -98,7 +107,7 @@ resource "aviatrix_app_domain" "app1-front" {
   }
 }
 
-resource "aviatrix_app_domain" "app2-front" {
+resource "aviatrix_smart_group" "app2-front" {
   name = "app2-front"
   selector {
     match_expressions {
@@ -110,7 +119,7 @@ resource "aviatrix_app_domain" "app2-front" {
   }
 }
 
-resource "aviatrix_app_domain" "dev" {
+resource "aviatrix_smart_group" "dev" {
   name = "dev"
   selector {
     match_expressions {
@@ -122,40 +131,40 @@ resource "aviatrix_app_domain" "dev" {
   }
 }
 
-resource "aviatrix_microseg_policy_list" "policy" {
+resource "aviatrix_distributed_firewalling_policy_list" "policy" {
   policies {
     action = "DENY"
-    src_app_domains = [ aviatrix_app_domain.dev.uuid ]
+    src_smart_groups = [ aviatrix_smart_group.dev.uuid ]
     name = "DenyDevApp1"
     protocol = "ANY"
-    dst_app_domains = [ aviatrix_app_domain.app1-front.uuid ]
+    dst_smart_groups = [ aviatrix_smart_group.app1-front.uuid ]
     logging = true
     priority = 100
   }
   policies {
     action = "DENY"
-    src_app_domains = [ aviatrix_app_domain.app1-front.uuid ]
+    src_smart_groups = [ aviatrix_smart_group.app1-front.uuid ]
     name = "DenyApp1ToApp2"
     protocol = "ANY"
-    dst_app_domains = [ aviatrix_app_domain.app2-front.uuid ]
+    dst_smart_groups = [ aviatrix_smart_group.app2-front.uuid ]
     logging = true
     priority = 200
   }
   policies {
     action = "PERMIT"
-    src_app_domains = [ aviatrix_app_domain.ferme.uuid ]
+    src_smart_groups = [ aviatrix_smart_group.ferme.uuid ]
     name = "AllowFerme"
     protocol = "ANY"
-    dst_app_domains = [ aviatrix_app_domain.catch-all.uuid ]
+    dst_smart_groups = [ aviatrix_smart_group.catch-all.uuid ]
     logging = true
     priority = 3500
   }
   policies {
-    action = "DENY"
-    src_app_domains = [ aviatrix_app_domain.catch-all.uuid ]
+    action = "PERMIT"
+    src_smart_groups = [ aviatrix_smart_group.catch-all.uuid ]
     name = "DenyAll"
     protocol = "ANY"
-    dst_app_domains = [ aviatrix_app_domain.catch-all.uuid ]
+    dst_smart_groups = [ aviatrix_smart_group.catch-all.uuid ]
     logging = true
     priority = 4000
   }

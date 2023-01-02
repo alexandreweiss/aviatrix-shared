@@ -13,3 +13,14 @@ admin_password          = Admin password for VMs
 firewall_admin_password = Firenet/Firewall admin password
 
 controller_ip           = Controller FQDN or IP to target deploy
+
+# Those TF files uses a backend in Terraform Cloud to store state.
+
+versions.tf contains that block of code that you would need to update or just remove to keep state local
+
+`  cloud {
+    organization = "ananableu"
+    workspaces {
+      name = "aviatrix-misc"
+    }
+  }`

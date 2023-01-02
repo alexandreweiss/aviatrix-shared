@@ -12,6 +12,7 @@ module "ne-prd-vm" {
   index_number = 01
   resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
   subnet_id = module.ne_spoke_prd[0].vpc.subnets[3].subnet_id
+  admin_ssh_key = var.ssh_public_key
 }
 
 module "we-prd-vm" {
@@ -22,6 +23,7 @@ module "we-prd-vm" {
   index_number = 01
   resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
   subnet_id = module.we_spoke_prd[0].vpc.subnets[3].subnet_id
+  admin_ssh_key = var.ssh_public_key
   depends_on = [
     module.we_spoke_prd
   ]
@@ -35,6 +37,7 @@ module "we-app1-front-vm" {
   index_number = 01
   resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
   subnet_id = module.we_spoke_prd[0].vpc.subnets[3].subnet_id
+  admin_ssh_key = var.ssh_public_key
   depends_on = [
     module.we_spoke_prd
   ]
@@ -48,6 +51,7 @@ module "we-app2-front-vm" {
   index_number = 01
   resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
   subnet_id = module.we_spoke_prd[0].vpc.subnets[3].subnet_id
+  admin_ssh_key = var.ssh_public_key
   depends_on = [
     module.we_spoke_prd
   ]
@@ -61,6 +65,7 @@ module "we-dev-vm" {
   index_number = 01
   resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
   subnet_id = module.we_spoke_dev[0].vpc.subnets[3].subnet_id
+  admin_ssh_key = var.ssh_public_key
   depends_on = [
     module.we_spoke_dev
   ]

@@ -1,6 +1,6 @@
 module "azure_transit_we" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.3.1"
+  version = "2.4.0"
 
   cloud   = "azure"
   region  = var.azure_we_location
@@ -17,7 +17,7 @@ module "azure_transit_we" {
 
 module "azure_transit_ne" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.3.1"
+  version = "2.4.0"
 
   cloud   = "azure"
   region  = var.azure_ne_location
@@ -32,7 +32,7 @@ module "azure_transit_ne" {
 
 module "gcp_transit_we" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.3.1"
+  version = "2.4.0"
 
   cloud   = "GCP"
   region  = var.gcp_we_location
