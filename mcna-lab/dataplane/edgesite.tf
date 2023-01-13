@@ -36,33 +36,33 @@
 #   remote_lan_ip     = "192.168.61.2"
 # }
 
-module "edge-site-b" {
-  source  = "terraform-aviatrix-modules/mc-edge/aviatrix"
-  //version = "v1.1.2"
+# module "edge-site-b" {
+#   source  = "terraform-aviatrix-modules/mc-edge/aviatrix"
+#   //version = "v1.1.2"
 
-  site_id        = "siteB"
-  //network_domain = "siteB"
+#   site_id        = "siteB"
+#   //network_domain = "siteB"
 
-  edge_gws = {
-    gw1 = {
-      gw_name                 = "edge-site-b",
-      lan_interface_ip_prefix = "192.168.62.1/24",
-      transit_gws = {
-        transit1 = {
-          name                        = module.azure_transit_we.transit_gateway.gw_name,
-          attached                    = false,
-          enable_jumbo_frame          = false,
-          enable_over_private_network = true
-        }
-      }
-      wan_default_gateway_ip  = "192.168.17.1"
-      wan_interface_ip_prefix = "192.168.17.62/24"
-      management_egress_ip_prefix = "${data.dns_a_record_set.ferme.addrs[0]}/32"
-      local_as_number         = "65062"
-      //wan_public_ip           = "${data.dns_a_record_set.ferme.addrs[0]}"
-    } 
-  }
-}
+#   edge_gws = {
+#     gw1 = {
+#       gw_name                 = "edge-site-b",
+#       lan_interface_ip_prefix = "192.168.62.1/24",
+#       transit_gws = {
+#         transit1 = {
+#           name                        = module.azure_transit_we.transit_gateway.gw_name,
+#           attached                    = false,
+#           enable_jumbo_frame          = false,
+#           enable_over_private_network = true
+#         }
+#       }
+#       wan_default_gateway_ip  = "192.168.17.1"
+#       wan_interface_ip_prefix = "192.168.17.62/24"
+#       management_egress_ip_prefix = "${data.dns_a_record_set.ferme.addrs[0]}/32"
+#       local_as_number         = "65062"
+#       //wan_public_ip           = "${data.dns_a_record_set.ferme.addrs[0]}"
+#     } 
+#   }
+# }
 
 # module "edge-site-d" {
 #   source  = "terraform-aviatrix-modules/mc-edge/aviatrix"
