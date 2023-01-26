@@ -1,17 +1,82 @@
+// PRD SPOKE in R1
+
+resource "azurerm_virtual_network" "azure-spoke-prd-r1" {
+  address_space       = ["10.10.4.1.0/24"]
+  location            = var.azure_r1_location
+  name                = "azr-${var.azure_r1_location_short}-spoke-prd-vn"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-prd-gw-subnet" {
+  address_prefixes     = ["10.10.1.0/28"]
+  name                 = "avx-gw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-prd-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-prd-hagw-subnet" {
+  address_prefixes     = ["10.10.1.16/28"]
+  name                 = "avx-hagw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-prd-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-prd-vm-subnet" {
+  address_prefixes     = ["10.10.1.32/28"]
+  name                 = "avx-vm-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-prd-r1.name
+}
+
 module "we_spoke_prd" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
   version = "1.5.0"
   count   = local.features.deploy_azr_we_spoke_prd ? 1 : 0
 
-  cloud          = "Azure"
-  name           = "we-spoke-prd"
-  cidr           = "10.10.1.0/24"
-  region         = var.azure_we_location
-  account        = local.accounts.azure_account
-  transit_gw     = module.azure_transit_we.transit_gateway.gw_name
-  network_domain = aviatrix_segmentation_network_domain.prd_nd.domain_name
-  ha_gw          = true
-  single_az_ha   = false
+  cloud                  = "Azure"
+  name                   = "we-spoke-prd"
+  vpc_id                 = "${azurerm_virtual_network.azure-spoke-prd-r1.name}:${azurerm_resource_group.azr-r1-spoke-prd-rg.name}:${azurerm_virtual_network.azure-spoke-prd-r1.guid}"
+  gw_subnet              = azurerm_subnet.r1-azure-spoke-prd-gw-subnet.address_prefixes[0]
+  hagw_subnet            = azurerm_subnet.r1-azure-spoke-prd-hagw-subnet.address_prefixes[0]
+  approved_learned_cidrs = azurerm_subnet.r1-azure-spoke-prd-gw-subnet.address_prefixes
+  use_existing_vpc       = true
+  region                 = var.azure_r1_location
+  account                = local.accounts.azure_account
+  transit_gw             = module.azure_transit_we.transit_gateway.gw_name
+  network_domain         = aviatrix_segmentation_network_domain.prd_nd.domain_name
+  ha_gw                  = true
+  single_az_ha           = false
+  resource_group         = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+}
+
+
+// DEV SPOKE in R1
+resource "azurerm_virtual_network" "azure-spoke-dev-r1" {
+  address_space       = ["10.10.2.0/24"]
+  location            = var.azure_r1_location
+  name                = "azr-${var.azure_r1_location_short}-spoke-prd-vn"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-dev-gw-subnet" {
+  address_prefixes     = ["10.10.2.0/28"]
+  name                 = "avx-gw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-prd-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-dev-hagw-subnet" {
+  address_prefixes     = ["10.10.2.16/28"]
+  name                 = "avx-hagw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-prd-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-dev-vm-subnet" {
+  address_prefixes     = ["10.10.2.32/28"]
+  name                 = "avx-vm-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-prd-r1.name
 }
 
 module "we_spoke_dev" {
@@ -19,16 +84,50 @@ module "we_spoke_dev" {
   version = "1.5.0"
   count   = local.features.deploy_azr_we_spoke_dev ? 1 : 0
 
-  cloud          = "Azure"
-  name           = "we-spoke-dev"
-  cidr           = "10.10.2.0/24"
-  region         = var.azure_we_location
-  account        = local.accounts.azure_account
-  transit_gw     = module.azure_transit_we.transit_gateway.gw_name
-  ha_gw          = false
-  network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat = false
-  single_az_ha   = false
+  cloud            = "Azure"
+  name             = "we-spoke-dev"
+  vpc_id           = "${azurerm_virtual_network.azure-spoke-dev-r1.name}:${azurerm_resource_group.azr-r1-spoke-dev-rg.name}:${azurerm_virtual_network.azure-spoke-dev-r1.guid}"
+  gw_subnet        = azurerm_subnet.r1-azure-spoke-dev-gw-subnet.address_prefixes[0]
+  use_existing_vpc = true
+  hagw_subnet      = azurerm_subnet.r1-azure-spoke-dev-hagw-subnet.address_prefixes[0]
+  region           = var.azure_r1_location
+  account          = local.accounts.azure_account
+  transit_gw       = module.azure_transit_we.transit_gateway.gw_name
+  ha_gw            = false
+  network_domain   = aviatrix_segmentation_network_domain.dev_nd.domain_name
+  single_ip_snat   = false
+  single_az_ha     = false
+  resource_group   = azurerm_resource_group.azr-r1-spoke-dev-rg.name
+}
+
+// SPOKE VPN
+
+resource "azurerm_virtual_network" "azure-spoke-vpn-r1" {
+  address_space       = ["10.10.3.0/24"]
+  location            = var.azure_r1_location
+  name                = "azr-${var.azure_r1_location_short}-spoke-prd-vn"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-vpn-gw-subnet" {
+  address_prefixes     = ["10.10.3.0/28"]
+  name                 = "avx-gw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-vpn-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-vpn-hagw-subnet" {
+  address_prefixes     = ["10.10.3.16/28"]
+  name                 = "avx-hagw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-vpn-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-vpn-vm-subnet" {
+  address_prefixes     = ["10.10.3.32/28"]
+  name                 = "avx-vm-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-vpn-r1.name
 }
 
 module "we_spoke_vpn" {
@@ -36,15 +135,19 @@ module "we_spoke_vpn" {
   version = "1.5.0"
   count   = local.features.deploy_azr_vpn_spoke ? 1 : 0
 
-  cloud          = "Azure"
-  name           = "we-spoke-vpn"
-  cidr           = "10.10.3.0/24"
-  region         = var.azure_we_location
-  account        = local.accounts.azure_account
-  transit_gw     = module.azure_transit_we.transit_gateway.gw_name
-  ha_gw          = false
-  single_az_ha   = true
-  network_domain = aviatrix_segmentation_network_domain.vpn_nd.domain_name
+  cloud     = "Azure"
+  name      = "we-spoke-vpn"
+  vpc_id    = "${azurerm_virtual_network.azure-spoke-vpn-r1.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azure-spoke-vpn-r1.guid}"
+  gw_subnet = azurerm_subnet.r1-azure-spoke-vpn-gw-subnet.address_prefixes[0]
+  //hagw_subnet    = azurerm_subnet.r1-azure-spoke-vpn-hagw-subnet.address_prefixes[0]
+  use_existing_vpc = true
+  region           = var.azure_r1_location
+  account          = local.accounts.azure_account
+  transit_gw       = module.azure_transit_we.transit_gateway.gw_name
+  ha_gw            = false
+  single_az_ha     = true
+  network_domain   = aviatrix_segmentation_network_domain.vpn_nd.domain_name
+  resource_group   = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
 }
 
 resource "aviatrix_gateway" "we-vpn-0" {
@@ -52,9 +155,9 @@ resource "aviatrix_gateway" "we-vpn-0" {
 
   cloud_type       = 8
   account_name     = local.accounts.azure_account
-  gw_name          = "we-vpn-0"
-  vpc_id           = module.we_spoke_vpn[0].vpc.vpc_id
-  vpc_reg          = var.azure_we_location
+  gw_name          = "${var.azure_r1_location_short}-vpn-0"
+  vpc_id           = "${azurerm_virtual_network.azure-spoke-vpn-r1.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azure-spoke-vpn-r1.guid}"
+  vpc_reg          = var.azure_r1_location
   gw_size          = "Standard_B1ms"
   subnet           = "10.10.3.16/28"
   zone             = "az-1"
@@ -63,6 +166,7 @@ resource "aviatrix_gateway" "we-vpn-0" {
   additional_cidrs = var.p2s_additional_cidrs
   max_vpn_conn     = "100"
 
+
   depends_on = [
     module.we_spoke_vpn
   ]
@@ -70,33 +174,37 @@ resource "aviatrix_gateway" "we-vpn-0" {
 
 // Peering to controller for internal management
 
-data "aviatrix_vpc" "we_spoke_vpn" {
-  name = module.we_spoke_vpn[0].vpc.name
-  depends_on = [
-    module.we_spoke_vpn
-  ]
-}
+# data "aviatrix_vpc" "we_spoke_vpn" {
+#   name = module.we_spoke_vpn[0].vpc.name
+#   depends_on = [
+#     module.we_spoke_vpn
+#   ]
+# }
 
 module "controller-vpn-spoke-peering" {
   source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
   count  = local.features.deploy_azr_vpn_spoke ? 1 : 0
 
-  left_vnet_resource_group_name  = data.aviatrix_vpc.we_spoke_vpn.resource_group
-  left_vnet_name                 = data.aviatrix_vpc.we_spoke_vpn.name
+  left_vnet_resource_group_name  = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
+  left_vnet_name                 = azurerm_virtual_network.azure-spoke-vpn-r1.name
   right_vnet_resource_group_name = local.controller.controller_resource_group_name
   right_vnet_name                = local.controller.controller_vnet_name
+
+  depends_on = [
+    azurerm_virtual_network.azure-spoke-vpn-r1
+  ]
 }
 
-module "ne_spoke_prd" {
-  source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.5.0"
-  count   = local.features.deploy_azr_ne_spoke ? 1 : 0
+# module "ne_spoke_prd" {
+#   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
+#   version = "1.5.0"
+#   count   = local.features.deploy_azr_ne_spoke ? 1 : 0
 
-  cloud      = "Azure"
-  name       = "ne-spoke-prd"
-  cidr       = "10.20.1.0/24"
-  region     = var.azure_ne_location
-  account    = local.accounts.azure_account
-  transit_gw = module.azure_transit_ne.transit_gateway.gw_name
-  //network_domain  = aviatrix_segmentation_network_domain.prd_nd.domain_name
-}
+#   cloud      = "Azure"
+#   name       = "ne-spoke-prd"
+#   cidr       = "10.20.1.0/24"
+#   region     = var.azure_r2_location
+#   account    = local.accounts.azure_account
+#   transit_gw = module.azure_transit_ne.transit_gateway.gw_name
+#   //network_domain  = aviatrix_segmentation_network_domain.prd_nd.domain_name
+# }

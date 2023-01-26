@@ -1,34 +1,39 @@
-variable "azure_we_location" {
+# variable "provider" {
+#   description = "provider to use"
+#   default     = "azurerm"
+# }
+
+variable "azure_r1_location" {
   default     = "West Europe"
   description = "region to deploy resources"
   type        = string
 }
 
-variable "azure_we_location_short" {
+variable "azure_r1_location_short" {
   default     = "we"
   description = "region to deploy resources"
   type        = string
 }
 
-variable "azure_ne_location" {
+variable "azure_r2_location" {
   default     = "North Europe"
   description = "region to deploy resources"
   type        = string
 }
 
-variable "azure_ne_location_short" {
+variable "azure_r2_location_short" {
   default     = "ne"
   description = "region to deploy resources"
   type        = string
 }
 
-variable "gcp_we_location" {
+variable "gcp_r1_location" {
   default     = "europe-west1"
   description = "region to deploy resources"
   type        = string
 }
 
-variable "gcp_we_location_short" {
+variable "gcp_r1_location_short" {
   default     = "we"
   description = "region to deploy resources"
   type        = string
@@ -114,7 +119,7 @@ locals {
     deploy_azr_we_spoke_prd = true
     deploy_azr_we_spoke_dev = true
     // West Europe GCP
-    deploy_gcp_we_spoke = false
+    deploy_gcp_r1_spoke = false
     // W365 spoke
     deploy_azr_we_spoke_w365 = true
   }

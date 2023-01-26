@@ -1,0 +1,29 @@
+{
+    "r1_vhubs": [
+        {
+            "hub_index": 0,
+            "hub_cidr": "10.100.0.0/23",
+            "hub_location": "westeurope",
+            "hub_location_short": "we"
+        }
+    ],
+    "r1_spokes": [
+        {
+            "spoke_index": 0,
+            "spoke_address_spaces": [
+                "10.101.0.0/24"
+            ],
+            "spoke_location": "westeurope",
+            "spoke_location_short": "we"
+        }
+    ],
+    "r1_subnets": [
+        {
+            "subnet_name": "vm-subnet",
+            "address_prefixes": [
+                "10.101.0.0/28"
+            ],
+            "spoke_index": 0
+        }
+    ]
+}
