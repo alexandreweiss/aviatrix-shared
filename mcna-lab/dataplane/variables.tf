@@ -92,19 +92,19 @@ variable "controller_ip" {
 }
 
 variable "p2s_additional_cidrs" {
-  default     = "10.0.0.0/8,192.168.10.0/24,1.1.1.1/32,192.168.16.0/23"
+  default     = "10.0.0.0/8,192.168.10.0/24,192.168.16.0/23"
   description = "Split tunneling for P2S users"
 }
 
 locals {
   accounts = {
-    azure_account = "azr-alweiss"
+    azure_account = "azure-alweiss"
     gcp_account   = "gcp-alweiss"
   }
 
   controller = {
-    controller_vnet_name           = "avx-ctrl-we-vnet"
-    controller_resource_group_name = "avx-ctrl-we-rg"
+    controller_vnet_name           = "avx-ctrl-ne-vnet"
+    controller_resource_group_name = "avx-ctrl-ne-rg"
   }
 
   features = {

@@ -1,3 +1,8 @@
+// Enable DFW
+# resource "aviatrix_distributed_firewalling_config" "dfw" {
+#   enable_distributed_firewalling = true
+# }
+
 // Segmentation aka. "Network Domain"
 
 resource "aviatrix_segmentation_network_domain" "prd_nd" {

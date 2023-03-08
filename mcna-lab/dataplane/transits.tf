@@ -14,27 +14,45 @@ module "azure_transit_we" {
   single_az_ha                  = false
   resource_group                = azurerm_resource_group.azr-transit-r1-0-rg.name
   //instance_size = "Standard_B2ms"
-
 }
 
-module "azure_transit_ne_vwan" {
+module "azure_transit_we_egress" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
   version = "2.4.0"
 
-  cloud                    = "azure"
-  region                   = var.azure_r2_location
-  cidr                     = "10.70.0.0/23"
-  account                  = local.accounts.azure_account
-  enable_transit_firenet   = true
-  gw_name                  = "azr-${var.azure_r2_location_short}-vwan-transit"
-  local_as_number          = 65010
-  enable_bgp_over_lan      = true
-  bgp_lan_interfaces_count = 1
-  resource_group           = azurerm_resource_group.azr-transit-ne-0-rg.name
-
+  cloud                         = "azure"
+  region                        = var.azure_r1_location
+  cidr                          = "10.40.0.0/23"
+  account                       = local.accounts.azure_account
+  enable_transit_firenet        = false
+  gw_name                       = "azr-${var.azure_r1_location_short}-transit-egress"
+  local_as_number               = 65010
+  single_az_ha                  = false
+  ha_gw                         = false
+  resource_group                = azurerm_resource_group.azr-transit-r1-1-rg.name
+  enable_egress_transit_firenet = true
   //instance_size = "Standard_B2ms"
-
 }
+
+# module "azure_transit_ne_vwan" {
+#   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
+#   version = "2.4.0"
+
+#   cloud                    = "azure"
+#   region                   = var.azure_r2_location
+#   cidr                     = "10.70.0.0/23"
+#   account                  = local.accounts.azure_account
+#   enable_transit_firenet   = true
+#   gw_name                  = "azr-${var.azure_r2_location_short}-vwan-transit"
+#   local_as_number          = 65010
+#   enable_segmentation      = true
+#   enable_bgp_over_lan      = true
+#   bgp_lan_interfaces_count = 1
+#   resource_group           = azurerm_resource_group.azr-transit-ne-0-rg.name
+
+#   //instance_size = "Standard_B2ms"
+
+# }
 
 # module "azure_transit_ne" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"

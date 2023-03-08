@@ -14,7 +14,8 @@
                 "10.101.0.0/24"
             ],
             "spoke_location": "westeurope",
-            "spoke_location_short": "we"
+            "spoke_location_short": "we",
+            "spoke_environment": "prd"
         }
     ],
     "r1_subnets": [

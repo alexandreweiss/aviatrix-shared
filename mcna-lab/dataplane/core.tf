@@ -3,6 +3,11 @@ resource "azurerm_resource_group" "azr-transit-r1-0-rg" {
   name     = "azr-transit-${var.azure_r1_location_short}-0-rg"
 }
 
+resource "azurerm_resource_group" "azr-transit-r1-1-rg" {
+  location = var.azure_r1_location
+  name     = "azr-transit-${var.azure_r1_location_short}-1-rg"
+}
+
 resource "azurerm_resource_group" "azr-transit-ne-0-rg" {
   location = var.azure_r2_location
   name     = "azr-transit-ne-0-rg"
@@ -21,6 +26,11 @@ resource "azurerm_resource_group" "azr-r1-spoke-dev-rg" {
 resource "azurerm_resource_group" "azr-r1-spoke-vpn-rg" {
   location = var.azure_r1_location
   name     = "azr-${var.azure_r1_location_short}-spoke-vpn-rg"
+}
+
+resource "azurerm_resource_group" "azr-r1-spoke-microseg-rg" {
+  location = var.azure_r1_location
+  name     = "azr-${var.azure_r1_location_short}-spoke-microseg-rg"
 }
 
 resource "azurerm_resource_group" "avx-lab-vms-rg" {

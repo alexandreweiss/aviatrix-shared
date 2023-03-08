@@ -45,7 +45,7 @@ module "vms" {
   count  = length(local.data.r1_subnets)
   source = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
 
-  environment         = "prd"
+  environment         = local.data.r1_spokes["${local.data.r1_subnets[count.index].spoke_index}"].spoke_environment
   location            = local.data.r1_spokes["${local.data.r1_subnets[count.index].spoke_index}"].spoke_location
   location_short      = local.data.r1_spokes["${local.data.r1_subnets[count.index].spoke_index}"].spoke_location_short
   index_number        = 01
