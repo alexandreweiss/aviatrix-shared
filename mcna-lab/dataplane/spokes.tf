@@ -66,7 +66,7 @@ module "we_spoke_prd" {
   account          = local.accounts.azure_account
   transit_gw       = module.azure_transit_we.transit_gateway.gw_name
   //transit_gw_egress = module.azure_transit_we_egress.transit_gateway.gw_name
-  network_domain = aviatrix_segmentation_network_domain.prd_nd.domain_name
+  //network_domain = aviatrix_segmentation_network_domain.prd_nd.domain_name
   ha_gw          = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-prd-rg.name
@@ -138,12 +138,13 @@ module "we_spoke_dev" {
   hagw_subnet      = azurerm_subnet.r1-azure-spoke-dev-hagw-subnet.address_prefixes[0]
   region           = var.azure_r1_location
   account          = local.accounts.azure_account
-  transit_gw       = module.azure_transit_we.transit_gateway.gw_name
-  ha_gw            = false
-  network_domain   = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat   = false
-  single_az_ha     = false
-  resource_group   = azurerm_resource_group.azr-r1-spoke-dev-rg.name
+  //transit_gw       = module.azure_transit_we.transit_gateway.gw_name
+  transit_gw = module.azure_transit_ne_vwan.transit_gateway.gw_name
+  ha_gw      = false
+  //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
+  single_ip_snat = false
+  single_az_ha   = false
+  resource_group = azurerm_resource_group.azr-r1-spoke-dev-rg.name
 }
 
 // SPOKE VPN
@@ -192,26 +193,26 @@ module "we_spoke_vpn" {
   transit_gw       = module.azure_transit_we.transit_gateway.gw_name
   ha_gw            = false
   single_az_ha     = true
-  network_domain   = aviatrix_segmentation_network_domain.vpn_nd.domain_name
-  resource_group   = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
+  //network_domain   = aviatrix_segmentation_network_domain.vpn_nd.domain_name
+  resource_group = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
 }
 
 resource "aviatrix_gateway" "we-vpn-0" {
   count = local.features.deploy_azr_vpn_gw && local.features.deploy_azr_vpn_spoke ? 1 : 0
 
-  cloud_type   = 8
-  account_name = local.accounts.azure_account
-  gw_name      = "${var.azure_r1_location_short}-vpn-0"
-  vpc_id       = "${azurerm_virtual_network.azure-spoke-vpn-r1.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azure-spoke-vpn-r1.guid}"
-  vpc_reg      = var.azure_r1_location
-  gw_size      = "Standard_B1ms"
-  subnet       = "10.10.3.16/28"
-  zone         = "az-1"
-  vpn_access   = true
-  vpn_cidr     = "172.20.20.0/24"
+  cloud_type       = 8
+  account_name     = local.accounts.azure_account
+  gw_name          = "${var.azure_r1_location_short}-vpn-0"
+  vpc_id           = "${azurerm_virtual_network.azure-spoke-vpn-r1.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azure-spoke-vpn-r1.guid}"
+  vpc_reg          = var.azure_r1_location
+  gw_size          = "Standard_B1ms"
+  subnet           = "10.10.3.16/28"
+  zone             = "az-1"
+  vpn_access       = true
+  vpn_cidr         = "172.20.20.0/24"
   additional_cidrs = var.p2s_additional_cidrs
-  max_vpn_conn = "100"
-  split_tunnel = true
+  max_vpn_conn     = "100"
+  split_tunnel     = true
 
 
   depends_on = [

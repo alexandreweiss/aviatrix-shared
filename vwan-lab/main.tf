@@ -16,13 +16,39 @@ resource "azurerm_virtual_wan" "vwan" {
 }
 
 resource "azurerm_virtual_hub" "r1-vhubs" {
-  count               = 1
+  count               = length(local.data.r1_vhubs)
   location            = local.data.r1_vhubs[count.index].hub_location
   virtual_wan_id      = azurerm_virtual_wan.vwan.id
   name                = "${local.data.r1_vhubs[count.index].hub_location_short}-vhub-${count.index}"
   resource_group_name = azurerm_resource_group.rg.name
   address_prefix      = local.data.r1_vhubs[count.index].hub_cidr
   sku                 = "Standard"
+}
+
+resource "azurerm_virtual_hub_connection" "spoke-attachment" {
+  count                     = length(local.data.r1_spoke_attachments)
+  name                      = azurerm_virtual_network.spoke["${local.data.r1_spoke_attachments[count.index].spoke_index}"].name
+  remote_virtual_network_id = azurerm_virtual_network.spoke["${local.data.r1_spoke_attachments[count.index].spoke_index}"].id
+  virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_spoke_attachments[count.index].hub_index].id
+}
+
+resource "azurerm_virtual_hub_connection" "aviatrix-attachment" {
+  count                     = length(local.data.r1_aviatrix_attachments)
+  name                      = "avx-north-europe-transit"
+  remote_virtual_network_id = "/subscriptions/56474334-838c-466b-9ac3-3903c86886e7/resourceGroups/azr-transit-ne-0-rg/providers/Microsoft.Network/virtualNetworks/avx-north-europe-transit"
+  virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_aviatrix_attachments[count.index].vhub_index].id
+}
+
+resource "azurerm_virtual_hub_bgp_connection" "bgp-aviatrix" {
+  count                         = length(local.data.r1_bgp_peers)
+  name                          = local.data.r1_bgp_peers[count.index].name
+  peer_asn                      = local.data.r1_bgp_peers[count.index].asn
+  peer_ip                       = local.data.r1_bgp_peers[count.index].peer_ip
+  virtual_hub_id                = azurerm_virtual_hub.r1-vhubs[local.data.r1_bgp_peers[count.index].hub_index].id
+  virtual_network_connection_id = azurerm_virtual_hub_connection.aviatrix-attachment[local.data.r1_bgp_peers[count.index].attachment_index].id
+  depends_on = [
+    azurerm_virtual_hub_connection.spoke-attachment
+  ]
 }
 
 resource "azurerm_virtual_network" "spoke" {

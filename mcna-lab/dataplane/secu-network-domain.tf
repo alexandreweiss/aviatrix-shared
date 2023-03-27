@@ -5,70 +5,19 @@
 
 // Segmentation aka. "Network Domain"
 
-resource "aviatrix_segmentation_network_domain" "prd_nd" {
-  domain_name = "prd"
-}
+module "mc-network-domains" {
+  source  = "terraform-aviatrix-modules/mc-network-domains/aviatrix"
+  version = "1.0.0"
 
-resource "aviatrix_segmentation_network_domain" "dev_nd" {
-  domain_name = "dev"
+  connection_policies = [
+    ["vpn", "prd"],
+    ["lifetime", "qa"],
+    ["lifetime", "prd"],
+    ["shared", "dev"],
+    ["shared", "qa"],
+    ["shared", "prd"],
+  ]
 }
-
-resource "aviatrix_segmentation_network_domain" "vpn_nd" {
-  domain_name = "vpn"
-}
-
-resource "aviatrix_segmentation_network_domain" "branch_nd" {
-  domain_name = "branch"
-}
-
-resource "aviatrix_segmentation_network_domain" "w365_nd" {
-  domain_name = "w365"
-}
-
-resource "aviatrix_segmentation_network_domain" "sited_nd" {
-  domain_name = "siteD"
-}
-
-resource "aviatrix_segmentation_network_domain" "sitea_nd" {
-  domain_name = "siteA"
-}
-
-// Network domain connection policies
-resource "aviatrix_segmentation_network_domain_connection_policy" "vpn_prod" {
-  domain_name_1 = aviatrix_segmentation_network_domain.vpn_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.prd_nd.domain_name
-}
-
-resource "aviatrix_segmentation_network_domain_connection_policy" "vpn_dev" {
-  domain_name_1 = aviatrix_segmentation_network_domain.vpn_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.dev_nd.domain_name
-}
-
-resource "aviatrix_segmentation_network_domain_connection_policy" "branch_dev" {
-  domain_name_1 = aviatrix_segmentation_network_domain.branch_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.dev_nd.domain_name
-}
-
-resource "aviatrix_segmentation_network_domain_connection_policy" "branch_prd" {
-  domain_name_1 = aviatrix_segmentation_network_domain.branch_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.prd_nd.domain_name
-}
-
-resource "aviatrix_segmentation_network_domain_connection_policy" "branch_w365" {
-  domain_name_1 = aviatrix_segmentation_network_domain.branch_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.w365_nd.domain_name
-}
-
-resource "aviatrix_segmentation_network_domain_connection_policy" "branch_sitea" {
-  domain_name_1 = aviatrix_segmentation_network_domain.branch_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.sitea_nd.domain_name
-}
-
-resource "aviatrix_segmentation_network_domain_connection_policy" "sitea_prd" {
-  domain_name_1 = aviatrix_segmentation_network_domain.sitea_nd.domain_name
-  domain_name_2 = aviatrix_segmentation_network_domain.prd_nd.domain_name
-}
-
 
 // User VPN
 resource "aviatrix_vpn_user" "aweiss" {
