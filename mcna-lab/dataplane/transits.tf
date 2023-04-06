@@ -34,25 +34,25 @@ module "azure_transit_we_egress" {
   //instance_size = "Standard_B2ms"
 }
 
-module "azure_transit_ne_vwan" {
-  source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.4.0"
+# module "azure_transit_ne_vwan" {
+#   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
+#   version = "2.4.0"
 
-  cloud           = "azure"
-  region          = var.azure_r2_location
-  cidr            = "10.70.0.0/23"
-  account         = local.accounts.azure_account
-  name            = "azr-${var.azure_r2_location_short}-vwan-transit"
-  local_as_number = 65011
-  //enable_segmentation      = true
-  enable_bgp_over_lan      = true
-  insane_mode              = true
-  bgp_lan_interfaces_count = 2
-  resource_group           = azurerm_resource_group.azr-transit-ne-0-rg.name
+#   cloud           = "azure"
+#   region          = var.azure_r2_location
+#   cidr            = "10.70.0.0/23"
+#   account         = local.accounts.azure_account
+#   name            = "azr-${var.azure_r2_location_short}-vwan-transit"
+#   local_as_number = 65011
+#   //enable_segmentation      = true
+#   enable_bgp_over_lan      = true
+#   insane_mode              = true
+#   bgp_lan_interfaces_count = 2
+#   resource_group           = azurerm_resource_group.azr-transit-ne-0-rg.name
 
-  //instance_size = "Standard_B2ms"
+#   //instance_size = "Standard_B2ms"
 
-}
+# }
 
 # module "azure_transit_ne" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"

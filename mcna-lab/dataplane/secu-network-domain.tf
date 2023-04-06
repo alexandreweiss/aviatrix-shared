@@ -5,19 +5,19 @@
 
 // Segmentation aka. "Network Domain"
 
-module "mc-network-domains" {
-  source  = "terraform-aviatrix-modules/mc-network-domains/aviatrix"
-  version = "1.0.0"
+# module "mc-network-domains" {
+#   source  = "terraform-aviatrix-modules/mc-network-domains/aviatrix"
+#   version = "1.0.0"
 
-  connection_policies = [
-    ["vpn", "prd"],
-    ["lifetime", "qa"],
-    ["lifetime", "prd"],
-    ["shared", "dev"],
-    ["shared", "qa"],
-    ["shared", "prd"],
-  ]
-}
+#   connection_policies = [
+#     ["vpn", "prd"],
+#     ["lifetime", "qa"],
+#     ["lifetime", "prd"],
+#     ["shared", "dev"],
+#     ["shared", "qa"],
+#     ["shared", "prd"],
+#   ]
+# }
 
 // User VPN
 resource "aviatrix_vpn_user" "aweiss" {

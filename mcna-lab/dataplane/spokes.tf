@@ -138,9 +138,9 @@ module "we_spoke_dev" {
   hagw_subnet      = azurerm_subnet.r1-azure-spoke-dev-hagw-subnet.address_prefixes[0]
   region           = var.azure_r1_location
   account          = local.accounts.azure_account
-  //transit_gw       = module.azure_transit_we.transit_gateway.gw_name
-  transit_gw = module.azure_transit_ne_vwan.transit_gateway.gw_name
-  ha_gw      = false
+  transit_gw       = module.azure_transit_we.transit_gateway.gw_name
+  //transit_gw = module.azure_transit_ne_vwan.transit_gateway.gw_name
+  ha_gw = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
   single_ip_snat = false
   single_az_ha   = false
@@ -192,7 +192,7 @@ module "we_spoke_vpn" {
   account          = local.accounts.azure_account
   transit_gw       = module.azure_transit_we.transit_gateway.gw_name
   ha_gw            = false
-  single_az_ha     = true
+  single_az_ha     = false
   //network_domain   = aviatrix_segmentation_network_domain.vpn_nd.domain_name
   resource_group = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
 }
