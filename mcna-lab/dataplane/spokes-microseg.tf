@@ -26,6 +26,7 @@ resource "azurerm_subnet" "prd-front-subnet" {
   virtual_network_name = azurerm_virtual_network.r1-spoke-app.name
 }
 
+
 resource "azurerm_subnet" "prd-sc-subnet" {
   address_prefixes     = ["10.30.4.48/28"]
   name                 = "prd-sc-subnet"
@@ -87,40 +88,49 @@ resource "aviatrix_spoke_transit_attachment" "spoke-transit-attachement" {
 }
 
 module "r1-app-front-vm" {
-  source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment          = "front-app"
-  location             = var.azure_r1_location
-  location_short       = var.azure_r1_location_short
-  index_number         = 01
-  resource_group_name  = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
-  subnet_id            = azurerm_subnet.prd-front-subnet.id
-  admin_ssh_key        = var.ssh_public_key
-  enable_auto_shutdown = false
-  vm_size              = "Standard_B1ms"
+  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment         = "front-app"
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
+  subnet_id           = azurerm_subnet.prd-front-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  vm_size             = "Standard_B1ms"
+}
+
+module "r1-app-2-front-vm" {
+  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment         = "front-app-2"
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
+  subnet_id           = azurerm_subnet.prd-front-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  vm_size             = "Standard_B1ms"
 }
 
 module "r1-app-sc-vm" {
-  source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment          = "sc-app"
-  location             = var.azure_r1_location
-  location_short       = var.azure_r1_location_short
-  index_number         = 01
-  resource_group_name  = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
-  subnet_id            = azurerm_subnet.prd-sc-subnet.id
-  admin_ssh_key        = var.ssh_public_key
-  enable_auto_shutdown = false
-  vm_size              = "Standard_B1ms"
+  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment         = "sc-app"
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
+  subnet_id           = azurerm_subnet.prd-sc-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  vm_size             = "Standard_B1ms"
 }
 
 module "r1-app-sql-vm" {
-  source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment          = "sql-app"
-  location             = var.azure_r1_location
-  location_short       = var.azure_r1_location_short
-  index_number         = 01
-  resource_group_name  = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
-  subnet_id            = azurerm_subnet.prd-sql-subnet.id
-  admin_ssh_key        = var.ssh_public_key
-  enable_auto_shutdown = false
-  vm_size              = "Standard_B1ms"
+  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment         = "sql-app"
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-microseg-rg.name
+  subnet_id           = azurerm_subnet.prd-sql-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  vm_size             = "Standard_B1ms"
 }

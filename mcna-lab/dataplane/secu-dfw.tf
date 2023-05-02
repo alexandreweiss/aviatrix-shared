@@ -10,6 +10,8 @@ resource "aviatrix_distributed_firewalling_intra_vpc" "app-vnet" {
     vpc_id       = "${azurerm_virtual_network.r1-spoke-app.name}:${azurerm_resource_group.azr-r1-spoke-microseg-rg.name}:${azurerm_virtual_network.r1-spoke-app.guid}"
     region       = var.azure_r1_location
   }
+
+  depends_on = [aviatrix_distributed_firewalling_config.dfw]
 }
 
 // Smart Groups
@@ -67,6 +69,24 @@ resource "aviatrix_smart_group" "sql-app" {
   }
 }
 
+resource "aviatrix_smart_group" "app-vnet" {
+  name = "all-vm-in-vnet-app"
+  selector {
+    match_expressions {
+      type = "subnet"
+      name = azurerm_subnet.prd-front-subnet.name
+    }
+    match_expressions {
+      type = "subnet"
+      name = azurerm_subnet.prd-sql-subnet.name
+    }
+    match_expressions {
+      type = "subnet"
+      name = azurerm_subnet.prd-sc-subnet.name
+    }
+  }
+}
+
 resource "aviatrix_distributed_firewalling_policy_list" "policy" {
   policies {
     action           = "PERMIT"
@@ -91,6 +111,27 @@ resource "aviatrix_distributed_firewalling_policy_list" "policy" {
     dst_smart_groups = [aviatrix_smart_group.sql-app.uuid]
     logging          = true
     priority         = 200
+  }
+  policies {
+    action           = "PERMIT"
+    src_smart_groups = [aviatrix_smart_group.ferme.uuid]
+    name             = "FermeToFrontIcmp"
+    protocol         = "icmp"
+    dst_smart_groups = [aviatrix_smart_group.front-app.uuid]
+    logging          = true
+    priority         = 1000
+  }
+  policies {
+    action           = "PERMIT"
+    src_smart_groups = [aviatrix_smart_group.ferme.uuid]
+    name             = "SSHToVMs"
+    protocol         = "TCP"
+    port_ranges {
+      lo = 22
+    }
+    dst_smart_groups = [aviatrix_smart_group.app-vnet.uuid]
+    logging          = true
+    priority         = 1100
   }
   # policies {
   #   action           = "PERMIT"
