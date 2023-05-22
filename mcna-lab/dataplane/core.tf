@@ -33,6 +33,11 @@ resource "azurerm_resource_group" "azr-r1-spoke-microseg-rg" {
   name     = "azr-${var.azure_r1_location_short}-spoke-microseg-rg"
 }
 
+resource "azurerm_resource_group" "azr-r1-spoke-app-b-microseg-rg" {
+  location = var.azure_r1_location
+  name     = "azr-${var.azure_r1_location_short}-spoke-app-b-microseg-rg"
+}
+
 resource "azurerm_resource_group" "avx-lab-vms-rg" {
   name     = "avx-lab-vms-rg"
   location = var.azure_r2_location

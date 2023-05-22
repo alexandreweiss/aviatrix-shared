@@ -98,7 +98,7 @@
 
 # module "we_spoke_nat0" {
 #   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-#   version = "1.5.0"
+#   version = "1.6.1"
 
 #   cloud            = "Azure"
 #   name             = "we-spoke-nat0"

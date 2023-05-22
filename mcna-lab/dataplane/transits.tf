@@ -1,6 +1,6 @@
 module "azure_transit_we" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.4.0"
+  version = "2.5.0"
 
   cloud                         = "azure"
   region                        = var.azure_r1_location
@@ -12,11 +12,13 @@ module "azure_transit_we" {
   enable_advertise_transit_cidr = true
   single_az_ha                  = false
   resource_group                = azurerm_resource_group.azr-transit-r1-0-rg.name
+  bgp_lan_interfaces_count      = 1
+  enable_bgp_over_lan           = true
 }
 
 module "azure_transit_we_egress" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.4.0"
+  version = "2.5.0"
 
   cloud                         = "azure"
   region                        = var.azure_r1_location
@@ -34,7 +36,7 @@ module "azure_transit_we_egress" {
 
 # module "azure_transit_ne_vwan" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-#   version = "2.4.0"
+#   version = "2.5.0"
 
 #   cloud           = "azure"
 #   region          = var.azure_r2_location
@@ -54,7 +56,7 @@ module "azure_transit_we_egress" {
 
 # module "azure_transit_ne" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-#   version = "2.4.0"
+#   version = "2.5.0"
 
 #   cloud                  = "azure"
 #   region                 = var.azure_r2_location
@@ -70,7 +72,7 @@ module "azure_transit_we_egress" {
 
 # module "gcp_transit_we" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-#   version = "2.4.0"
+#   version = "2.5.0"
 
 #   cloud           = "GCP"
 #   region          = var.gcp_r1_location

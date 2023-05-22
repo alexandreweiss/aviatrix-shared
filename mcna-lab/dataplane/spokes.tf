@@ -53,7 +53,7 @@ resource "azurerm_subnet_route_table_association" "prd-subnet-vm-rt-assoc" {
 
 module "we_spoke_prd" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.5.0"
+  version = "1.6.1"
   count   = local.features.deploy_azr_we_spoke_prd ? 1 : 0
 
   cloud            = "Azure"
@@ -127,7 +127,7 @@ resource "azurerm_subnet_route_table_association" "dev-subnet-vm-rt-assoc" {
 
 module "we_spoke_dev" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.5.0"
+  version = "1.6.1"
   count   = local.features.deploy_azr_we_spoke_dev ? 1 : 0
 
   cloud            = "Azure"
@@ -179,7 +179,7 @@ resource "azurerm_subnet" "r1-azure-spoke-vpn-vm-subnet" {
 
 module "we_spoke_vpn" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.5.0"
+  version = "1.6.1"
   count   = local.features.deploy_azr_vpn_spoke ? 1 : 0
 
   cloud     = "Azure"
@@ -245,7 +245,7 @@ module "controller-vpn-spoke-peering" {
 
 # module "ne_spoke_prd" {
 #   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-#   version = "1.5.0"
+#   version = "1.6.1"
 #   count   = local.features.deploy_azr_ne_spoke ? 1 : 0
 
 #   cloud      = "Azure"
