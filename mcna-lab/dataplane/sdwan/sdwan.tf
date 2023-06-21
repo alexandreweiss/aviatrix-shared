@@ -21,6 +21,7 @@ resource "azurerm_virtual_network" "azure-spoke-sdwan-r1" {
   resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
 }
 
+
 resource "azurerm_subnet" "r1-azure-spoke-sdwan-gw-subnet" {
   address_prefixes     = ["10.60.1.0/28"]
   name                 = "avx-gw-subnet"
@@ -28,8 +29,15 @@ resource "azurerm_subnet" "r1-azure-spoke-sdwan-gw-subnet" {
   virtual_network_name = azurerm_virtual_network.azure-spoke-sdwan-r1.name
 }
 
-resource "azurerm_subnet" "r1-azure-spoke-sdwan-vm-subnet" {
+resource "azurerm_subnet" "r1-azure-spoke-sdwan-hagw-subnet" {
   address_prefixes     = ["10.60.1.16/28"]
+  name                 = "avx-hagw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-sdwan-r1.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-sdwan-vm-subnet" {
+  address_prefixes     = ["10.60.1.32/28"]
   name                 = "avx-vm-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-sdwan-r1.name
@@ -69,7 +77,7 @@ module "r1-sdwan-vm-2" {
   location_short       = var.azure_r1_location_short
   index_number         = 02
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
-  subnet_id            = azurerm_subnet.r1-azure-spoke-sdwan-gw-subnet.id
+  subnet_id            = azurerm_subnet.r1-azure-spoke-sdwan-hagw-subnet.id
   admin_ssh_key        = var.ssh_public_key
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
@@ -85,21 +93,21 @@ resource "azurerm_route_table" "rt-sdwan-back-transit" {
     address_prefix         = "10.0.0.0/8"
     name                   = "10_0_0_0_8"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.private_ip
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[0]
   }
 
   route {
     address_prefix         = "192.168.0.0/16"
     name                   = "192_168_0_0_16"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.private_ip
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[0]
   }
 
   route {
     address_prefix         = "172.16.0.0/12"
     name                   = "172_16_0_0_12"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.private_ip
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[0]
   }
 }
 
@@ -107,6 +115,39 @@ resource "azurerm_subnet_route_table_association" "sdwan-rt-assoc" {
   route_table_id = azurerm_route_table.rt-sdwan-back-transit.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-sdwan-gw-subnet.id
 }
+
+resource "azurerm_route_table" "rt-sdwan-ha-back-transit" {
+  location            = var.azure_r1_location
+  name                = "sdwan-ha-back-to-transit"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
+
+  route {
+    address_prefix         = "10.0.0.0/8"
+    name                   = "10_0_0_0_8"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[0]
+  }
+
+  route {
+    address_prefix         = "192.168.0.0/16"
+    name                   = "192_168_0_0_16"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[0]
+  }
+
+  route {
+    address_prefix         = "172.16.0.0/12"
+    name                   = "172_16_0_0_12"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[0]
+  }
+}
+
+resource "azurerm_subnet_route_table_association" "sdwan-ha-rt-assoc" {
+  route_table_id = azurerm_route_table.rt-sdwan-ha-back-transit.id
+  subnet_id      = azurerm_subnet.r1-azure-spoke-sdwan-hagw-subnet.id
+}
+
 
 // Tiered vnet creation
 resource "azurerm_virtual_network" "azure-spoke-sdwan-tiered-r1" {
@@ -183,6 +224,10 @@ resource "aviatrix_spoke_external_device_conn" "transit-sdwan-bgp" {
   bgp_local_as_num  = "65007"
   bgp_remote_as_num = "64512"
   remote_lan_ip     = "10.60.1.4"
-  local_lan_ip      = "10.10.0.148"
-  remote_vpc_name   = "${azurerm_virtual_network.azure-spoke-sdwan-r1.name}:${azurerm_resource_group.azr-r1-spoke-sdwan-rg.name}:${data.azurerm_subscription.current.subscription_id}"
+  # local_lan_ip             = "10.10.0.148"
+  remote_vpc_name          = "${azurerm_virtual_network.azure-spoke-sdwan-r1.name}:${azurerm_resource_group.azr-r1-spoke-sdwan-rg.name}:${data.azurerm_subscription.current.subscription_id}"
+  backup_local_lan_ip      = "10.10.0.156"
+  backup_remote_lan_ip     = "10.60.1.20"
+  backup_bgp_remote_as_num = "64512"
+  ha_enabled               = true
 }

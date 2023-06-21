@@ -109,7 +109,6 @@
 #   region           = var.azure_r1_location
 #   account          = local.accounts.azure_account
 #   transit_gw       = module.azure_transit_we.transit_gateway.gw_name
-#   //transit_gw = module.azure_transit_ne_vwan.transit_gateway.gw_name
 #   ha_gw = false
 #   //network_domain = aviatrix_segmentation_network_domain.nat0_nd.domain_name
 #   single_az_ha                     = false

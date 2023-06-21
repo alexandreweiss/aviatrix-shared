@@ -39,14 +39,14 @@ variable "gcp_r1_location_short" {
   type        = string
 }
 
-variable "aws_we_location" {
-  default     = "europe-west1"
+variable "aws_r1_location" {
+  default     = "eu-central-1"
   description = "region to deploy resources"
   type        = string
 }
 
-variable "aws_we_location_short" {
-  default     = "we"
+variable "aws_r1_location_short" {
+  default     = "fra"
   description = "region to deploy resources"
   type        = string
 }
@@ -99,6 +99,7 @@ variable "p2s_additional_cidrs" {
 locals {
   accounts = {
     azure_account = "azure-alweiss"
+    aws_account   = "aws-alweiss"
     gcp_account   = "gcp-alweiss"
   }
 

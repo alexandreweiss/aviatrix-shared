@@ -9,7 +9,7 @@ module "azure_transit_we" {
   enable_transit_firenet        = true
   name                          = "azr-${var.azure_r1_location_short}-transit"
   local_as_number               = 65007
-  enable_advertise_transit_cidr = true
+  enable_advertise_transit_cidr = false
   single_az_ha                  = false
   resource_group                = azurerm_resource_group.azr-transit-r1-0-rg.name
   bgp_lan_interfaces_count      = 1
@@ -34,26 +34,6 @@ module "azure_transit_we_egress" {
   //instance_size = "Standard_B2ms"
 }
 
-# module "azure_transit_ne_vwan" {
-#   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-#   version = "2.5.0"
-
-#   cloud           = "azure"
-#   region          = var.azure_r2_location
-#   cidr            = "10.70.0.0/23"
-#   account         = local.accounts.azure_account
-#   name            = "azr-${var.azure_r2_location_short}-vwan-transit"
-#   local_as_number = 65011
-#   //enable_segmentation      = true
-#   enable_bgp_over_lan      = true
-#   insane_mode              = true
-#   bgp_lan_interfaces_count = 2
-#   resource_group           = azurerm_resource_group.azr-transit-ne-0-rg.name
-
-#   //instance_size = "Standard_B2ms"
-
-# }
-
 # module "azure_transit_ne" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
 #   version = "2.5.0"
@@ -70,6 +50,7 @@ module "azure_transit_we_egress" {
 #   //instance_size = "Standard_B2ms"
 # }
 
+
 # module "gcp_transit_we" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
 #   version = "2.5.0"
@@ -83,3 +64,19 @@ module "azure_transit_we_egress" {
 #   single_az_ha    = false
 # }
 
+
+# module "aws_transit_fra" {
+#   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
+#   version = "2.5.0"
+
+#   cloud                  = "aws"
+#   region                 = var.aws_r1_location
+#   cidr                   = "10.50.0.0/23"
+#   account                = local.accounts.aws_account
+#   enable_transit_firenet = true
+#   gw_name                = "aws-${var.aws_r1_location_short}-transit"
+#   local_as_number        = 65011
+#   enable_segmentation    = false
+#   // this is to enable connection to AWS TGW
+#   hybrid_connection = true
+# }

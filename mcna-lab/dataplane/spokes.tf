@@ -70,6 +70,7 @@ module "we_spoke_prd" {
   ha_gw          = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-prd-rg.name
+  single_ip_snat = true
 }
 
 
@@ -139,10 +140,9 @@ module "we_spoke_dev" {
   region           = var.azure_r1_location
   account          = local.accounts.azure_account
   transit_gw       = module.azure_transit_we.transit_gateway.gw_name
-  //transit_gw = module.azure_transit_ne_vwan.transit_gateway.gw_name
-  ha_gw = false
+  ha_gw            = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat = false
+  single_ip_snat = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-dev-rg.name
 }

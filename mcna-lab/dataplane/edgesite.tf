@@ -2,8 +2,8 @@
 #   source  = "terraform-aviatrix-modules/mc-edge/aviatrix"
 #   version = "v1.1.2"
 
-#   site_id        = "siteA"
-#   network_domain = "siteA"
+#   site_id        = "ferme"
+#   network_domain = "ferme"
 
 #   edge_gws = {
 #     gw1 = {
@@ -26,9 +26,9 @@
 #   }
 # }
 
-# resource "aviatrix_edge_spoke_external_device_conn" "edge-siteA-lan" {
-#   site_id           = "siteA"
-#   connection_name   = "lanSiteA"
+# resource "aviatrix_edge_spoke_external_device_conn" "edge-ferme-lan" {
+#   site_id           = "ferme"
+#   connection_name   = "lanferme"
 #   gw_name           = "edge-site-a"
 #   bgp_local_as_num  = "65061"
 #   bgp_remote_as_num = "65161"

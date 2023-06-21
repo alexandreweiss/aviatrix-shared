@@ -1,0 +1,27 @@
+devices:
+  - name: "neo-ferme"
+    serial_number: "VMware-56 4d f0 d5 c0 a6 59 d1-bd 28 12 3f fe 7f a6 f0"
+    hardware_model: "ESXI-VM-2-WAN"
+  - name: "neo-studio"
+    serial_number: "26b2e4a4-eb44-4712-9c69-8095a4394d44"
+    hardware_model: "ESXI-VM-2-WAN"
+
+edges:
+  - name: "edge-ferme"
+    gw_name: "edge-ferme"
+    site_id: "ferme"
+    gw_size: "small"
+    wan_ip: "192.168.60.160/24"
+    wan_gw_ip: "192.168.60.1"
+    lan_ip: "192.168.61.1/24"
+    local_as_number: 65061
+    neo_device: 0
+  - name: "edge-studio"
+    gw_name: "edge-studio"
+    site_id: "studio"
+    gw_size: "small"
+    wan_ip: "192.168.71.70/24"
+    wan_gw_ip: "192.168.71.1"
+    lan_ip: "192.168.80.1/24"
+    local_as_number: 65080
+    neo_device: 1
