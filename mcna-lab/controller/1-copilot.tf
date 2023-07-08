@@ -1,17 +1,17 @@
 module "copilot_build_azure" {
   source                         = "github.com/AviatrixSystems/terraform-modules-copilot.git//copilot_build_azure"
-  copilot_name                   = "avx-cplt-ne"
+  copilot_name                   = "avx-cplt-${var.azure_r2_location_short}"
   virtual_machine_admin_username = local.copilot.username
   virtual_machine_admin_password = var.admin_password
   use_existing_vnet              = true
   resource_group_name            = module.aviatrix_controller_azure.avx_controller_rg.name
   subnet_id                      = module.aviatrix_controller_azure.avx_controller_subnet.id
-  virtual_machine_size           = "Standard_B2ms"
+  virtual_machine_size           = var.copilot_virtual_machine_size
   controller_private_ip          = module.aviatrix_controller_azure.avx_controller_private_ip
   controller_public_ip           = module.aviatrix_controller_azure.avx_controller_public_ip
-  location                       = var.azure_we_location
-  default_data_disk_size         = 128
-  
+  location                       = var.azure_r2_location
+  default_data_disk_size         = 64
+
   allowed_cidrs = {
     "tcp_cidrs" = {
       priority = "100"

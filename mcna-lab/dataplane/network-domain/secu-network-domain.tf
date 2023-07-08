@@ -19,17 +19,6 @@
 #   ]
 # }
 
-// User VPN
-resource "aviatrix_vpn_user" "aweiss" {
-  count = local.features.deploy_azr_vpn_gw ? 1 : 0
-
-  user_email = "aweiss@aviatrix.com"
-  user_name  = "aweiss"
-  gw_name    = aviatrix_gateway.we-vpn-0[0].gw_name
-  vpc_id     = aviatrix_gateway.we-vpn-0[0].vpc_id
-}
-
-
 // Smart Groups
 # resource "aviatrix_smart_group" "catch-all" {
 #   name = "catch-all"

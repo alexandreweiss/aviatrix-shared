@@ -13,21 +13,6 @@ resource "azurerm_resource_group" "azr-transit-ne-0-rg" {
   name     = "azr-transit-ne-0-rg"
 }
 
-resource "azurerm_resource_group" "azr-r1-spoke-prd-rg" {
-  location = var.azure_r1_location
-  name     = "azr-${var.azure_r1_location_short}-spoke-prd-rg"
-}
-
-resource "azurerm_resource_group" "azr-r1-spoke-dev-rg" {
-  location = var.azure_r1_location
-  name     = "azr-${var.azure_r1_location_short}-spoke-dev-rg"
-}
-
-resource "azurerm_resource_group" "azr-r1-spoke-vpn-rg" {
-  location = var.azure_r1_location
-  name     = "azr-${var.azure_r1_location_short}-spoke-vpn-rg"
-}
-
 resource "azurerm_resource_group" "azr-r1-spoke-microseg-rg" {
   location = var.azure_r1_location
   name     = "azr-${var.azure_r1_location_short}-spoke-microseg-rg"

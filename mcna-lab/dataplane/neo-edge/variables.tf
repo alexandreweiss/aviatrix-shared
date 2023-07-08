@@ -3,7 +3,7 @@ variable "admin_password" {
   description = "Admin password"
 }
 
-variable "controller_ip" {
+variable "controller_fqdn" {
   description = "FQDN or IP of the Aviatrix Controller"
   sensitive   = true
 }
@@ -57,7 +57,7 @@ variable "neo_edges" {
 
 locals {
   accounts = {
-    csp_account = "edgePlatform-0"
+    csp_account = "edgePlatform-Prod"
   }
 
   data = yamldecode(file("${path.module}/configuration.yaml"))

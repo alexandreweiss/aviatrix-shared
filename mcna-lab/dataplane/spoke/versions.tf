@@ -7,7 +7,7 @@ terraform {
   cloud {
     organization = "ananableu"
     workspaces {
-      name = "aviatrix-shared-eve-edge"
+      name = "aviatrix-shared-spoke"
     }
   }
 }

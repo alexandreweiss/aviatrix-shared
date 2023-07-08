@@ -7,4 +7,10 @@ terraform {
       source = "hashicorp/azuread"
     }
   }
+  cloud {
+    organization = "ananableu"
+    workspaces {
+      name = "aviatrix-shared-control-plane"
+    }
+  }
 }

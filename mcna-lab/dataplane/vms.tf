@@ -10,20 +10,6 @@
 #   admin_ssh_key = var.ssh_public_key
 # }
 
-module "we-prd-vm" {
-  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment         = "prd"
-  location            = var.azure_r1_location
-  location_short      = var.azure_r1_location_short
-  index_number        = 01
-  resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
-  subnet_id           = azurerm_subnet.r1-azure-spoke-prd-vm-subnet.id
-  admin_ssh_key       = var.ssh_public_key
-  depends_on = [
-    module.we_spoke_prd
-  ]
-}
-
 # module "we-app1-front-vm" {
 #   source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
 #   environment         = "app1-front"
@@ -52,16 +38,4 @@ module "we-prd-vm" {
 #   ]
 # }
 
-module "we-dev-vm" {
-  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment         = "dev"
-  location            = var.azure_r1_location
-  location_short      = var.azure_r1_location_short
-  index_number        = 01
-  resource_group_name = azurerm_resource_group.avx-lab-vms-rg.name
-  subnet_id           = azurerm_subnet.r1-azure-spoke-dev-vm-subnet.id
-  admin_ssh_key       = var.ssh_public_key
-  depends_on = [
-    module.we_spoke_dev
-  ]
-}
+

@@ -16,23 +16,23 @@ module "azure_transit_we" {
   enable_bgp_over_lan           = true
 }
 
-module "azure_transit_we_egress" {
-  source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.5.0"
+# module "azure_transit_we_egress" {
+#   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
+#   version = "2.5.0"
 
-  cloud                         = "azure"
-  region                        = var.azure_r1_location
-  cidr                          = "10.40.0.0/23"
-  account                       = local.accounts.azure_account
-  enable_transit_firenet        = false
-  name                          = "azr-${var.azure_r1_location_short}-transit-egress"
-  local_as_number               = 65010
-  single_az_ha                  = false
-  ha_gw                         = false
-  resource_group                = azurerm_resource_group.azr-transit-r1-1-rg.name
-  enable_egress_transit_firenet = true
-  //instance_size = "Standard_B2ms"
-}
+#   cloud                         = "azure"
+#   region                        = var.azure_r1_location
+#   cidr                          = "10.40.0.0/23"
+#   account                       = local.accounts.azure_account
+#   enable_transit_firenet        = false
+#   name                          = "azr-${var.azure_r1_location_short}-transit-egress"
+#   local_as_number               = 65010
+#   single_az_ha                  = false
+#   ha_gw                         = false
+#   resource_group                = azurerm_resource_group.azr-transit-r1-1-rg.name
+#   enable_egress_transit_firenet = true
+#   //instance_size = "Standard_B2ms"
+# }
 
 # module "azure_transit_ne" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
