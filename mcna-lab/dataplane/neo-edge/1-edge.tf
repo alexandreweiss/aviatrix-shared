@@ -39,9 +39,10 @@ resource "aviatrix_edge_platform" "edge-gw-ferme" {
 
 # Attach edge to transit
 resource "aviatrix_edge_spoke_transit_attachment" "edge-ferme-transit-we" {
-  spoke_gw_name   = aviatrix_edge_platform.edge-gw-ferme.gw_name
-  transit_gw_name = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  depends_on      = [aviatrix_edge_platform.edge-gw-ferme]
+  spoke_gw_name               = aviatrix_edge_platform.edge-gw-ferme.gw_name
+  transit_gw_name             = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  enable_over_private_network = false
+  depends_on                  = [aviatrix_edge_platform.edge-gw-ferme]
 }
 
 # resource "aviatrix_edge_neo" "edge-studio" {
