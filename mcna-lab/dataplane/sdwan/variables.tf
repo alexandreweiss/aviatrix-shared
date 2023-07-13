@@ -32,7 +32,7 @@ variable "admin_password" {
   description = "Admin password"
 }
 
-variable "controller_ip" {
+variable "controller_fqdn" {
   description = "FQDN or IP of the Aviatrix Controller"
   sensitive   = true
 }

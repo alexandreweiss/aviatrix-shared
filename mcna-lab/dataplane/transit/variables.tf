@@ -86,7 +86,7 @@ variable "ssh_public_key" {
   description = "SSH public key for VM administration"
 }
 
-variable "controller_ip" {
+variable "controller_fqdn" {
   description = "FQDN or IP of the Aviatrix Controller"
   sensitive   = true
 }

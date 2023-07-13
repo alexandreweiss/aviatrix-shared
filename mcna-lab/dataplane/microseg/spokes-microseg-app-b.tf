@@ -1,3 +1,8 @@
+resource "azurerm_resource_group" "azr-r1-spoke-app-b-microseg-rg" {
+  location = var.azure_r1_location
+  name     = "azr-${var.azure_r1_location_short}-spoke-app-b-microseg-rg"
+}
+
 # resource "azurerm_virtual_network" "r1-spoke-app-b" {
 #   address_space       = ["10.30.5.0/24"]
 #   location            = var.azure_r1_location

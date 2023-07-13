@@ -1,3 +1,7 @@
+data "dns_a_record_set" "controller_ip" {
+  host = var.controller_fqdn
+}
+
 module "azure_transit_we" {
   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
   version = "2.5.0"
@@ -15,6 +19,11 @@ module "azure_transit_we" {
   bgp_lan_interfaces_count      = 1
   enable_bgp_over_lan           = true
 }
+
+# resource "azurerm_resource_group" "azr-transit-r1-1-rg" {
+#   location = var.azure_r1_location
+#   name     = "azr-transit-${var.azure_r1_location_short}-1-rg"
+# }
 
 # module "azure_transit_we_egress" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"

@@ -13,7 +13,7 @@ terraform {
 }
 
 provider "aviatrix" {
-  controller_ip = var.controller_ip
+  controller_ip = data.dns_a_record_set.controller_ip.addrs[0]
   username      = "admin"
   password      = var.admin_password
 }

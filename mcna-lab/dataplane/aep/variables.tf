@@ -57,7 +57,7 @@ variable "neo_edges" {
 
 locals {
   accounts = {
-    csp_account = "edgePlatform-Prod"
+    csp_account = "prodPlatform"
   }
 
   data = yamldecode(file("${path.module}/configuration.yaml"))

@@ -4,6 +4,10 @@ data "tfe_outputs" "dataplane" {
   workspace    = "aviatrix-shared"
 }
 
+data "dns_a_record_set" "controller_ip" {
+  host = var.controller_fqdn
+}
+
 output "transit_we" {
   value     = data.tfe_outputs.dataplane.values.transit_we
   sensitive = true
