@@ -21,7 +21,7 @@ resource "azurerm_dns_a_record" "ctrl" {
   resource_group_name = "core-rg"
   ttl                 = 3600
   zone_name           = "ananableu.fr"
-  records             = ["4.210.87.221"]
+  records             = ["20.234.105.10"]
 }
 
 resource "azurerm_dns_a_record" "cplt" {
@@ -29,7 +29,7 @@ resource "azurerm_dns_a_record" "cplt" {
   resource_group_name = "core-rg"
   ttl                 = 3600
   zone_name           = "ananableu.fr"
-  records             = ["68.219.101.118"]
+  records             = ["20.223.192.190"]
 }
 
 resource "azurerm_dns_cname_record" "controller" {

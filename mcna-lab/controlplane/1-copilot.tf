@@ -5,7 +5,7 @@ module "copilot_build_azure" {
   virtual_machine_admin_password = var.admin_password
   use_existing_vnet              = true
   resource_group_name            = module.aviatrix_controller_azure.avx_controller_rg.name
-  subnet_id                      = module.aviatrix_controller_azure.avx_controller_subnet.id
+  subnet_id                      = module.aviatrix_controller_azure.avx_controller_subnet[0].id
   virtual_machine_size           = var.copilot_virtual_machine_size
   controller_private_ip          = module.aviatrix_controller_azure.avx_controller_private_ip
   controller_public_ip           = module.aviatrix_controller_azure.avx_controller_public_ip
