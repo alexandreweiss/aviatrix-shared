@@ -1,8 +1,7 @@
 # NEO 1 WAN / 1012VC
 resource "aviatrix_edge_platform_device_onboarding" "edge-1012-ferme" {
 
-  //account_name = local.accounts.csp_account
-  account_name              = "prodPlatform"
+  account_name              = local.accounts.csp_account
   device_name               = "edge-1012-ferme"
   serial_number             = "GSAB295268"
   hardware_model            = "ADV-1012-1-WAN"

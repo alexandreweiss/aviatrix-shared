@@ -4,7 +4,7 @@ resource "aviatrix_edge_platform" "edge-gw-ferme" {
   account_name                           = local.accounts.csp_account
   gw_name                                = "edge-gw-ferme"
   site_id                                = "ferme"
-  gw_size                                = "small"
+  gw_size                                = "large"
   local_as_number                        = 65180
   device_id                              = aviatrix_edge_platform_device_onboarding.edge-1012-ferme.device_id
   management_egress_ip_prefix_list       = ["${data.dns_a_record_set.ferme.addrs[0]}/32"]
