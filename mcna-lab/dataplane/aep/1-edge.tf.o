@@ -4,7 +4,7 @@ resource "aviatrix_edge_platform" "edge-gw-ferme" {
   account_name                           = local.accounts.csp_account
   gw_name                                = "edge-gw-ferme"
   site_id                                = "ferme"
-  gw_size                                = "small"
+  gw_size                                = "large"
   local_as_number                        = 65180
   device_id                              = aviatrix_edge_platform_device_onboarding.edge-1012-ferme.device_id
   management_egress_ip_prefix_list       = ["${data.dns_a_record_set.ferme.addrs[0]}/32"]
@@ -38,9 +38,9 @@ resource "aviatrix_edge_platform" "edge-gw-ferme" {
 }
 
 # Attach edge to transit
-resource "aviatrix_edge_spoke_transit_attachment" "edge-ferme-transit-we" {
+resource "aviatrix_edge_spoke_transit_attachment" "edge-ferme-transit-ne" {
   spoke_gw_name               = aviatrix_edge_platform.edge-gw-ferme.gw_name
-  transit_gw_name             = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  transit_gw_name             = data.tfe_outputs.dataplane.values.transit_we_gw_name
   enable_over_private_network = false
   depends_on                  = [aviatrix_edge_platform.edge-gw-ferme]
 }

@@ -1,0 +1,19 @@
+data "dns_a_record_set" "controller_ip" {
+  host = var.controller_fqdn
+}
+
+module "aws_transit_fra" {
+  source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
+  version = "2.5.0"
+
+  cloud                  = "aws"
+  region                 = var.aws_r1_location
+  cidr                   = "10.50.0.0/23"
+  account                = local.accounts.aws_account
+  enable_transit_firenet = true
+  gw_name                = "aws-${var.aws_r1_location_short}-transit"
+  local_as_number        = 65011
+  enable_segmentation    = false
+  // this is to enable connection to AWS TGW
+  hybrid_connection = true
+}
