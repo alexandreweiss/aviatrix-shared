@@ -10,7 +10,7 @@ module "aviatrix_controller_azure" {
   avx_controller_admin_email      = var.admin_email
   avx_controller_admin_password   = var.admin_password
   account_email                   = var.admin_email
-  access_account_name             = local.accounts.azure_account
+  access_account_name             = var.azure_account
   aviatrix_customer_id            = var.aviatrix_customer_id
   location                        = var.azure_r2_location
   controller_vnet_cidr            = var.controller_vnet_cidr

@@ -12,7 +12,7 @@ module "transit_peering" {
   version = "1.0.8"
 
   transit_gateways = [
-    nonsensitive(data.tfe_outputs.dataplane.values.transit_we_gw_name),
-    nonsensitive(data.tfe_outputs.dataplane.values.transit_r2_gw_name)
+    nonsensitive(data.tfe_outputs.dataplane.values.transit_we_gw_name)
+    //nonsensitive(data.tfe_outputs.dataplane.values.aws_transit_r1_gw_name)
   ]
 }

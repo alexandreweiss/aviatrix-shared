@@ -67,13 +67,15 @@ module "azr_r1_spoke_dev" {
   use_existing_vpc = true
   hagw_subnet      = azurerm_subnet.r1-azure-spoke-dev-hagw-subnet.address_prefixes[0]
   region           = var.azure_r1_location
-  account          = local.accounts.azure_account
+  account          = var.azure_account
   transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
   ha_gw            = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat = false
-  single_az_ha   = false
-  resource_group = azurerm_resource_group.azr-r1-spoke-dev-rg.name
+  single_ip_snat  = true
+  single_az_ha    = false
+  resource_group  = azurerm_resource_group.azr-r1-spoke-dev-rg.name
+  local_as_number = 65012
+  enable_bgp      = true
 }
 
 module "we-dev-vm" {

@@ -10,18 +10,6 @@ variable "azure_r1_location_short" {
   type        = string
 }
 
-variable "aws_r1_location" {
-  default     = "eu-central-1"
-  description = "region to deploy resources"
-  type        = string
-}
-
-variable "aws_r1_location_short" {
-  default     = "fra"
-  description = "region to deploy resources"
-  type        = string
-}
-
 variable "admin_password" {
   sensitive   = true
   description = "Admin password"
@@ -54,3 +42,13 @@ variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
 
+variable "p2s_additional_cidrs" {
+  description = "IP addresses to be included in the P2S tunnel"
+}
+
+locals {
+  controller = {
+    controller_vnet_name           = "avx-ctrl-ne-vnet"
+    controller_resource_group_name = "avx-ctrl-ne-rg"
+  }
+}

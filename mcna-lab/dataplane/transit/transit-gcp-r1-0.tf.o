@@ -9,7 +9,7 @@ module "gcp_transit_we" {
   cloud           = "GCP"
   region          = var.gcp_r1_location
   cidr            = "10.30.0.0/23"
-  account         = local.accounts.gcp_account
+  account         = var.gcp_account
   gw_name         = "gcp-${var.azure_r1_location_short}-transit"
   local_as_number = 65009
   single_az_ha    = false
@@ -23,7 +23,7 @@ module "gcp_transit_we" {
 #   cloud                  = "aws"
 #   region                 = var.aws_r1_location
 #   cidr                   = "10.50.0.0/23"
-#   account                = local.accounts.aws_account
+#   account                = var.aws_account
 #   enable_transit_firenet = true
 #   gw_name                = "aws-${var.aws_r1_location_short}-transit"
 #   local_as_number        = 65011

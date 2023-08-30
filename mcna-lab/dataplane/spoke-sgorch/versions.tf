@@ -3,11 +3,17 @@ terraform {
     aviatrix = {
       source = "aviatrixsystems/aviatrix"
     }
+    guacamole = {
+      source = "techBeck03/guacamole"
+    }
+    ssh = {
+      source = "loafoe/ssh"
+    }
   }
   cloud {
     organization = "ananableu"
     workspaces {
-      name = "aviatrix-shared-spoke"
+      name = "aviatrix-shared-spoke-sgorch"
     }
   }
 }

@@ -1,16 +1,3 @@
-data "dns_a_record_set" "ferme" {
-  host = var.ferme_fqdn
-}
-
-data "dns_a_record_set" "controller_ip" {
-  host = var.controller_fqdn
-}
-
-data "tfe_outputs" "dataplane" {
-  organization = "ananableu"
-  workspace    = "aviatrix-shared"
-}
-
 //To be disabled when Edge is deployed on same public IP
 resource "aviatrix_transit_external_device_conn" "ferme" {
   vpc_id                   = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.vpc_id

@@ -37,11 +37,21 @@ variable "controller_fqdn" {
   sensitive   = true
 }
 
-locals {
-  accounts = {
-    azure_account = "azure-alweiss"
-  }
 
+variable "azure_account" {
+  description = "CSP account onboarder on the controller"
+}
+
+variable "aws_account" {
+  description = "CSP account onboarder on the controller"
+}
+
+variable "gcp_account" {
+  description = "CSP account onboarder on the controller"
+}
+
+
+locals {
   controller = {
     controller_vnet_name           = "avx-ctrl-ne-vnet"
     controller_resource_group_name = "avx-ctrl-ne-rg"

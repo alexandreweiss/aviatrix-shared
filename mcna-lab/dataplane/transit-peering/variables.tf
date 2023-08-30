@@ -8,10 +8,15 @@ variable "controller_fqdn" {
   sensitive   = true
 }
 
-locals {
-  accounts = {
-    azure_account = "azure-alweiss"
-    aws_account   = "aws-alweiss"
-    gcp_account   = "gcp-alweiss"
-  }
+variable "azure_account" {
+  description = "CSP account onboarder on the controller"
 }
+
+variable "aws_account" {
+  description = "CSP account onboarder on the controller"
+}
+
+variable "gcp_account" {
+  description = "CSP account onboarder on the controller"
+}
+

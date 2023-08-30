@@ -6,7 +6,7 @@ resource "aviatrix_distributed_firewalling_config" "dfw" {
 # // Enable VPC for MicroSeg
 # resource "aviatrix_distributed_firewalling_intra_vpc" "app-vnet" {
 #   vpcs {
-#     account_name = local.accounts.azure_account
+#     account_name = var.azure_account
 #     vpc_id       = "${azurerm_virtual_network.r1-spoke-app.name}:${azurerm_resource_group.azr-r1-spoke-microseg-rg.name}:${azurerm_virtual_network.r1-spoke-app.guid}"
 #     region       = var.azure_r1_location
 #   }

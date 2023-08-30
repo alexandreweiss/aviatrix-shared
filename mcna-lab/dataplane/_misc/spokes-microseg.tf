@@ -71,7 +71,7 @@ resource "azurerm_resource_group" "azr-r1-spoke-microseg-rg" {
 
 # resource "aviatrix_spoke_gateway" "azr-r1-spoke-microseg-gw" {
 #   cloud_type   = 8
-#   account_name = local.accounts.azure_account
+#   account_name = var.azure_account
 #   gw_name      = "${var.azure_r1_location_short}-app-spoke"
 #   vpc_id       = "${azurerm_virtual_network.r1-spoke-app.name}:${azurerm_resource_group.azr-r1-spoke-microseg-rg.name}:${azurerm_virtual_network.r1-spoke-app.guid}"
 #   //vpc_reg           = azurerm_virtual_network.r1-spoke-app.location

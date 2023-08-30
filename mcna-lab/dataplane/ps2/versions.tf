@@ -7,7 +7,7 @@ terraform {
   cloud {
     organization = "ananableu"
     workspaces {
-      name = "aviatrix-shared-spoke"
+      name = "aviatrix-shared-p2s"
     }
   }
 }
@@ -22,7 +22,4 @@ provider "azurerm" {
   features {
 
   }
-}
-
-provider "aws" {
 }

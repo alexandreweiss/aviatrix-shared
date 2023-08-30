@@ -10,6 +10,30 @@ variable "azure_r1_location_short" {
   type        = string
 }
 
+variable "azure_r2_location" {
+  default     = "North Europe"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "azure_r2_location_short" {
+  default     = "ne"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "gcp_r1_location" {
+  default     = "europe-west1"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "gcp_r1_location_short" {
+  default     = "we"
+  description = "region to deploy resources"
+  type        = string
+}
+
 variable "aws_r1_location" {
   default     = "eu-central-1"
   description = "region to deploy resources"
@@ -22,6 +46,10 @@ variable "aws_r1_location_short" {
   type        = string
 }
 
+variable "firewall_admin_username" {
+  description = "Admin username for Firewall (usually requires a stronger one than just admin)"
+}
+
 variable "admin_password" {
   sensitive   = true
   description = "Admin password"
@@ -30,16 +58,6 @@ variable "admin_password" {
 variable "controller_fqdn" {
   description = "FQDN or IP of the Aviatrix Controller"
   sensitive   = true
-}
-
-variable "ferme_fqdn" {
-  description = "FQDN of Ferme ISP"
-  sensitive   = true
-}
-
-variable "ssh_public_key" {
-  sensitive   = true
-  description = "SSH public key for VM administration"
 }
 
 variable "azure_account" {
@@ -53,4 +71,3 @@ variable "aws_account" {
 variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
-

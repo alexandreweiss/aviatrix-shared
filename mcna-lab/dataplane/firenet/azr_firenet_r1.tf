@@ -1,5 +1,5 @@
 // Disabled to remove Firewall instance $$
-# module "azr-r1-firenet" {
+# module "azr-firenet_r1" {
 #   source = "terraform-aviatrix-modules/mc-firenet/aviatrix"
 #   //version = "v1.4.1"
 
