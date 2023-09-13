@@ -7,7 +7,7 @@ resource "aviatrix_transit_external_device_conn" "azure_0" {
   tunnel_protocol          = "IPSEC"
   bgp_local_as_num         = "65012"
   bgp_remote_as_num        = "65515"
-  remote_gateway_ip        = "4.210.203.47"
+  remote_gateway_ip        = "52.157.201.22"
   local_tunnel_cidr        = "169.254.21.2/30"
   remote_tunnel_cidr       = "169.254.21.1/30"
   enable_edge_segmentation = false
@@ -33,7 +33,7 @@ resource "aviatrix_transit_external_device_conn" "azure_1" {
   tunnel_protocol          = "IPSEC"
   bgp_local_as_num         = "65012"
   bgp_remote_as_num        = "65100"
-  remote_gateway_ip        = "51.124.228.168"
+  remote_gateway_ip        = "4.180.148.213"
   local_tunnel_cidr        = "169.254.21.6/30"
   remote_tunnel_cidr       = "169.254.21.5/30"
   enable_edge_segmentation = false

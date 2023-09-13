@@ -1,0 +1,11 @@
+Changes to Outputs:
+  - aws_r1_spoke_app_a     = (sensitive value) -> null
+  + guacamole_fqdn         = "ec2-18-184-155-190.eu-central-1.compute.amazonaws.com"
+  + guacamole_login_url    = "https://ec2-18-184-155-190.eu-central-1.compute.amazonaws.com/#/index.html?username=guacadmin&password=EjeqAD2vy31Y"
+  + guacamole_password     = "EjeqAD2vy31Y"
+  + guacamole_username     = "guacadmin"
+  + vpc1_windows_instances = {
+      + ip       = "10.10.4.25"
+      + name     = "windows-vm"
+      + password = "3VI2Zi$fm%?8Y(ybIyzN*gl5shTBLXb?"
+    }

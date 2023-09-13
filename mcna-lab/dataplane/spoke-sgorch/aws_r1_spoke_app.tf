@@ -152,13 +152,13 @@ module "aws_r1_spoke_app_a" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
   version = "1.6.3"
 
-  cloud   = "AWS"
-  name    = "${var.aws_r1_location_short}-spoke-app-a"
-  cidr    = "10.10.4.0/24"
-  region  = var.aws_r1_location
-  account = var.aws_account
-  //transit_gw       = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
-  attached         = false
+  cloud            = "AWS"
+  name             = "${var.aws_r1_location_short}-spoke-app-a"
+  cidr             = "10.10.4.0/24"
+  region           = var.aws_r1_location
+  account          = var.aws_account
+  transit_gw       = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
+  attached         = true
   use_existing_vpc = true
   vpc_id           = aws_vpc.this.id
   gw_subnet        = aws_subnet.this["avx-gw-subnet"].cidr_block
@@ -183,11 +183,17 @@ resource "aviatrix_smart_group" "app-a-back" {
   name = "app-a-back"
   selector {
     match_expressions {
-      cidr = aws_subnet.this["back-a"].cidr_block
+      type = "vm"
+      tags = {
+        "Application" = "RDS"
+      }
     }
-    match_expressions {
-      cidr = aws_subnet.this["back-b"].cidr_block
-    }
+    # match_expressions {
+    #   cidr = aws_subnet.this["back-a"].cidr_block
+    # }
+    # match_expressions {
+    #   cidr = aws_subnet.this["back-b"].cidr_block
+    # }
   }
 }
 
@@ -195,11 +201,17 @@ resource "aviatrix_smart_group" "app-a-front" {
   name = "app-a-front"
   selector {
     match_expressions {
-      cidr = aws_subnet.this["front-a"].cidr_block
+      type = "vm"
+      tags = {
+        "Application" = "Jump Server"
+      }
     }
-    match_expressions {
-      cidr = aws_subnet.this["front-b"].cidr_block
-    }
+    # match_expressions {
+    #   cidr = aws_subnet.this["front-a"].cidr_block
+    # }
+    # match_expressions {
+    #   cidr = aws_subnet.this["front-b"].cidr_block
+    # }
   }
 }
 
@@ -210,7 +222,7 @@ resource "aviatrix_smart_group" "my-source-ip" {
       cidr = "${chomp(data.http.myip.response_body)}/32"
     }
     match_expressions {
-      cidr = "216.215.70.66/32"
+      cidr = "81.49.43.155/32"
     }
   }
 }
@@ -225,6 +237,9 @@ resource "aviatrix_distributed_firewalling_policy_list" "policy" {
     port_ranges {
       lo = 443
     }
+    # port_ranges {
+    #   lo = 22
+    # }
     dst_smart_groups = [aviatrix_smart_group.app-a-front.uuid]
     logging          = true
     priority         = 100
