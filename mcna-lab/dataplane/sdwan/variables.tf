@@ -50,6 +50,20 @@ variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
 
+variable "transit_gw_bgp_ip" {
+  description = "BGP Peer IP of the first Aviatrix gateway"
+  default     = "10.10.0.116"
+}
+
+variable "transit_hagw_bgp_ip" {
+  description = "BGP Peer IP of the first Aviatrix gateway"
+  default     = "10.10.0.124"
+}
+
+variable "asn_sdwan" {
+  description = "ASN to be used by SDWAN / Quagga"
+  default     = 65000
+}
 
 locals {
   controller = {

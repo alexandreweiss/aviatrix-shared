@@ -41,6 +41,42 @@ provider "registry.terraform.io/hashicorp/azurerm" {
   ]
 }
 
+provider "registry.terraform.io/hashicorp/dns" {
+  version = "3.3.2"
+  hashes = [
+    "h1:iQWbwrmQn+FwIjZjJVmkGMVaTGUvfnUpDZGgDrQ1wko=",
+    "zh:05d2d50e301318362a4a82e6b7a9734ace07bc01abaaa649c566baf98814755f",
+    "zh:1e9fd1c3bfdda777e83e42831dd45b7b9e794250a0f351e5fd39762e8a0fe15b",
+    "zh:40e715fc7a2ede21f919567249b613844692c2f8a64f93ee64e5b68bae7ac2a2",
+    "zh:454d7aa83000a6e2ba7a7bfde4bcf5d7ed36298b22d760995ca5738ab02ee468",
+    "zh:46124ded51b4153ad90f12b0305fdbe0c23261b9669aa58a94a31c9cca2f4b19",
+    "zh:55a4f13d20f73534515a6b05701abdbfc54f4e375ba25b2dffa12afdad20e49d",
+    "zh:78d5eefdd9e494defcb3c68d282b8f96630502cac21d1ea161f53cfe9bb483b3",
+    "zh:7903b1ceb8211e2b8c79290e2e70906a4b88f4fba71c900eb3a425ce12f1716a",
+    "zh:b79fc4f444ef7a2fd7111a80428c070ad824f43a681699e99ab7f83074dfedbd",
+    "zh:ca9f45e0c4cb94e7d62536c226024afef3018b1de84f1ea4608b51bcd497a2a0",
+    "zh:ddc8bd894559d7d176e0ceb0bb1ae266519b01b315362ebfee8327bb7e7e5fa8",
+    "zh:e77334c0794ef8f9354b10e606040f6b0b67b373f5ff1db65bddcdd4569b428b",
+  ]
+}
+
+provider "registry.terraform.io/hashicorp/template" {
+  version = "2.2.0"
+  hashes = [
+    "h1:LN84cu+BZpVRvYlCzrbPfCRDaIelSyEx/W9Iwwgbnn4=",
+    "zh:01702196f0a0492ec07917db7aaa595843d8f171dc195f4c988d2ffca2a06386",
+    "zh:09aae3da826ba3d7df69efeb25d146a1de0d03e951d35019a0f80e4f58c89b53",
+    "zh:09ba83c0625b6fe0a954da6fbd0c355ac0b7f07f86c91a2a97849140fea49603",
+    "zh:0e3a6c8e16f17f19010accd0844187d524580d9fdb0731f675ffcf4afba03d16",
+    "zh:45f2c594b6f2f34ea663704cc72048b212fe7d16fb4cfd959365fa997228a776",
+    "zh:77ea3e5a0446784d77114b5e851c970a3dde1e08fa6de38210b8385d7605d451",
+    "zh:8a154388f3708e3df5a69122a23bdfaf760a523788a5081976b3d5616f7d30ae",
+    "zh:992843002f2db5a11e626b3fc23dc0c87ad3729b3b3cff08e32ffb3df97edbde",
+    "zh:ad906f4cebd3ec5e43d5cd6dc8f4c5c9cc3b33d2243c89c5fc18f97f7277b51d",
+    "zh:c979425ddb256511137ecd093e23283234da0154b7fa8b21c2687182d9aea8b2",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/tfe" {
   version = "0.44.1"
   hashes = [

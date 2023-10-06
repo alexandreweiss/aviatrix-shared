@@ -8,6 +8,26 @@ data "dns_a_record_set" "controller_ip" {
   host = var.controller_fqdn
 }
 
+data "template_file" "cloudconfig-sdwan" {
+  template = file("${path.module}/cloud-init.tpl")
+
+  vars = {
+    transit_gw_bgp_ip   = var.transit_gw_bgp_ip,
+    transit_hagw_bgp_ip = var.transit_hagw_bgp_ip
+    asn_sdwan           = var.asn_sdwan
+  }
+}
+
+data "template_cloudinit_config" "config" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.cloudconfig-sdwan.rendered
+  }
+}
+
 output "transit_we" {
   value     = data.tfe_outputs.dataplane.values.transit_we
   sensitive = true
@@ -72,6 +92,7 @@ module "r1-sdwan-vm" {
   admin_ssh_key        = var.ssh_public_key
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
+  custom_data          = data.template_cloudinit_config.config.rendered
 }
 
 module "r1-sdwan-vm-2" {
@@ -85,6 +106,7 @@ module "r1-sdwan-vm-2" {
   admin_ssh_key        = var.ssh_public_key
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
+  custom_data          = data.template_cloudinit_config.config.rendered
 }
 
 // Route table for SD-WAN BGP peer
@@ -226,12 +248,13 @@ resource "aviatrix_spoke_external_device_conn" "transit-sdwan-bgp" {
   connection_type   = "bgp"
   tunnel_protocol   = "LAN"
   bgp_local_as_num  = "65007"
-  bgp_remote_as_num = "64512"
+  bgp_remote_as_num = "65000"
   remote_lan_ip     = "10.60.1.4"
   # local_lan_ip             = "10.10.0.148"
   remote_vpc_name          = "${azurerm_virtual_network.azure-spoke-sdwan-r1.name}:${azurerm_resource_group.azr-r1-spoke-sdwan-rg.name}:${data.azurerm_subscription.current.subscription_id}"
   backup_local_lan_ip      = "10.10.0.156"
   backup_remote_lan_ip     = "10.60.1.20"
-  backup_bgp_remote_as_num = "64512"
+  backup_bgp_remote_as_num = "65000"
   ha_enabled               = true
+  depends_on               = [module.transit-sdwan-peering]
 }

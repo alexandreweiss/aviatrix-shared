@@ -1,8 +1,3 @@
-provider "azurerm" {
-  features {
-  }
-}
-
 resource "azurerm_resource_group" "rg" {
   location = var.r1_location
   name     = "vwan-lab-rg"
@@ -34,8 +29,8 @@ resource "azurerm_virtual_hub_connection" "spoke-attachment" {
 
 resource "azurerm_virtual_hub_connection" "aviatrix-attachment" {
   count                     = length(local.data.r1_aviatrix_attachments)
-  name                      = "avx-north-europe-transit"
-  remote_virtual_network_id = "/subscriptions/56474334-838c-466b-9ac3-3903c86886e7/resourceGroups/azr-transit-ne-0-rg/providers/Microsoft.Network/virtualNetworks/avx-north-europe-transit"
+  name                      = "avx-west-europe-transit"
+  remote_virtual_network_id = "/subscriptions/cc67e95e-9baa-4ef4-bfac-a33a19ef2232/resourceGroups/azr-transit-we-0-rg/providers/Microsoft.Network/virtualNetworks/azr-we-transit"
   virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_aviatrix_attachments[count.index].vhub_index].id
 }
 

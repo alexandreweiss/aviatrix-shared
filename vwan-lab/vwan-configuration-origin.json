@@ -1,82 +1,88 @@
 {
-    "r1_vhubs": [
+    "r1_aviatrix_attachments": [
         {
+            "attachment_index": 0,
+            "vhub_index": 0
+        }
+    ],
+    "r1_bgp_peers": [
+        {
+            "asn": 65007,
+            "attachment_index": 0,
+            "bgp_index": 0,
             "hub_index": 0,
-            "hub_cidr": "10.100.0.0/23",
-            "hub_location": "westeurope",
-            "hub_location_short": "we"
+            "name": "avx-we-vwan-transit",
+            "peer_ip": "10.10.0.116"
         },
         {
-            "hub_index": 1,
-            "hub_cidr": "10.100.2.0/23",
-            "hub_location": "westeurope",
-            "hub_location_short": "we"
-        }
-    ],
-    "r1_spokes": [
-        {
-            "spoke_index": 0,
-            "spoke_address_spaces": [
-                "10.101.0.0/24"
-            ],
-            "spoke_location": "westeurope",
-            "spoke_location_short": "we",
-            "spoke_environment": "prd"
-        },
-        {
-            "spoke_index": 1,
-            "spoke_address_spaces": [
-                "10.101.1.0/24"
-            ],
-            "spoke_location": "westeurope",
-            "spoke_location_short": "we",
-            "spoke_environment": "dev"
-        }
-    ],
-    "r1_subnets": [
-        {
-            "subnet_name": "vm-subnet",
-            "address_prefixes": [
-                "10.101.0.0/28"
-            ],
-            "spoke_index": 0
-        },
-        {
-            "subnet_name": "vm-subnet",
-            "address_prefixes": [
-                "10.101.1.0/28"
-            ],
-            "spoke_index": 1
+            "asn": 65007,
+            "attachment_index": 0,
+            "bgp_index": 1,
+            "hub_index": 0,
+            "name": "avx-we-vwan-transit-hagw",
+            "peer_ip": "10.10.0.124"
         }
     ],
     "r1_spoke_attachments": [
         {
             "attachment_id": 0,
-            "spoke_index": 0,
-            "hub_index": 0
+            "hub_index": 0,
+            "spoke_index": 0
         },
         {
             "attachment_id": 1,
-            "spoke_index": 1,
-            "hub_index": 1
+            "hub_index": 1,
+            "spoke_index": 1
         }
     ],
-    "r1_bgp_peers": [
+    "r1_spokes": [
         {
-            "bgp_index": 0,
-            "peer_ip": "10.70.0.68",
-            "name": "avx-ne-vwan-transit",
-            "asn": 65011,
-            "hub_index": 1,
-            "attachment_index": 1
+            "spoke_address_spaces": [
+                "10.101.0.0/24"
+            ],
+            "spoke_environment": "prd",
+            "spoke_index": 0,
+            "spoke_location": "westeurope",
+            "spoke_location_short": "we"
         },
         {
-            "bgp_index": 1,
-            "peer_ip": "10.70.0.84",
-            "name": "avx-ne-vwan-transit-hagw",
-            "asn": 65011,
+            "spoke_address_spaces": [
+                "10.101.1.0/24"
+            ],
+            "spoke_environment": "dev",
+            "spoke_index": 1,
+            "spoke_location": "northeurope",
+            "spoke_location_short": "ne"
+        }
+    ],
+    "r1_subnets": [
+        {
+            "address_prefixes": [
+                "10.101.0.0/28"
+            ],
+            "spoke_index": 0,
+            "subnet_name": "vm-subnet"
+        },
+        {
+            "address_prefixes": [
+                "10.101.1.0/28"
+            ],
+            "spoke_index": 1,
+            "subnet_name": "vm-subnet"
+        }
+    ],
+    "r1_vhubs": [
+        {
+            "hub_cidr": "10.100.0.0/23",
+            "hub_index": 0,
+            "hub_location": "westeurope",
+            "hub_location_short": "we"
+        },
+        {
+            "hub_cidr": "10.100.2.0/23",
             "hub_index": 1,
-            "attachment_index": 1
+            "hub_location": "northeurope",
+            "hub_location_short": "ne"
         }
     ]
 }
