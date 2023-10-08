@@ -65,6 +65,11 @@ variable "asn_sdwan" {
   default     = 65000
 }
 
+variable "asn_transit" {
+  description = "ASN to be used by SDWAN / Quagga"
+  default     = 65007
+}
+
 locals {
   controller = {
     controller_vnet_name           = "avx-ctrl-ne-vnet"

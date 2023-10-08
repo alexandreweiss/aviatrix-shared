@@ -15,6 +15,7 @@ data "template_file" "cloudconfig-sdwan" {
     transit_gw_bgp_ip   = var.transit_gw_bgp_ip,
     transit_hagw_bgp_ip = var.transit_hagw_bgp_ip
     asn_sdwan           = var.asn_sdwan
+    asn_transit         = var.asn_transit
   }
 }
 
