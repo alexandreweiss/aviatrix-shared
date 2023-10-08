@@ -1,4 +1,4 @@
-// Retrieve the transit
+// Retrieve the transit informations
 data "tfe_outputs" "dataplane" {
   organization = "ananableu"
   workspace    = "aviatrix-shared"
@@ -8,6 +8,7 @@ data "dns_a_record_set" "controller_ip" {
   host = var.controller_fqdn
 }
 
+# Generate the script to run in Linux VMs to turn on FRR for routing to simulate SDWAN headend
 data "template_file" "cloudconfig-sdwan" {
   template = file("${path.module}/cloud-init.tpl")
 
@@ -29,16 +30,19 @@ data "template_cloudinit_config" "config" {
   }
 }
 
+
 output "transit_we" {
   value     = data.tfe_outputs.dataplane.values.transit_we
   sensitive = true
 }
 
+# Resource group creation to store SDWAN lab
 resource "azurerm_resource_group" "azr-r1-spoke-sdwan-rg" {
   location = var.azure_r1_location
   name     = "azr-${var.azure_r1_location_short}-spoke-sdwan-rg"
 }
 
+# VNET creation containing SDWAN VMs (r1-sdwan-vm and r1-sdwan-vm-2) 
 resource "azurerm_virtual_network" "azure-spoke-sdwan-r1" {
   address_space       = ["10.60.1.0/24"]
   location            = var.azure_r1_location
@@ -68,6 +72,7 @@ resource "azurerm_subnet" "r1-azure-spoke-sdwan-vm-subnet" {
   virtual_network_name = azurerm_virtual_network.azure-spoke-sdwan-r1.name
 }
 
+# VNET peering creation between VNET containing Aviatrix transit and VNET containing SDWAN headends
 module "transit-sdwan-peering" {
   source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
 
@@ -82,6 +87,7 @@ module "transit-sdwan-peering" {
   ]
 }
 
+# SDWAN headend 1
 module "r1-sdwan-vm" {
   source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
   environment          = "sdwan"
@@ -96,6 +102,7 @@ module "r1-sdwan-vm" {
   custom_data          = data.template_cloudinit_config.config.rendered
 }
 
+# SDWAN headend 2
 module "r1-sdwan-vm-2" {
   source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
   environment          = "sdwan"
@@ -110,7 +117,7 @@ module "r1-sdwan-vm-2" {
   custom_data          = data.template_cloudinit_config.config.rendered
 }
 
-// Route table for SD-WAN BGP peer
+// Route table for SD-WAN BGP peer : THIS IS VERY IMPORTANT to SEND TRAFFIC BACK TO AVIATRIX TRANSIT
 resource "azurerm_route_table" "rt-sdwan-back-transit" {
   location            = var.azure_r1_location
   name                = "sdwan-back-to-transit"
@@ -138,6 +145,7 @@ resource "azurerm_route_table" "rt-sdwan-back-transit" {
   }
 }
 
+# Route table association with SDWAN subnet 1 for return traffic to Aviatrix transit
 resource "azurerm_subnet_route_table_association" "sdwan-rt-assoc" {
   route_table_id = azurerm_route_table.rt-sdwan-back-transit.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-sdwan-gw-subnet.id
@@ -170,13 +178,14 @@ resource "azurerm_route_table" "rt-sdwan-ha-back-transit" {
   }
 }
 
+# Route table association with SDWAN subnet 2 for return traffic to Aviatrix transit
 resource "azurerm_subnet_route_table_association" "sdwan-ha-rt-assoc" {
   route_table_id = azurerm_route_table.rt-sdwan-ha-back-transit.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-sdwan-hagw-subnet.id
 }
 
 
-// Tiered vnet creation
+// Tiered vnet creation to host test VMs as branche of SDWAN device
 resource "azurerm_virtual_network" "azure-spoke-sdwan-tiered-r1" {
   address_space       = ["10.60.2.0/24"]
   location            = var.azure_r1_location
@@ -191,6 +200,7 @@ resource "azurerm_subnet" "r1-azure-spoke-sdwan-tiered-vm-subnet" {
   virtual_network_name = azurerm_virtual_network.azure-spoke-sdwan-tiered-r1.name
 }
 
+# Peering betwenn SDWAN VNET and TEST VNET containing the Test VM
 module "transit-sdwan-tiered-peering" {
   source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
 
@@ -206,7 +216,7 @@ module "transit-sdwan-tiered-peering" {
   ]
 }
 
-// Tiered VM
+// Tiered test VM
 module "r1-sdwan-tiered-vm" {
   source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
   environment         = "sdwan-tiered"
@@ -219,7 +229,7 @@ module "r1-sdwan-tiered-vm" {
   vm_size             = "Standard_B1ms"
 }
 
-// Route table for tiered VM
+// Route table for tiered VM to send traffic to SDWAN headend
 resource "azurerm_route_table" "rt-to-sdwan" {
   location            = var.azure_r1_location
   name                = "sdwan-tiered-vm"
@@ -233,6 +243,7 @@ resource "azurerm_route_table" "rt-to-sdwan" {
   }
 }
 
+# Route table association to TEST VM subnet
 resource "azurerm_subnet_route_table_association" "tiered-vm-rt-assoc" {
   route_table_id = azurerm_route_table.rt-to-sdwan.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-sdwan-tiered-vm-subnet.id
@@ -242,6 +253,7 @@ resource "azurerm_subnet_route_table_association" "tiered-vm-rt-assoc" {
 
 data "azurerm_subscription" "current" {}
 
+# This is the BGP over LAN connection creation on Aviatrix side
 resource "aviatrix_spoke_external_device_conn" "transit-sdwan-bgp" {
   vpc_id            = data.tfe_outputs.dataplane.values.transit_we.vpc.vpc_id
   connection_name   = "sdwan"
