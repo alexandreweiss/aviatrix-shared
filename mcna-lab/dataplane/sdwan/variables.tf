@@ -50,14 +50,24 @@ variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
 
-variable "transit_gw_bgp_ip" {
+variable "transit_gw_eth3_bgp_ip" {
   description = "BGP Peer IP of the first Aviatrix gateway"
   default     = "10.10.0.116"
 }
 
-variable "transit_hagw_bgp_ip" {
+variable "transit_hagw_eth3_bgp_ip" {
+  description = "BGP Peer IP of the first Aviatrix gateway"
+  default     = "10.10.0.140"
+}
+
+variable "transit_gw_eth4_bgp_ip" {
   description = "BGP Peer IP of the first Aviatrix gateway"
   default     = "10.10.0.124"
+}
+
+variable "transit_hagw_eth4_bgp_ip" {
+  description = "BGP Peer IP of the first Aviatrix gateway"
+  default     = "10.10.0.180"
 }
 
 variable "asn_sdwan" {

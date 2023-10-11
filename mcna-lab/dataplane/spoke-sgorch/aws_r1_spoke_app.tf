@@ -152,13 +152,13 @@ module "aws_r1_spoke_app_a" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
   version = "1.6.3"
 
-  cloud            = "AWS"
-  name             = "${var.aws_r1_location_short}-spoke-app-a"
-  cidr             = "10.10.4.0/24"
-  region           = var.aws_r1_location
-  account          = var.aws_account
-  transit_gw       = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
-  attached         = true
+  cloud   = "AWS"
+  name    = "${var.aws_r1_location_short}-spoke-app-a"
+  cidr    = "10.10.4.0/24"
+  region  = var.aws_r1_location
+  account = var.aws_account
+  //transit_gw       = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
+  attached         = false
   use_existing_vpc = true
   vpc_id           = aws_vpc.this.id
   gw_subnet        = aws_subnet.this["avx-gw-subnet"].cidr_block

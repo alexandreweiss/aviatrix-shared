@@ -1,22 +1,14 @@
-// Retrieve the transit informations
-data "tfe_outputs" "dataplane" {
-  organization = "ananableu"
-  workspace    = "aviatrix-shared"
-}
-
-data "dns_a_record_set" "controller_ip" {
-  host = var.controller_fqdn
-}
-
 # Generate the script to run in Linux VMs to turn on FRR for routing to simulate SDWAN headend
 data "template_file" "cloudconfig-sdwan" {
   template = file("${path.module}/cloud-init.tpl")
 
   vars = {
-    transit_gw_bgp_ip   = var.transit_gw_bgp_ip,
-    transit_hagw_bgp_ip = var.transit_hagw_bgp_ip
-    asn_sdwan           = var.asn_sdwan
-    asn_transit         = var.asn_transit
+    transit_gw_eth3_bgp_ip   = var.transit_gw_eth3_bgp_ip
+    transit_hagw_eth3_bgp_ip = var.transit_hagw_eth3_bgp_ip
+    transit_gw_eth4_bgp_ip   = var.transit_gw_eth4_bgp_ip
+    transit_hagw_eth4_bgp_ip = var.transit_hagw_eth4_bgp_ip
+    asn_sdwan                = var.asn_sdwan
+    asn_transit              = var.asn_transit
   }
 }
 
@@ -251,21 +243,20 @@ resource "azurerm_subnet_route_table_association" "tiered-vm-rt-assoc" {
 
 //Create BGP o LAN on Transit to sdwan
 
-data "azurerm_subscription" "current" {}
 
 # This is the BGP over LAN connection creation on Aviatrix side
 resource "aviatrix_spoke_external_device_conn" "transit-sdwan-bgp" {
-  vpc_id            = data.tfe_outputs.dataplane.values.transit_we.vpc.vpc_id
-  connection_name   = "sdwan"
-  gw_name           = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  connection_type   = "bgp"
-  tunnel_protocol   = "LAN"
-  bgp_local_as_num  = "65007"
-  bgp_remote_as_num = "65000"
-  remote_lan_ip     = "10.60.1.4"
-  # local_lan_ip             = "10.10.0.148"
+  vpc_id                   = data.tfe_outputs.dataplane.values.transit_we.vpc.vpc_id
+  connection_name          = "sdwan"
+  gw_name                  = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  connection_type          = "bgp"
+  tunnel_protocol          = "LAN"
+  bgp_local_as_num         = "65007"
+  bgp_remote_as_num        = "65000"
+  remote_lan_ip            = "10.60.1.4"
+  local_lan_ip             = var.transit_gw_eth3_bgp_ip
   remote_vpc_name          = "${azurerm_virtual_network.azure-spoke-sdwan-r1.name}:${azurerm_resource_group.azr-r1-spoke-sdwan-rg.name}:${data.azurerm_subscription.current.subscription_id}"
-  backup_local_lan_ip      = "10.10.0.156"
+  backup_local_lan_ip      = var.transit_hagw_eth3_bgp_ip
   backup_remote_lan_ip     = "10.60.1.20"
   backup_bgp_remote_as_num = "65000"
   ha_enabled               = true

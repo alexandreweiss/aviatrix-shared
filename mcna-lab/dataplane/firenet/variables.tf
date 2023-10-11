@@ -71,3 +71,7 @@ variable "aws_account" {
 variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
+
+variable "storage_access_key" {
+  description = "Storage access key for PA bootstrap"
+}

@@ -29,10 +29,14 @@ write_files:
       router bgp ${asn_sdwan}
        bgp router-id 169.254.169.254
        network 10.60.2.0/24
-       neighbor ${transit_gw_bgp_ip} remote-as ${asn_transit}
-       neighbor ${transit_gw_bgp_ip} soft-reconfiguration inbound
-       neighbor ${transit_hagw_bgp_ip} remote-as ${asn_transit}
-       neighbor ${transit_hagw_bgp_ip} soft-reconfiguration inbound
+       neighbor ${transit_gw_eth3_bgp_ip} remote-as ${asn_transit}
+       neighbor ${transit_gw_eth3_bgp_ip} soft-reconfiguration inbound
+       neighbor ${transit_hagw_eth3_bgp_ip} remote-as ${asn_transit}
+       neighbor ${transit_hagw_eth3_bgp_ip} soft-reconfiguration inbound
+       neighbor ${transit_gw_eth4_bgp_ip} remote-as ${asn_transit}
+       neighbor ${transit_gw_eth4_bgp_ip} soft-reconfiguration inbound
+       neighbor ${transit_hagw_eth4_bgp_ip} remote-as ${asn_transit}
+       neighbor ${transit_hagw_eth4_bgp_ip} soft-reconfiguration inbound
       !
        address-family ipv6
        exit-address-family

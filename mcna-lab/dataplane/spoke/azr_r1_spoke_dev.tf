@@ -69,10 +69,10 @@ module "azr_r1_spoke_dev" {
   region           = var.azure_r1_location
   account          = var.azure_account
   transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  attached         = false
+  attached         = true
   ha_gw            = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat  = true
+  single_ip_snat  = false
   single_az_ha    = false
   resource_group  = azurerm_resource_group.azr-r1-spoke-dev-rg.name
   local_as_number = 65012
