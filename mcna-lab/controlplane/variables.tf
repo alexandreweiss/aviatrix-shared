@@ -28,11 +28,11 @@ variable "azure_r2_location_short" {
 }
 
 variable "controller_vnet_cidr" {
-  default = "192.168.10.0/24"
+  default = "192.168.11.0/24"
 }
 
 variable "controller_subnet_cidr" {
-  default = "192.168.10.0/28"
+  default = "192.168.11.0/28"
 }
 
 variable "controller_virtual_machine_size" {
@@ -58,14 +58,13 @@ variable "aviatrix_customer_id" {
   description = "License ID"
 }
 
+variable "azure_account" {
+  description = "Name of the Azure Account"
+}
+
 locals {
 
   copilot = {
     username = "admin-lab"
-  }
-
-  accounts = {
-    azure_account = "azure-alweiss"
-    aws_account   = "aws-alweiss"
   }
 }

@@ -89,21 +89,21 @@ resource "azurerm_route_table" "rt-sdwan-2-back-transit" {
     address_prefix         = "10.0.0.0/8"
     name                   = "10_0_0_0_8"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[0]
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[1]
   }
 
   route {
     address_prefix         = "192.168.0.0/16"
     name                   = "192_168_0_0_16"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[0]
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[1]
   }
 
   route {
     address_prefix         = "172.16.0.0/12"
     name                   = "172_16_0_0_12"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[0]
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.bgp_lan_ip_list[1]
   }
 }
 
@@ -122,21 +122,21 @@ resource "azurerm_route_table" "rt-sdwan-2-ha-back-transit" {
     address_prefix         = "10.0.0.0/8"
     name                   = "10_0_0_0_8"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[0]
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[1]
   }
 
   route {
     address_prefix         = "192.168.0.0/16"
     name                   = "192_168_0_0_16"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[0]
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[1]
   }
 
   route {
     address_prefix         = "172.16.0.0/12"
     name                   = "172_16_0_0_12"
     next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[0]
+    next_hop_in_ip_address = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.ha_bgp_lan_ip_list[1]
   }
 }
 
@@ -147,19 +147,84 @@ resource "azurerm_subnet_route_table_association" "sdwan-2-ha-rt-assoc" {
 }
 
 # Peering betwenn SDWAN VNET and TEST VNET containing the Test VM
-module "transit-sdwan-2-tiered-peering" {
+# Removed to peer with tiered-2
+# module "transit-sdwan-2-tiered-peering" {
+#   source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
+
+#   left_vnet_resource_group_name  = azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name
+#   left_vnet_name                 = azurerm_virtual_network.azure-spoke-sdwan-2-r1.name
+#   right_vnet_resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
+#   right_vnet_name                = azurerm_virtual_network.azure-spoke-sdwan-tiered-r1.name
+#   allow_forwarded_traffic        = true
+
+#   depends_on = [
+#     azurerm_virtual_network.azure-spoke-sdwan-2-r1,
+#     azurerm_virtual_network.azure-spoke-sdwan-tiered-r1
+#   ]
+# }
+
+// Tiered vnet creation to host test VMs as branche of SDWAN device
+resource "azurerm_virtual_network" "azure-spoke-sdwan-tiered-2-r1" {
+  address_space       = ["10.60.3.0/24"]
+  location            = var.azure_r1_location
+  name                = "azr-${var.azure_r1_location_short}-spoke-sdwan-tiered-2-vn"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-sdwan-tiered-2-vm-subnet" {
+  address_prefixes     = ["10.60.3.16/28"]
+  name                 = "avx-vm-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-sdwan-tiered-2-r1.name
+}
+
+# Peering betwenn SDWAN VNET and TEST TIERED VNET 2 containing the Test VM
+module "transit-sdwan-tiered-2-peering" {
   source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
 
   left_vnet_resource_group_name  = azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name
   left_vnet_name                 = azurerm_virtual_network.azure-spoke-sdwan-2-r1.name
-  right_vnet_resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
-  right_vnet_name                = azurerm_virtual_network.azure-spoke-sdwan-tiered-r1.name
+  right_vnet_resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name
+  right_vnet_name                = azurerm_virtual_network.azure-spoke-sdwan-tiered-2-r1.name
   allow_forwarded_traffic        = true
 
   depends_on = [
     azurerm_virtual_network.azure-spoke-sdwan-2-r1,
-    azurerm_virtual_network.azure-spoke-sdwan-tiered-r1
+    azurerm_virtual_network.azure-spoke-sdwan-tiered-2-r1
   ]
+}
+
+// Tiered test VM
+module "r1-sdwan-tiered-2-vm" {
+  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment         = "sdwan-tiered-2"
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name
+  subnet_id           = azurerm_subnet.r1-azure-spoke-sdwan-tiered-2-vm-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  vm_size             = "Standard_B1ms"
+}
+
+// Route table for tiered VM to send traffic to SDWAN headend
+resource "azurerm_route_table" "rt-to-sdwan-2" {
+  location            = var.azure_r1_location
+  name                = "sdwan-tiered-2-vm"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
+
+  route {
+    address_prefix         = "0.0.0.0/0"
+    name                   = "toSdwan"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = module.r1-sdwan-2-vm.vm_private_ip
+  }
+}
+
+# Route table association to TEST VM subnet
+resource "azurerm_subnet_route_table_association" "tiered-2-vm-rt-assoc" {
+  route_table_id = azurerm_route_table.rt-to-sdwan-2.id
+  subnet_id      = azurerm_subnet.r1-azure-spoke-sdwan-tiered-2-vm-subnet.id
 }
 
 # This is the BGP over LAN connection creation on Aviatrix side

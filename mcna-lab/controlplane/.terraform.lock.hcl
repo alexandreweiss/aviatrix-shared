@@ -47,6 +47,7 @@ provider "registry.terraform.io/hashicorp/dns" {
   version = "3.3.2"
   hashes = [
     "h1:HjskPLRqmCw8Q/kiSuzti3iJBSpcAvcBFdlwFFQuoDE=",
+    "h1:iQWbwrmQn+FwIjZjJVmkGMVaTGUvfnUpDZGgDrQ1wko=",
     "zh:05d2d50e301318362a4a82e6b7a9734ace07bc01abaaa649c566baf98814755f",
     "zh:1e9fd1c3bfdda777e83e42831dd45b7b9e794250a0f351e5fd39762e8a0fe15b",
     "zh:40e715fc7a2ede21f919567249b613844692c2f8a64f93ee64e5b68bae7ac2a2",

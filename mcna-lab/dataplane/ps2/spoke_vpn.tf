@@ -65,11 +65,12 @@ resource "aviatrix_gateway" "we-vpn-0" {
   additional_cidrs = var.p2s_additional_cidrs
   max_vpn_conn     = "100"
   split_tunnel     = true
+  enable_vpn_nat   = true
 
 
-  depends_on = [
-    module.azr_r1_spoke_vpn
-  ]
+  # depends_on = [
+  #   module.azr_r1_spoke_vpn
+  # ]
 }
 
 // Peering to controller for internal management
