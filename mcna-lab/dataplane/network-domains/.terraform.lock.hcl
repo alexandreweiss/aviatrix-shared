@@ -3,7 +3,7 @@
 
 provider "registry.terraform.io/aviatrixsystems/aviatrix" {
   version     = "3.1.3"
-  constraints = "~> 3.1.0"
+  constraints = ">= 2.22.0"
   hashes = [
     "h1:VfdJaw3zmQnxA7g3Q2EytuAJFr1PYGlqaHHKH25GDl8=",
     "zh:13251aa3bb4592aaecd71f3ab74d3f84c1cfd7500a28b06327749351ea7a00c3",
@@ -20,25 +20,6 @@ provider "registry.terraform.io/aviatrixsystems/aviatrix" {
     "zh:ce4832adbb79c569ce58721059e5b97ea29993874eb674ec05101fbb3eb6aee6",
     "zh:df2a402fc1063ee1d387fb9516dc68f2864aa146a434f7528872c651ac662f08",
     "zh:ebc261718a2033d8463adf462964f8ace289265614e580ea292a944b6df9a966",
-  ]
-}
-
-provider "registry.terraform.io/hashicorp/azurerm" {
-  version = "3.81.0"
-  hashes = [
-    "h1:oSERNhYZ/xnfAIFFl31zmGih13HOUAbdtt2Fq1SVPBQ=",
-    "zh:000c3a458b6623fdfb1e3b08fa40f38bf4563193a9387886f10080047673cb13",
-    "zh:05cff5c0ac90b626d566981e4622d00f5465c71eef545877f7461eea3fde4152",
-    "zh:1de5b14c0d1eb51592e7d01c9df763ba610e2b559725d0a7a1616374d6094e7a",
-    "zh:35f9a458b4e54e488103a0f081a0e79a8e31aa6f8ad16fa8aff755d0806de2f4",
-    "zh:6762619a09dfb56f95b7fc5268cfcfd46950160d6b62d00bc1c9f5c7cd65f663",
-    "zh:786c3ea3a0ae173c23b01daf7bd2318a713588a50b9c4be886da0a0cb0c94905",
-    "zh:a5253e9fed9e487e7eb7f483b34d6131f2c457caa02674a2ada67f75a659e4cc",
-    "zh:ae0c2bf657bee5cf6f66a42c8960cdd2402a9c96b5fd28ce561f4b32b95f3620",
-    "zh:af4ddc88ae7a7b115f0327fca381c1ea9866e100169b6a9ae1c0ac8417a631a5",
-    "zh:afaf51e32b9da123187d568a9a6f59974c89a18f67ca87651ecd0cf30fa8f113",
-    "zh:e4c34b238272ed178d165628ce2a4a3fbe3e8f9b65c632f047b55685c18f7160",
-    "zh:f569b65999264a9416862bca5cd2a6177d94ccb0424f3a4ef424428912b9cb3c",
   ]
 }
 
@@ -61,24 +42,21 @@ provider "registry.terraform.io/hashicorp/dns" {
   ]
 }
 
-provider "registry.terraform.io/packetfabric/packetfabric" {
-  version = "1.7.0"
+provider "registry.terraform.io/hashicorp/tfe" {
+  version = "0.49.2"
   hashes = [
-    "h1:ZVYCHQo1i/2cP30VvLyPXdDuw7aOMYubLNTTrVHEsa4=",
-    "zh:062cd8a92e873a78efb2e0506c2e1f269220cef201614f5c67b754dd227ed79e",
-    "zh:06fa93a65600a2d4f970292595f22b9e9b2e1e2ffa8dce8bbca44ab69d7f3cc0",
-    "zh:2b6cd5a0e15061797cb35e14e3cb6e22b66f5bc2e858dd5bb6952a6aee9a4e5f",
-    "zh:57b3bf65200e20e996cf96f6e5fd47523a1a95f47e96ade8b6b3f5d40a5e4bab",
-    "zh:606a38c8214176b182733d6ca7bf2e3345787b2808b7fecdc0b1d90d5c5b349a",
-    "zh:6b69ecebdab565bde4d12ce05a04aac4152152eb8a7b1661975f53fdb864ab8b",
-    "zh:78d5eefdd9e494defcb3c68d282b8f96630502cac21d1ea161f53cfe9bb483b3",
-    "zh:8e486f2d4cfc28a41c0781306ec2dbab63155a8d2be61d6c4df92dade6ab329b",
-    "zh:a2f26d4b937723f339d8255d31ed5eead616e6d1e20c40dc464430e67d755911",
-    "zh:a710f491625b517093c691f83aef560daaee1c731eac0a84d7dde220f6e473c7",
-    "zh:ae3fd622c879312fdbed431ac24d35c31de96440ea45926077c77f4124898de6",
-    "zh:b177fa99073f6d445081b5c0c7c5c86938afe11c03d083a3482e9f3753f62293",
-    "zh:b3a989f14e93017654e223b3fc71c8227fa89c3286ca864603131f158d80fe8b",
-    "zh:e5a98695f39ab35ce31a4fcdc5872c66a658e6aec9b097ca95c2383906a82804",
-    "zh:e98e449e87a60642e49810b79da6e994a7814ac4775d3688fbc180dd91686b97",
+    "h1:3k82LGhjJ2nAtiCPrxWzszixAaIM0Xt3qwHZFvCTQZg=",
+    "zh:25cd271cbd1fad25555ebff14c437e2d8846b735404bc0f1b1b996396a73b749",
+    "zh:29122cdb5e1be47cf3f8fde5e9e3df7357b3ca636bac22119e0996f49d85bf08",
+    "zh:45c8a182c1a6b26816a173c680ac56e068b7d5de1f38559d7a7a4eff9de81236",
+    "zh:4f7dc38fe31cb24add93276d8ee1d02b820b13aa82bbb91cb7ee1c8ee06a6eed",
+    "zh:6c1d2e2aba12dc5c119b157668d15e21a486f990c2ed66fdd0d242af0f53fc3f",
+    "zh:767da8bf988f93874277eaace5a76c9ba9029865611670caf334eba0e501bf81",
+    "zh:a07d4aed4fa37a9f8f6d528a5fd9ae7422bb0b9ffb09c5b2fb6abe48664f53b7",
+    "zh:af814fc3dfc2974bef366a16a2d2e3976da1d74efb233a6e38a9981382d0ae3b",
+    "zh:d95ec293fa70e946b6cd657912b33155f8be3413e6128ed2bfa5a493f788e439",
+    "zh:db6354e84ad3d1b6441530e64d39ecf747f62f5fe6b40ff913c459159f5198a3",
+    "zh:de6eea7e28847ce14be3f0ff6bb581e5dc6b056d33a45be08605c9d3029149e6",
+    "zh:ee0eea2aad38265414af8e923028851ddc1e578db1524101875719fbb9ce7054",
   ]
 }

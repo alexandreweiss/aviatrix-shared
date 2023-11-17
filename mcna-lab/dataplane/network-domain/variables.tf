@@ -22,9 +22,32 @@ variable "azure_r2_location_short" {
   type        = string
 }
 
-variable "ssh_public_key" {
-  sensitive   = true
-  description = "SSH public key for VM administration"
+variable "gcp_r1_location" {
+  default     = "europe-west1"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "gcp_r1_location_short" {
+  default     = "we"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "aws_r1_location" {
+  default     = "eu-central-1"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "aws_r1_location_short" {
+  default     = "fra"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "firewall_admin_username" {
+  description = "Admin username for Firewall (usually requires a stronger one than just admin)"
 }
 
 variable "admin_password" {
@@ -36,7 +59,6 @@ variable "controller_fqdn" {
   description = "FQDN or IP of the Aviatrix Controller"
   sensitive   = true
 }
-
 
 variable "azure_account" {
   description = "CSP account onboarder on the controller"
@@ -50,39 +72,6 @@ variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
 
-variable "transit_gw_eth3_bgp_ip" {
-  description = "BGP Peer IP of the first Aviatrix gateway"
-  default     = "10.10.0.116"
-}
-
-variable "transit_hagw_eth3_bgp_ip" {
-  description = "BGP Peer IP of the first Aviatrix gateway"
-  default     = "10.10.0.140"
-}
-
-variable "transit_gw_eth4_bgp_ip" {
-  description = "BGP Peer IP of the first Aviatrix gateway"
-  default     = "10.10.0.124"
-}
-
-variable "transit_hagw_eth4_bgp_ip" {
-  description = "BGP Peer IP of the first Aviatrix gateway"
-  default     = "10.10.0.180"
-}
-
-variable "asn_sdwan" {
-  description = "ASN to be used by SDWAN / Quagga"
-  default     = 65000
-}
-
-variable "asn_transit" {
-  description = "ASN to be used by SDWAN / Quagga"
-  default     = 65007
-}
-
-locals {
-  controller = {
-    controller_vnet_name           = "avx-ctrl-we-vnet"
-    controller_resource_group_name = "avx-ctrl-we-rg"
-  }
+variable "storage_access_key" {
+  description = "Storage access key for PA bootstrap"
 }

@@ -1,8 +1,13 @@
 terraform {
+  required_providers {
+    aviatrix = {
+      source = "aviatrixsystems/aviatrix"
+    }
+  }
   cloud {
     organization = "ananableu"
     workspaces {
-      name = "aviatrix-shared-er-lab"
+      name = "aviatrix-shared-network-domains"
     }
   }
 }

@@ -235,13 +235,13 @@ resource "aviatrix_spoke_external_device_conn" "transit-sdwan-2-bgp" {
   connection_type          = "bgp"
   tunnel_protocol          = "LAN"
   bgp_local_as_num         = "65007"
-  bgp_remote_as_num        = "65000"
+  bgp_remote_as_num        = "65001"
   remote_lan_ip            = "10.60.5.4"
   local_lan_ip             = var.transit_gw_eth4_bgp_ip
   remote_vpc_name          = "${azurerm_virtual_network.azure-spoke-sdwan-2-r1.name}:${azurerm_resource_group.azr-r1-spoke-sdwan-2-rg.name}:${data.azurerm_subscription.current.subscription_id}"
   backup_local_lan_ip      = var.transit_hagw_eth4_bgp_ip
   backup_remote_lan_ip     = "10.60.5.20"
-  backup_bgp_remote_as_num = "65000"
+  backup_bgp_remote_as_num = "65001"
   ha_enabled               = true
   depends_on               = [module.transit-sdwan-2-peering]
 }

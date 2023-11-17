@@ -20,14 +20,14 @@ resource "azurerm_virtual_hub" "r1-vhubs" {
   sku                 = "Standard"
 }
 
-resource "azurerm_vpn_gateway" "r1-vpn-gw" {
-  count               = length(local.data.r1_vpns)
-  location            = local.data.r1_vhubs[count.index].hub_location
-  name                = "${local.data.r1_vhubs[count.index].hub_location_short}-vpn-${count.index}"
-  resource_group_name = azurerm_resource_group.rg.name
-  virtual_hub_id      = azurerm_virtual_hub.r1-vhubs[local.data.r1_vpns[count.index].hub_index].id
-  depends_on          = [azurerm_virtual_hub.r1-vhubs]
-}
+# resource "azurerm_vpn_gateway" "r1-vpn-gw" {
+#   count               = length(local.data.r1_vpns)
+#   location            = local.data.r1_vhubs[count.index].hub_location
+#   name                = "${local.data.r1_vhubs[count.index].hub_location_short}-vpn-${count.index}"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   virtual_hub_id      = azurerm_virtual_hub.r1-vhubs[local.data.r1_vpns[count.index].hub_index].id
+#   depends_on          = [azurerm_virtual_hub.r1-vhubs]
+# }
 
 resource "azurerm_virtual_hub_connection" "spoke-attachment" {
   count                     = length(local.data.r1_spoke_attachments)
