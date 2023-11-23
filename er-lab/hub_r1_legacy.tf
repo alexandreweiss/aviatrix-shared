@@ -124,7 +124,7 @@ module "r2-vm" {
   location_short      = var.azure_r1_location_short
   index_number        = 01
   resource_group_name = azurerm_resource_group.er-lab-r1-legacy.name
-  subnet_id           = azurerm_subnetvm-spoke-subnet-r1-legacy.id
+  subnet_id           = azurerm_subnet.vm-spoke-subnet-r1-legacy.id
   admin_ssh_key       = var.ssh_public_key
   depends_on = [
   ]
