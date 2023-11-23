@@ -17,21 +17,21 @@ module "azure_transit_ars" {
 
 # This is the BGP over LAN connection creation on Aviatrix side
 resource "aviatrix_spoke_external_device_conn" "transit-sdwan-bgp" {
-  vpc_id                      = module.azure_transit_ars.vpc.vpc_id
-  connection_name             = "ars"
-  gw_name                     = module.azure_transit_ars.transit_gateway.gw_name
-  connection_type             = "bgp"
-  tunnel_protocol             = "LAN"
-  bgp_local_as_num            = "65014"
-  bgp_remote_as_num           = "65515"
-  remote_lan_ip               = "10.90.0.69"
-  local_lan_ip                = module.azure_transit_ars.transit_gateway.bgp_lan_ip_list[0]
-  remote_vpc_name             = "${azurerm_virtual_network.er-vn.name}:${azurerm_resource_group.er-lab-r1.name}:${data.azurerm_subscription.current.subscription_id}"
-  backup_local_lan_ip         = module.azure_transit_ars.transit_gateway.ha_bgp_lan_ip_list[0]
-  backup_remote_lan_ip        = "10.90.0.68"
-  backup_bgp_remote_as_num    = "65515"
-  ha_enabled                  = true
-  depends_on                  = [module.vn-peering]
-  enable_bgp_lan_activemesh   = true
-  manual_bgp_advertised_cidrs = ["10.0.0.0/16"]
+  vpc_id                    = module.azure_transit_ars.vpc.vpc_id
+  connection_name           = "ars"
+  gw_name                   = module.azure_transit_ars.transit_gateway.gw_name
+  connection_type           = "bgp"
+  tunnel_protocol           = "LAN"
+  bgp_local_as_num          = "65014"
+  bgp_remote_as_num         = "65515"
+  remote_lan_ip             = "10.90.0.69"
+  local_lan_ip              = module.azure_transit_ars.transit_gateway.bgp_lan_ip_list[0]
+  remote_vpc_name           = "${azurerm_virtual_network.er-vn.name}:${azurerm_resource_group.er-lab-r1.name}:${data.azurerm_subscription.current.subscription_id}"
+  backup_local_lan_ip       = module.azure_transit_ars.transit_gateway.ha_bgp_lan_ip_list[0]
+  backup_remote_lan_ip      = "10.90.0.68"
+  backup_bgp_remote_as_num  = "65515"
+  ha_enabled                = true
+  depends_on                = [module.vn-peering]
+  enable_bgp_lan_activemesh = true
+  //manual_bgp_advertised_cidrs = ["10.0.0.0/16"]
 }

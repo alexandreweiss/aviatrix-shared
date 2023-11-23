@@ -59,24 +59,30 @@ resource "aviatrix_transit_external_device_conn" "azure_transit_to_dc" {
 }
 
 ## DC to COLO
-resource "aviatrix_spoke_external_device_conn" "dc_to_colo" {
-  vpc_id          = module.dc_ett_router.spoke_gateway.vpc_id
-  connection_name = "ETT_dc_to_colo"
-  connection_type = "bgp"
-  #   custom_algorithms      = false
-  #   phase_1_authentication = "SHA-256"
-  #   phase_1_dh_groups      = "14"
-  #   phase_1_encryption     = "AES-256-CBC"
-  #   phase_2_authentication = "HMAC-SHA-256"
-  #   phase_2_dh_groups      = "14"
-  #   phase_2_encryption     = "AES-256-CBC"
-  enable_ikev2       = true
-  tunnel_protocol    = "IPSEC"
-  bgp_local_as_num   = "65016"
-  bgp_remote_as_num  = "64000"
-  remote_gateway_ip  = var.packet_fabric_ipsec_ip_address
-  local_tunnel_cidr  = "169.254.101.2/30"
-  remote_tunnel_cidr = "169.254.101.1/30"
-  pre_shared_key     = var.pre_shared_key
-  gw_name            = module.dc_ett_router.spoke_gateway.gw_name
+# resource "aviatrix_spoke_external_device_conn" "dc_to_colo" {
+#   vpc_id             = module.dc_ett_router.spoke_gateway.vpc_id
+#   connection_name    = "ETT_dc_to_colo"
+#   connection_type    = "bgp"
+#   enable_ikev2       = true
+#   tunnel_protocol    = "IPSEC"
+#   bgp_local_as_num   = "65016"
+#   bgp_remote_as_num  = "64000"
+#   remote_gateway_ip  = var.packet_fabric_ipsec_ip_address
+#   local_tunnel_cidr  = "169.254.101.2/30"
+#   remote_tunnel_cidr = "169.254.101.1/30"
+#   pre_shared_key     = var.pre_shared_key
+#   gw_name            = module.dc_ett_router.spoke_gateway.gw_name
+# }
+
+# Create an Aviatrix Site2cloud Connection
+resource "aviatrix_site2cloud" "test_s2c" {
+  vpc_id                     = module.dc_ett_router.spoke_gateway.vpc_id
+  connection_type            = "unmapped"
+  connection_name            = "ETT_dc_to_colo"
+  remote_gateway_type        = "generic"
+  tunnel_type                = "route"
+  primary_cloud_gateway_name = "gw1"
+  remote_gateway_ip          = "5.5.5.5"
+  remote_subnet_cidr         = "10.23.0.0/24"
+  local_subnet_cidr          = "10.20.1.0/24"
 }
