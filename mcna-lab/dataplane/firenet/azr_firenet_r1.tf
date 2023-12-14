@@ -6,7 +6,7 @@ module "azr-firenet_r1" {
   transit_module           = data.tfe_outputs.dataplane.values.transit_we
   firewall_image           = "Palo Alto Networks VM-Series Flex Next-Generation Firewall (BYOL)"
   custom_fw_names          = ["azr-${var.azure_r1_location_short}-firenet", "azr-${var.azure_r1_location_short}-firenet-2"]
-  egress_enabled           = true
+  egress_enabled           = false
   fw_amount                = 2
   instance_size            = "Standard_D3_v2"
   username                 = var.firewall_admin_username

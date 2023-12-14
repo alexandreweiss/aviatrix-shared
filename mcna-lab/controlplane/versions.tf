@@ -10,7 +10,7 @@ terraform {
   cloud {
     organization = "ananableu"
     workspaces {
-      name = "aviatrix-shared-control-plane-prd"
+      name = "aviatrix-shared-control-plane"
     }
   }
 }

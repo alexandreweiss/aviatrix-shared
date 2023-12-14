@@ -74,15 +74,3 @@ resource "aviatrix_transit_external_device_conn" "azure_transit_to_dc" {
 #   gw_name            = module.dc_ett_router.spoke_gateway.gw_name
 # }
 
-# Create an Aviatrix Site2cloud Connection
-resource "aviatrix_site2cloud" "test_s2c" {
-  vpc_id                     = module.dc_ett_router.spoke_gateway.vpc_id
-  connection_type            = "unmapped"
-  connection_name            = "ETT_dc_to_colo"
-  remote_gateway_type        = "generic"
-  tunnel_type                = "route"
-  primary_cloud_gateway_name = "gw1"
-  remote_gateway_ip          = "5.5.5.5"
-  remote_subnet_cidr         = "10.23.0.0/24"
-  local_subnet_cidr          = "10.20.1.0/24"
-}

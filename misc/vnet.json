@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.23.1.45101",
+      "templateHash": "14665066710383957196"
+    }
+  },
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "myVnet"
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/24"
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "vm"
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/28"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope"
+    },
+    "routeTableName": {
+      "type": "string",
+      "defaultValue": "myRouteTable"
+    },
+    "routeName": {
+      "type": "string",
+      "defaultValue": "myRoute"
+    },
+    "routeAddressPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/16"
+    },
+    "routeNextHopIpAddress": {
+      "type": "string",
+      "defaultValue": "10.0.0.10"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-05-01",
+      "name": "[parameters('vnetName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnetAddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('subnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetPrefix')]",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables', parameters('routeTableName'))]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTableName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/routeTables",
+      "apiVersion": "2022-11-01",
+      "name": "[parameters('routeTableName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "disableBgpRoutePropagation": false
+      }
+    },
+    {
+      "type": "Microsoft.Network/routeTables/routes",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', parameters('routeTableName'), parameters('routeName'))]",
+      "properties": {
+        "addressPrefix": "[parameters('routeAddressPrefix')]",
+        "nextHopType": "VirtualAppliance",
+        "nextHopIpAddress": "[parameters('routeNextHopIpAddress')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/routeTables', parameters('routeTableName'))]"
+      ]
+    }
+  ]
+}
