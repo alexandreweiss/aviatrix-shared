@@ -7,7 +7,7 @@ module "azure_transit_we" {
   cidr                          = "10.10.0.0/23"
   account                       = var.azure_account
   enable_transit_firenet        = true
-  name                          = "azr-${var.azure_r1_location_short}-transit"
+  name                          = "azr-${var.azure_r1_location_short}-transit-${var.customer_name}"
   local_as_number               = 65007
   enable_advertise_transit_cidr = false
   single_az_ha                  = false
@@ -15,6 +15,7 @@ module "azure_transit_we" {
   bgp_lan_interfaces_count      = 3
   enable_bgp_over_lan           = true
   instance_size                 = "Standard_D4_v2"
+  //insane_mode                   = true
 }
 
 output "transit_we" {

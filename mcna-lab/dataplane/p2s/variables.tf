@@ -1,3 +1,8 @@
+variable "customer_name" {
+  description = "Name of customer to be used in resources"
+  default     = "contoso"
+}
+
 variable "azure_r1_location" {
   default     = "West Europe"
   description = "region to deploy resources"

@@ -2,17 +2,18 @@ module "azure_transit_ars" {
   source = "terraform-aviatrix-modules/mc-transit/aviatrix"
   //version = "2.5.1"
 
-  cloud                    = "azure"
-  region                   = var.azure_r1_location
-  cidr                     = "10.110.0.0/23"
-  account                  = var.azure_account
-  name                     = "azr-${var.azure_r1_location_short}-ars-transit"
-  local_as_number          = 65014
-  resource_group           = azurerm_resource_group.er-lab-r1.name
-  bgp_lan_interfaces_count = 1
-  enable_bgp_over_lan      = true
-  instance_size            = "Standard_B2ms"
-  insane_mode              = true
+  cloud                         = "azure"
+  region                        = var.azure_r1_location
+  cidr                          = "10.110.0.0/23"
+  account                       = var.azure_account
+  name                          = "azr-${var.azure_r1_location_short}-ars-transit"
+  local_as_number               = 65014
+  resource_group                = azurerm_resource_group.er-lab-r1.name
+  bgp_lan_interfaces_count      = 1
+  enable_bgp_over_lan           = true
+  instance_size                 = "Standard_B2ms"
+  insane_mode                   = true
+  enable_advertise_transit_cidr = true
 }
 
 # This is the BGP over LAN connection creation on Aviatrix side

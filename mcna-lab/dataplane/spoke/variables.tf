@@ -1,3 +1,24 @@
+variable "customer_name" {
+  description = "Name of customer to be used in resources"
+  default     = "contoso"
+}
+
+variable "application_1" {
+  description = "Name of application 1"
+  default     = "MyApp1"
+}
+
+variable "application_2" {
+  description = "Name of application 2"
+  default     = "MyApp2"
+}
+
+variable "application_3" {
+  description = "Name of application 3"
+  default     = "MyApp3"
+}
+
+
 variable "azure_r1_location" {
   default     = "West Europe"
   description = "region to deploy resources"
@@ -53,4 +74,3 @@ variable "aws_account" {
 variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
-

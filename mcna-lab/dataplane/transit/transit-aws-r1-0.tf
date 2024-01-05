@@ -7,11 +7,11 @@ module "aws_transit_r1" {
   cidr                   = "10.50.0.0/23"
   account                = var.aws_account
   enable_transit_firenet = true
-  gw_name                = "aws-${var.aws_r1_location_short}-transit"
+  gw_name                = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
   local_as_number        = 65011
   enable_segmentation    = false
-  // this is to enable connection to AWS TGW
-  hybrid_connection = false
+  //insane_mode            = true
+  name = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
 }
 
 output "aws_transit_r1" {

@@ -61,7 +61,7 @@ module "er-gw" {
   gw_sku              = "Standard"
 }
 
-## Creation of AVX Transit VNET and peering to HUB VNET
+## Creation of AVX Transit VNET and peering to HUB VNET (we have a dedicated kind of spoke vnet for ER and ARS that we peer with that Aviatrix Transit vnet)
 resource "azurerm_virtual_network" "avx-vn" {
   address_space       = ["10.80.0.0/24"]
   location            = azurerm_resource_group.er-lab-r1.location

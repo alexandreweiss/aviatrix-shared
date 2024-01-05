@@ -7,7 +7,7 @@ module "azure_transit_r2" {
   cidr                          = "10.20.0.0/23"
   account                       = var.azure_account
   enable_transit_firenet        = true
-  name                          = "azr-${var.azure_r2_location_short}-transit"
+  name                          = "azr-${var.azure_r2_location_short}-transit-${var.customer_name}"
   local_as_number               = 65008
   enable_advertise_transit_cidr = false
   single_az_ha                  = false

@@ -10,7 +10,7 @@ module "gcp_transit_we" {
   region          = var.gcp_r1_location
   cidr            = "10.30.0.0/23"
   account         = var.gcp_account
-  gw_name         = "gcp-${var.azure_r1_location_short}-transit"
+  gw_name         = "gcp-${var.azure_r1_location_short}-transit-${var.customer_name}"
   local_as_number = 65009
   single_az_ha    = false
 }
@@ -25,7 +25,7 @@ module "gcp_transit_we" {
 #   cidr                   = "10.50.0.0/23"
 #   account                = var.aws_account
 #   enable_transit_firenet = true
-#   gw_name                = "aws-${var.aws_r1_location_short}-transit"
+#   gw_name                = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
 #   local_as_number        = 65011
 #   enable_segmentation    = false
 #   // this is to enable connection to AWS TGW

@@ -7,3 +7,8 @@ Connect to CPLT to configure additional data disk proposed
 
 ## Backup
 Enable storage account for backup
+
+## Deployment
+https://github.com/AviatrixSystems/terraform-aviatrix-azure-controller
+
+Update to staging after controller deployment

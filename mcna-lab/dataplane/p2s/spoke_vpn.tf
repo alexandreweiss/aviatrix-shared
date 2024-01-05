@@ -1,7 +1,7 @@
 // SPOKE VPN
 resource "azurerm_resource_group" "azr-r1-spoke-vpn-rg" {
   location = var.azure_r1_location
-  name     = "azr-${var.azure_r1_location_short}-spoke-vpn-rg"
+  name     = "azr-${var.azure_r1_location_short}-spoke-vpn-${var.customer_name}-rg"
 }
 
 resource "azurerm_virtual_network" "azr-r1-spoke-vpn" {
@@ -37,7 +37,7 @@ module "azr_r1_spoke_vpn" {
   version = "1.6.1"
 
   cloud            = "Azure"
-  name             = "${var.azure_r1_location_short}-spoke-vpn"
+  name             = "${var.azure_r1_location_short}-spoke-vpn-${var.customer_name}"
   vpc_id           = "${azurerm_virtual_network.azr-r1-spoke-vpn.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azr-r1-spoke-vpn.guid}"
   gw_subnet        = azurerm_subnet.azr-r1-spoke-vpn-gw-subnet.address_prefixes[0]
   use_existing_vpc = true
@@ -54,11 +54,11 @@ resource "aviatrix_gateway" "we-vpn-0" {
 
   cloud_type       = 8
   account_name     = var.azure_account
-  gw_name          = "${var.azure_r1_location_short}-vpn-0"
+  gw_name          = "${var.azure_r1_location_short}-vpn-${var.customer_name}-0"
   vpc_id           = "${azurerm_virtual_network.azr-r1-spoke-vpn.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azr-r1-spoke-vpn.guid}"
   vpc_reg          = var.azure_r1_location
   gw_size          = "Standard_B1ms"
-  subnet           = "10.10.3.16/28"
+  subnet           = "10.10.3.0/28"
   zone             = "az-1"
   vpn_access       = true
   vpn_cidr         = "172.20.20.0/24"
@@ -68,9 +68,10 @@ resource "aviatrix_gateway" "we-vpn-0" {
   enable_vpn_nat   = true
 
 
-  # depends_on = [
-  #   module.azr_r1_spoke_vpn
-  # ]
+  depends_on = [
+    azurerm_virtual_network.azr-r1-spoke-vpn,
+    azurerm_subnet.azr-r1-spoke-vpn-gw-subnet
+  ]
 }
 
 // Peering to controller for internal management

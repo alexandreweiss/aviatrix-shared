@@ -1,11 +1,11 @@
 resource "aviatrix_edge_vm_selfmanaged" "edge0" {
-  gw_name                = "edge0"
-  site_id                = "studio0"
-  ztp_file_download_path = "./iso/"
+  gw_name                = "${var.remote_location_type}-${var.remote_location}-edge"
+  site_id                = var.remote_location
+  ztp_file_download_path = "/tmp"
   ztp_file_type          = "iso"
   local_as_number        = var.edge_local_as_number
-  latitude               = "50.3239"
-  longitude              = "1.4337"
+  latitude               = var.remote_location_lat
+  longitude              = var.remote_location_lon
   interfaces {
     name          = "eth0"
     type          = "WAN"
