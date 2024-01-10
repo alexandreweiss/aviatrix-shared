@@ -18,6 +18,11 @@ variable "application_3" {
   default     = "MyApp3"
 }
 
+variable "customer_website" {
+  description = "FQDN of customer website"
+  default     = "www.aviatrix.com"
+}
+
 
 variable "azure_r1_location" {
   default     = "West Europe"

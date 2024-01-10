@@ -80,6 +80,38 @@ resource "azurerm_route_table" "r1-azure-spoke-app2-vm-subnet-2-rt" {
   }
 }
 
+resource "azurerm_subnet" "r1-azure-spoke-app2-aci-subnet" {
+  address_prefixes     = ["10.11.2.64/28"]
+  name                 = "aci-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-app2-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-app2-r1.name
+  delegation {
+    name = "delegation"
+    service_delegation {
+      name    = "Microsoft.ContainerInstance/containerGroups"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
+
+resource "azurerm_route_table" "r1-azure-spoke-app2-aci-subnet-rt" {
+  location            = var.azure_r1_location
+  name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_2}-aci-subnet-rt"
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-app2-rg.name
+
+  route {
+    address_prefix = "0.0.0.0/0"
+    name           = "internetDefaultBlackhole"
+    next_hop_type  = "None"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      route,
+    ]
+  }
+}
+
 resource "azurerm_subnet_route_table_association" "app2-subnet-vm-rt-assoc" {
   route_table_id = azurerm_route_table.r1-azure-spoke-app2-vm-subnet-rt.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-app2-vm-subnet.id
@@ -88,6 +120,11 @@ resource "azurerm_subnet_route_table_association" "app2-subnet-vm-rt-assoc" {
 resource "azurerm_subnet_route_table_association" "app2-subnet-vm-2-rt-assoc" {
   route_table_id = azurerm_route_table.r1-azure-spoke-app2-vm-subnet-2-rt.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-app2-vm-subnet-2.id
+}
+
+resource "azurerm_subnet_route_table_association" "app2-subnet-aci-rt-assoc" {
+  route_table_id = azurerm_route_table.r1-azure-spoke-app2-aci-subnet-rt.id
+  subnet_id      = azurerm_subnet.r1-azure-spoke-app2-aci-subnet.id
 }
 
 module "azr_r1_spoke_app2" {
@@ -115,23 +152,23 @@ module "azr_r1_spoke_app2" {
   //instance_size   = "Standard_D4s_v3"
 }
 
-module "we-app2-vm" {
-  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment = var.application_2
-  tags = {
-    "application" = var.application_2
-  }
-  location            = var.azure_r1_location
-  location_short      = var.azure_r1_location_short
-  index_number        = 01
-  resource_group_name = azurerm_resource_group.azr-r1-spoke-app2-rg.name
-  subnet_id           = azurerm_subnet.r1-azure-spoke-app2-vm-subnet.id
-  admin_ssh_key       = var.ssh_public_key
-  customer_name       = var.customer_name
-  //vm_size             = "Standard_DS4_v2"
-  depends_on = [
-  ]
-}
+# module "we-app2-vm" {
+#   source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+#   environment = var.application_2
+#   tags = {
+#     "application" = var.application_2
+#   }
+#   location            = var.azure_r1_location
+#   location_short      = var.azure_r1_location_short
+#   index_number        = 01
+#   resource_group_name = azurerm_resource_group.azr-r1-spoke-app2-rg.name
+#   subnet_id           = azurerm_subnet.r1-azure-spoke-app2-vm-subnet.id
+#   admin_ssh_key       = var.ssh_public_key
+#   customer_name       = var.customer_name
+#   //vm_size             = "Standard_DS4_v2"
+#   depends_on = [
+#   ]
+# }
 
 # module "we-app2-vm-2" {
 #   source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"

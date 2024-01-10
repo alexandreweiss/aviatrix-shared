@@ -34,8 +34,8 @@ resource "aviatrix_edge_spoke_transit_attachment" "edge0-azr-r1-transit" {
 
 # Create an Edge as a Spoke External Device Connection
 resource "aviatrix_edge_spoke_external_device_conn" "bgpolan" {
-  site_id           = "studio0"
-  connection_name   = "edge0-gw-studio0-lan-router"
+  site_id           = var.remote_location
+  connection_name   = "${var.remote_location_type}-${var.remote_location}-edge-to-lan"
   gw_name           = aviatrix_edge_vm_selfmanaged.edge0.gw_name
   bgp_local_as_num  = aviatrix_edge_vm_selfmanaged.edge0.local_as_number
   bgp_remote_as_num = "65171"
