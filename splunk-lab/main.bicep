@@ -139,6 +139,25 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-05-0
           destinationPortRange: '22'
         }
       }
+      {
+        name: 'syslog'
+        properties: {
+          priority: 1100
+          protocol: 'Tcp'
+          access: 'Allow'
+          direction: 'Inbound'
+          sourceAddressPrefixes: [
+            '4.245.51.179/32'
+            '51.144.184.45/32'
+            '20.54.186.156/32'
+            '51.124.0.113/32'
+            '108.143.24.233/32'
+          ]
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '6514'
+        }
+      }
     ]
   }
 }

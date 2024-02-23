@@ -7,20 +7,20 @@
     ],
     "r1_bgp_peers": [
         {
-            "asn": 65007,
+            "asn": 65012,
             "attachment_index": 0,
             "bgp_index": 0,
             "hub_index": 0,
             "name": "avx-we-vwan-transit",
-            "peer_ip": "10.10.0.116"
+            "peer_ip": "10.10.2.76"
         },
         {
-            "asn": 65007,
+            "asn": 65012,
             "attachment_index": 0,
             "bgp_index": 1,
             "hub_index": 0,
             "name": "avx-we-vwan-transit-hagw",
-            "peer_ip": "10.10.0.124"
+            "peer_ip": "10.10.2.68"
         }
     ],
     "r1_spoke_attachments": [
@@ -58,9 +58,5 @@
             "hub_location_short": "we"
         }
     ],
-    "r1_vpns": [
-        {
-            "hub_index": 0
-        }
-    ]
+    "r1_vpns": []
 }

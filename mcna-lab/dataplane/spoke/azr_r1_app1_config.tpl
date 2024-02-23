@@ -8,3 +8,9 @@ endpoints:
     group: Applications
     conditions:
       - "[CONNECTED] == true"
+  - name : ${application_2} in AWS
+    url: "icmp://${application_2_aws_ip}"
+    interval: 10s
+    group: Applications
+    conditions:
+      - "[CONNECTED] == true"

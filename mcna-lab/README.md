@@ -24,3 +24,19 @@ versions.tf contains that block of code that you would need to update or just re
       name = "aviatrix-misc"
     }
   }`
+
+# Prepare for a demo
+
+## Variables
+
+Update variables in shared TF workspace with customer_name, 3 applications' names
+Update variables in edge-sm TF workspace with location_type and remote_location
+
+destroy any edge
+destroy any transit peering
+destroy any spoke
+destroy any p2s
+terraform apply on transit first
+terraform apply on transit peering
+terraform apply on P2S
+terraform apply on spoke

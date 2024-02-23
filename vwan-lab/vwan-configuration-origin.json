@@ -84,5 +84,10 @@
             "hub_location": "northeurope",
             "hub_location_short": "ne"
         }
+    ],
+    "r1_vpns": [
+        {
+            "hub_index": 0
+        }
     ]
 }

@@ -3,6 +3,12 @@ terraform {
     aviatrix = {
       source = "aviatrixsystems/aviatrix"
     }
+    aws = {
+      source = "hashicorp/aws"
+    }
+    ssh = {
+      source = "loafoe/ssh"
+    }
   }
   cloud {
     organization = "ananableu"

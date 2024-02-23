@@ -15,7 +15,7 @@ module "azure_transit_we" {
   bgp_lan_interfaces_count      = 3
   enable_bgp_over_lan           = true
   instance_size                 = "Standard_D4_v2"
-  //insane_mode                   = true
+  insane_mode                   = true
 }
 
 output "transit_we" {

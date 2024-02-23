@@ -12,6 +12,8 @@ resource "aviatrix_edge_vm_selfmanaged" "edge0" {
     ip_address    = "192.168.70.10/24"
     gateway_ip    = "192.168.70.1"
     wan_public_ip = "81.49.43.155"
+    # wan_public_ip = "77.159.218.94"
+    # wan_public_ip = "92.184.106.15"
   }
   interfaces {
     name       = "eth1"
@@ -23,6 +25,8 @@ resource "aviatrix_edge_vm_selfmanaged" "edge0" {
     type          = "MANAGEMENT"
     enable_dhcp   = true
     wan_public_ip = "81.49.43.155"
+    # wan_public_ip = "77.159.218.94"
+    # wan_public_ip = "92.184.106.15"
   }
 }
 

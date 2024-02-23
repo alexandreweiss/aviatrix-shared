@@ -46,24 +46,29 @@ resource "azurerm_virtual_hub_connection" "spoke-attachment" {
   virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_spoke_attachments[count.index].hub_index].id
 }
 
-# resource "azurerm_virtual_hub_connection" "aviatrix-attachment" {
-#   count                     = length(local.data.r1_aviatrix_attachments)
-#   name                      = "avx-west-europe-transit"
-#   remote_virtual_network_id = "/subscriptions/cc67e95e-9baa-4ef4-bfac-a33a19ef2232/resourceGroups/azr-transit-we-0-rg/providers/Microsoft.Network/virtualNetworks/azr-we-transit"
-#   virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_aviatrix_attachments[count.index].vhub_index].id
-# }
+data "tfe_outputs" "dataplane" {
+  organization = "ananableu"
+  workspace    = "aviatrix-shared"
+}
 
-# resource "azurerm_virtual_hub_bgp_connection" "bgp-aviatrix" {
-#   count                         = length(local.data.r1_bgp_peers)
-#   name                          = local.data.r1_bgp_peers[count.index].name
-#   peer_asn                      = local.data.r1_bgp_peers[count.index].asn
-#   peer_ip                       = local.data.r1_bgp_peers[count.index].peer_ip
-#   virtual_hub_id                = azurerm_virtual_hub.r1-vhubs[local.data.r1_bgp_peers[count.index].hub_index].id
-#   virtual_network_connection_id = azurerm_virtual_hub_connection.aviatrix-attachment[local.data.r1_bgp_peers[count.index].attachment_index].id
-#   depends_on = [
-#     azurerm_virtual_hub_connection.spoke-attachment
-#   ]
-# }
+resource "azurerm_virtual_hub_connection" "aviatrix-attachment" {
+  count                     = length(local.data.r1_aviatrix_attachments)
+  name                      = "avx-west-europe-transit"
+  remote_virtual_network_id = data.tfe_outputs.dataplane.values.transit_we.vpc.azure_vnet_resource_id
+  virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_aviatrix_attachments[count.index].vhub_index].id
+}
+
+resource "azurerm_virtual_hub_bgp_connection" "bgp-aviatrix" {
+  count                         = length(local.data.r1_bgp_peers)
+  name                          = local.data.r1_bgp_peers[count.index].name
+  peer_asn                      = local.data.r1_bgp_peers[count.index].asn
+  peer_ip                       = local.data.r1_bgp_peers[count.index].peer_ip
+  virtual_hub_id                = azurerm_virtual_hub.r1-vhubs[local.data.r1_bgp_peers[count.index].hub_index].id
+  virtual_network_connection_id = azurerm_virtual_hub_connection.aviatrix-attachment[local.data.r1_bgp_peers[count.index].attachment_index].id
+  depends_on = [
+    azurerm_virtual_hub_connection.spoke-attachment
+  ]
+}
 
 resource "azurerm_virtual_network" "spoke" {
   count               = length(local.data.r1_spokes)

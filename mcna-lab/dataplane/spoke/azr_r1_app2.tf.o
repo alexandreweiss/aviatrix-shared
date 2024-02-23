@@ -37,9 +37,10 @@ resource "azurerm_storage_share" "app2_aci_share" {
 resource "local_file" "app2_config_yaml" {
   filename = "app2-config.yaml"
   content = templatefile("${path.module}/azr_r1_app2_config.tpl",
-    { "customer_name" = var.customer_name,
-      "application_2" = var.application_2,
-    "customer_website" = var.customer_website }
+    { "customer_name"    = var.customer_name,
+      "application_2"    = var.application_2,
+      "customer_website" = var.customer_website
+    }
   )
 }
 
@@ -90,6 +91,9 @@ resource "aviatrix_smart_group" "app2" {
   selector {
     match_expressions {
       cidr = azurerm_subnet.r1-azure-spoke-app2-aci-subnet.address_prefixes[0]
+    }
+    match_expressions {
+      cidr = aws_subnet.this["front-a"].cidr_block
     }
   }
 }

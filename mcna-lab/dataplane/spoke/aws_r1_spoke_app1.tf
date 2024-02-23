@@ -11,6 +11,10 @@ variable "vpc_cidr" {
   default = "10.52.0.0/24"
 }
 
+variable "test_subnet" {
+  default = "172.18.18.0/24"
+}
+
 #Create VPC
 resource "aws_vpc" "this" {
   cidr_block = var.vpc_cidr
@@ -26,9 +30,15 @@ resource "aws_vpc_ipv4_cidr_block_association" "this" {
   cidr_block = var.gw_subnet
 }
 
+#Add third CIDR
+resource "aws_vpc_ipv4_cidr_block_association" "test" {
+  vpc_id     = aws_vpc.this.id
+  cidr_block = var.test_subnet
+}
+
 #Create route tables
 resource "aws_route_table" "this" {
-  for_each = toset(["avx-gw", "avx-hagw", "rt-internal-a", "rt-internal-b", "public1", "public2"])
+  for_each = toset(["avx-gw", "avx-hagw", "test-subnet", "rt-internal-a", "rt-internal-b", "public1", "public2"])
   vpc_id   = aws_vpc.this.id
 
   tags = {
@@ -67,6 +77,11 @@ locals {
       route_table       = "avx-hagw",
       cidr              = cidrsubnet(var.gw_subnet, 1, 1)
       availability_zone = "b"
+    },
+    test-subnet = {
+      route_table       = "test-subnet",
+      cidr              = cidrsubnet(var.test_subnet, 4, 0)
+      availability_zone = "a"
     },
     front-a = {
       route_table       = "rt-internal-a",
@@ -143,12 +158,13 @@ module "aws_r1_spoke_app1" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
   version = "1.6.3"
 
-  cloud            = "AWS"
-  name             = "aws-${var.aws_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
-  cidr             = var.vpc_cidr
-  region           = var.aws_r1_location
-  account          = var.aws_account
-  transit_gw       = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
+  cloud   = "AWS"
+  name    = "aws-${var.aws_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
+  cidr    = var.vpc_cidr
+  region  = var.aws_r1_location
+  account = var.aws_account
+  // transit_gw       = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
+  transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
   attached         = true
   use_existing_vpc = true
   single_ip_snat   = true
@@ -179,7 +195,7 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-## Deploy Guacamole AMI for remote desktop access to the Windows host in VPC1. Configuration happens in the separate "config-guacamole" Terraform plan
+# Deploy Guacamole AMI for remote desktop access to the Windows host in VPC1. Configuration happens in the separate "config-guacamole" Terraform plan
 module "ec2_instance_linux" {
   source = "terraform-aws-modules/ec2-instance/aws"
 
@@ -190,11 +206,77 @@ module "ec2_instance_linux" {
   key_name                    = "ssh-linux-non-prod"
   monitoring                  = true
   subnet_id                   = aws_subnet.this["front-a"].id
+  vpc_security_group_ids      = [aws_security_group.allow_all_rfc1918.id]
   associate_public_ip_address = false
 
   tags = {
     Cloud       = "AWS"
     Application = "Dev Server"
+  }
+}
+
+resource "aws_security_group" "allow_all_rfc1918" {
+  name        = "allow_all_rfc1918_vpc"
+  description = "allow_all_rfc1918_vpc"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_all_rfc1918_vpc"
+  }
+}
+
+resource "aws_security_group" "allow_web_ssh_public" {
+  name        = "allow_web_ssh_public"
+  description = "allow_web_ssh_public"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 83
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${chomp(data.http.myip.response_body)}/32"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_web_ssh_public"
   }
 }
 

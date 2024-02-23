@@ -18,8 +18,8 @@ resource "aviatrix_edge_platform" "edge-gw-ferme" {
   interfaces {
     name          = "eth0"
     type          = "WAN"
-    ip_address    = "192.168.18.10/24"
-    gateway_ip    = "192.168.18.1"
+    ip_address    = "192.168.15.5/24"
+    gateway_ip    = "192.168.15.1"
     wan_public_ip = data.dns_a_record_set.ferme.addrs[0]
   }
 

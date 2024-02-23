@@ -82,5 +82,5 @@ variable "pre_shared_key" {
 
 variable "packet_fabric_ipsec_ip_address" {
   description = "IP address of PacketFabric IPSEC onramp"
-  default     = "23.159.0.152"
+  default     = "23.159.0.154"
 }
