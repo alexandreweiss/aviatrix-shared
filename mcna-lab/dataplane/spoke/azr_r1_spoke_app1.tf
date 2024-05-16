@@ -17,19 +17,19 @@ resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
 }
 
 # Comment out for HPE
-# resource "azurerm_subnet" "r1-azure-spoke-app1-gw-subnet" {
-#   address_prefixes     = ["10.10.2.0/26"]
-#   name                 = "avx-gw-subnet"
-#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-#   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
-# }
+resource "azurerm_subnet" "r1-azure-spoke-app1-gw-subnet" {
+  address_prefixes     = ["10.10.2.0/26"]
+  name                 = "avx-gw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
+}
 
-# resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-subnet" {
-#   address_prefixes     = ["10.10.2.64/26"]
-#   name                 = "avx-hagw-subnet"
-#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-#   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
-# }
+resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-subnet" {
+  address_prefixes     = ["10.10.2.64/26"]
+  name                 = "avx-hagw-subnet"
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
+}
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet" {
   address_prefixes     = ["10.10.2.128/28"]
@@ -133,33 +133,33 @@ module "azr_r1_spoke_app1" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
   version = "1.6.3"
 
-  cloud  = "Azure"
-  name   = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
-  vpc_id = "${azurerm_virtual_network.azure-spoke-app1-r1.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}:${azurerm_virtual_network.azure-spoke-app1-r1.guid}"
-  #gw_subnet = azurerm_subnet.r1-azure-spoke-app1-gw-subnet.address_prefixes[0]
+  cloud     = "Azure"
+  name      = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
+  vpc_id    = "${azurerm_virtual_network.azure-spoke-app1-r1.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}:${azurerm_virtual_network.azure-spoke-app1-r1.guid}"
+  gw_subnet = azurerm_subnet.r1-azure-spoke-app1-gw-subnet.address_prefixes[0]
   #  For HPE
-  gw_subnet = "10.10.2.0/26"
+  #gw_subnet = "10.10.2.0/26"
   ###
   use_existing_vpc = true
-  # hagw_subnet      = azurerm_subnet.r1-azure-spoke-app1-hagw-subnet.address_prefixes[0]
+  hagw_subnet      = azurerm_subnet.r1-azure-spoke-app1-hagw-subnet.address_prefixes[0]
   # For HPE
-  hagw_subnet = "10.10.3.0/26"
+  #hagw_subnet = "10.10.3.0/26"
   ###
   region     = var.azure_r1_location
   account    = var.azure_account
   transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
   attached   = true
   # Must be enabled for HPE
-  ha_gw = true
+  ha_gw = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat           = true
-  single_az_ha             = false
-  resource_group           = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-  local_as_number          = 65012
-  enable_bgp               = true
-  depends_on               = [azurerm_route_table.r1-azure-spoke-app1-vm-subnet-rt, azurerm_route_table.r1-azure-spoke-app1-vm-subnet-2-rt]
-  instance_size            = "Standard_D4s_v3"
-  insane_mode              = true
+  single_ip_snat  = true
+  single_az_ha    = false
+  resource_group  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  local_as_number = 65012
+  enable_bgp      = true
+  depends_on      = [azurerm_route_table.r1-azure-spoke-app1-vm-subnet-rt, azurerm_route_table.r1-azure-spoke-app1-vm-subnet-2-rt]
+  //instance_size            = "Standard_D4s_v3"
+  insane_mode              = false
   bgp_lan_interfaces_count = 1
   enable_bgp_over_lan      = true
 }

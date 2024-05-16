@@ -9,7 +9,7 @@ module "aws_transit_r1" {
   enable_transit_firenet = true
   gw_name                = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
   local_as_number        = 65011
-  enable_segmentation    = false
+  enable_segmentation    = true
   //insane_mode            = true
   name = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
 }

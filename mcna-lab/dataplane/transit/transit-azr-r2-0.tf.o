@@ -3,7 +3,7 @@ module "azure_transit_r2" {
   version = "2.5.0"
 
   cloud                         = "azure"
-  region                        = var.azure_r1_location
+  region                        = var.azure_r2_location
   cidr                          = "10.20.0.0/23"
   account                       = var.azure_account
   enable_transit_firenet        = true

@@ -1,3 +1,4 @@
+# Azure Resource Group Creation
 resource "azurerm_resource_group" "aks-lab-rg" {
   count = var.aks_cluster_qty
 
@@ -5,6 +6,7 @@ resource "azurerm_resource_group" "aks-lab-rg" {
   name     = "aks-lab-${count.index}-rg"
 }
 
+# Azure Virtual Network Creation for AKS
 resource "azurerm_virtual_network" "vnet" {
   count = var.aks_cluster_qty
 
@@ -13,6 +15,8 @@ resource "azurerm_virtual_network" "vnet" {
   name                = "aks-lab-${count.index}-vn"
   resource_group_name = azurerm_resource_group.aks-lab-rg[count.index].name
 }
+
+# Azure Subnet Creation for AKS - Node
 
 resource "azurerm_subnet" "node-subnet" {
   count = var.aks_cluster_qty
@@ -23,6 +27,7 @@ resource "azurerm_subnet" "node-subnet" {
   virtual_network_name = azurerm_virtual_network.vnet[count.index].name
 }
 
+# Azure Subnet Creation for AKS - Gateway subnet for Aviatrix Spoke
 resource "azurerm_subnet" "gw-subnet" {
   count = var.aks_cluster_qty
 
@@ -32,6 +37,7 @@ resource "azurerm_subnet" "gw-subnet" {
   virtual_network_name = azurerm_virtual_network.vnet[count.index].name
 }
 
+# Azure Subnet Creation for AKS - PODs
 resource "azurerm_subnet" "pod-subnet" {
   count = var.aks_cluster_qty
 
@@ -45,6 +51,7 @@ resource "azurerm_subnet" "pod-subnet" {
   }
 }
 
+# Azure Route Table Creation for AKS - POD Subnet
 resource "azurerm_route_table" "pod-subnet-rt" {
   count = var.aks_cluster_qty
 
@@ -64,6 +71,7 @@ resource "azurerm_route_table" "pod-subnet-rt" {
   }
 }
 
+# Azure Subnet Route Table Association for AKS - POD Subnet
 resource "azurerm_subnet_route_table_association" "pod-subnet-rt-assoc" {
   count = var.aks_cluster_qty
 
@@ -81,6 +89,7 @@ resource "azurerm_subnet_route_table_association" "pod-subnet-rt-assoc" {
 #   virtual_network_name = azurerm_virtual_network.vnet[count.index].name
 # }
 
+# Azure Kubernetes Cluster Creation
 resource "azurerm_kubernetes_cluster" "k8s" {
   count = var.aks_cluster_qty
 
@@ -102,7 +111,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     vnet_subnet_id = azurerm_subnet.node-subnet[count.index].id
   }
   linux_profile {
-    admin_username = "ubuntu"
+    admin_username = "admin-lab"
 
     ssh_key {
       //key_data = jsondecode(azapi_resource_action.ssh_public_key_gen.output).publicKey

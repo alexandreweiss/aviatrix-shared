@@ -65,18 +65,6 @@ variable "azure_account" {
   description = "CSP account onboarder on the controller"
 }
 
-variable "aws_account" {
-  description = "CSP account onboarder on the controller"
-}
-
-variable "gcp_account" {
-  description = "CSP account onboarder on the controller"
-}
-
-variable "ferme_fqdn" {
-  description = "FQDN of Ferme ISP"
-  sensitive   = true
-}
 
 variable "admin_password" {
   sensitive   = true

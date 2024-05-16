@@ -12,7 +12,7 @@ module "azure_transit_we" {
   enable_advertise_transit_cidr = false
   single_az_ha                  = false
   resource_group                = azurerm_resource_group.azr-transit-r1-0-rg.name
-  bgp_lan_interfaces_count      = 3
+  bgp_lan_interfaces_count      = 1
   enable_bgp_over_lan           = true
   instance_size                 = "Standard_D4_v2"
   insane_mode                   = true

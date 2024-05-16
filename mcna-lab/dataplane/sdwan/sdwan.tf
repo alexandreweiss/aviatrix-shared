@@ -69,7 +69,7 @@ module "transit-sdwan-peering" {
   source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
 
   left_vnet_resource_group_name  = data.tfe_outputs.dataplane.values.transit_we_rg
-  left_vnet_name                 = "azr-we-transit"
+  left_vnet_name                 = "azr-we-transit-avx"
   right_vnet_resource_group_name = azurerm_resource_group.azr-r1-spoke-sdwan-rg.name
   right_vnet_name                = azurerm_virtual_network.azure-spoke-sdwan-r1.name
   allow_forwarded_traffic        = true
