@@ -35,7 +35,6 @@ module "r1-fw-1-vm" {
   enable_ip_forwarding = true
   custom_data          = data.template_cloudinit_config.config.rendered
   lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
-  enable_public_ip     = true
 }
 
 module "r1-fw-2-vm" {

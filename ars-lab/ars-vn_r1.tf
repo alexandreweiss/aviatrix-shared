@@ -79,6 +79,7 @@ module "vn-peering" {
   left_vnet_name                 = azurerm_virtual_network.ars-vn.name
   right_vnet_resource_group_name = azurerm_resource_group.ars-lab-r1.name
   right_vnet_name                = module.azure_transit_ars.vpc.name
+  allow_forwarded_traffic        = true
 
   depends_on = [
     azurerm_virtual_network.ars-vn,
@@ -93,23 +94,11 @@ module "spoke-vn-peering" {
   left_vnet_name                 = azurerm_virtual_network.ars-vn.name
   right_vnet_resource_group_name = azurerm_resource_group.ars-lab-r1.name
   right_vnet_name                = azurerm_virtual_network.spoke-vn.name
+  allow_forwarded_traffic        = true
+
 
   depends_on = [
     azurerm_virtual_network.ars-vn,
     azurerm_virtual_network.spoke-vn
-  ]
-}
-
-## Test VM
-module "r1-vm" {
-  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment         = "vm"
-  location            = var.azure_r1_location
-  location_short      = var.azure_r1_location_short
-  index_number        = 01
-  resource_group_name = azurerm_resource_group.ars-lab-r1.name
-  subnet_id           = azurerm_subnet.spoke-vm-subnet.id
-  admin_ssh_key       = var.ssh_public_key
-  depends_on = [
   ]
 }

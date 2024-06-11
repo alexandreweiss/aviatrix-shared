@@ -17,11 +17,6 @@ write_files:
     path: /etc/sysctl.conf
     content: |
       net.ipv4.ip_forward=1
-  - owner: root:root
-    append: true
-    path: /etc/rc.local
-    content: |
-      sudo iptables-restore < /etc/iptables.conf
   - owner: frr:frr
     append: true
     path: /etc/frr/frr.conf
@@ -54,6 +49,5 @@ write_files:
     defer: true
 runcmd:
   - sysctl -w net.ipv4.ip_forward=1
-  - iptables-save > /etc/iptables.conf
   - sed -i -e "s/bgpd=no/bgpd=yes/g" /etc/frr/daemons
   - systemctl restart frr

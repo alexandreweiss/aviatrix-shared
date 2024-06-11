@@ -13,9 +13,10 @@ module "r1-spoke-vm" {
 
 // Route table for tiered VM to send traffic to SDWAN headend
 resource "azurerm_route_table" "rt-to-fw" {
-  location            = var.azure_r1_location
-  name                = "fw-tiered-vm"
-  resource_group_name = azurerm_resource_group.ars-lab-r1.name
+  location                      = var.azure_r1_location
+  name                          = "fw-tiered-vm"
+  resource_group_name           = azurerm_resource_group.ars-lab-r1.name
+  disable_bgp_route_propagation = true
 
   route {
     address_prefix         = "0.0.0.0/0"
