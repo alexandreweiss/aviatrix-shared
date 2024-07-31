@@ -34,7 +34,7 @@ module "r1-fw-1-vm" {
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
   custom_data          = data.template_cloudinit_config.config.rendered
-  lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
+  # lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
 }
 
 module "r1-fw-2-vm" {
@@ -49,7 +49,7 @@ module "r1-fw-2-vm" {
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
   custom_data          = data.template_cloudinit_config.config.rendered
-  lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
+  # lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
 }
 
 resource "azurerm_lb" "fw_lb" {
