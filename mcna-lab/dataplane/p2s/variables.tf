@@ -53,7 +53,7 @@ variable "p2s_additional_cidrs" {
 
 locals {
   controller = {
-    controller_vnet_name           = "avx-ctrl-we-vnet"
-    controller_resource_group_name = "avx-ctrl-we-rg"
+    controller_vnet_name           = "avx-cplane-frc-vn"
+    controller_resource_group_name = "avx-cplane-we-rg"
   }
 }

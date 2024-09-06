@@ -1,25 +1,31 @@
-# resource "azurerm_resource_group" "azr-transit-r1-1-rg" {
-#   location = var.azure_r1_location
-#   name     = "azr-transit-${var.azure_r1_location_short}-1-rg"
-# }
+resource "azurerm_resource_group" "azr-transit-r1-1-rg" {
+  location = var.azure_r1_location
+  name     = "azr-transit-${var.azure_r1_location_short}-1-rg"
+}
 
-# module "azure_transit_we_egress" {
-#   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-#   version = "2.5.0"
+module "azure_transit_we_egress" {
+  source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
+  version = "2.5.0"
 
-#   cloud                         = "azure"
-#   region                        = var.azure_r1_location
-#   cidr                          = "10.40.0.0/23"
-#   account                       = var.azure_account
-#   enable_transit_firenet        = false
-#   name                          = "azr-${var.azure_r1_location_short}-transit-egress-${var.customer_name}"
-#   local_as_number               = 65010
-#   single_az_ha                  = false
-#   ha_gw                         = false
-#   resource_group                = azurerm_resource_group.azr-transit-r1-1-rg.name
-#   enable_egress_transit_firenet = true
-#   //instance_size = "Standard_B2ms"
-# }
+  cloud   = "azure"
+  region  = var.azure_r1_location
+  cidr    = "10.40.0.0/23"
+  account = var.azure_account
+  # enable_transit_firenet        = false
+  enable_transit_firenet        = true
+  name                          = "azr-${var.azure_r1_location_short}-transit-egress-${var.customer_name}"
+  local_as_number               = 65010
+  single_az_ha                  = false
+  ha_gw                         = false
+  resource_group                = azurerm_resource_group.azr-transit-r1-1-rg.name
+  enable_egress_transit_firenet = false
+  //instance_size = "Standard_B2ms"
+}
+
+output "transit_we_egress" {
+  value     = module.azure_transit_we_egress
+  sensitive = true
+}
 
 # module "azure_transit_ne" {
 #   source  = "terraform-aviatrix-modules/mc-transit/aviatrix"

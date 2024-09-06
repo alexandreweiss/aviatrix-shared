@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<config version="11.0.0" urldb="paloaltonetworks" detail-version="11.0.2">
+<config version="11.2.0" urldb="paloaltonetworks" detail-version="11.2.0">
   <mgt-config>
     <users>
       <entry name="admin">
@@ -18,10 +18,10 @@
             </custom>
           </role-based>
         </permissions>
-        <phash>$5$ymnohmel$wkONBuqSR6WJfwAkZoTxXmmPM/kvxHl.mB7wtPEsu9A</phash>
+        <phash>$5$igbatymo$8goL9vNwCW9nmpBSxzTJASUYWt2I27o4xo40X1fems3</phash>
       </entry>
       <entry name="admin-lab">
-        <phash>$5$otitlafw$y1VYWhUyWFFbofbxC6V3DSU4sVhej0N8Pkoedomz6A/</phash>
+        <phash>$5$mkhuwhqw$qukK4YF8AFcsqjFB1RQJetPHLLI9S46366wZzBBHFYC</phash>
         <permissions>
           <role-based>
             <superuser>yes</superuser>
@@ -269,7 +269,9 @@
                 <authentication-profile>enable</authentication-profile>
                 <authentication-sequence>enable</authentication-sequence>
                 <user-identification>enable</user-identification>
-                <dhcp-syslog-server>enable</dhcp-syslog-server>
+                <iot-security>
+                  <dhcp-syslog-server>enable</dhcp-syslog-server>
+                </iot-security>
                 <data-redistribution>enable</data-redistribution>
                 <device-quarantine>enable</device-quarantine>
                 <vm-info-source>enable</vm-info-source>
@@ -713,82 +715,6 @@
             <routing-table>
               <ip>
                 <static-route>
-                  <entry name="AVX-172.16.0.0-12">
-                    <nexthop>
-                      <ip-address>10.10.0.81</ip-address>
-                    </nexthop>
-                    <bfd>
-                      <profile>None</profile>
-                    </bfd>
-                    <interface>ethernet1/2</interface>
-                    <path-monitor>
-                      <enable>no</enable>
-                      <failure-condition>any</failure-condition>
-                      <hold-time>2</hold-time>
-                    </path-monitor>
-                    <metric>10</metric>
-                    <destination>172.16.0.0/12</destination>
-                    <route-table>
-                      <unicast/>
-                    </route-table>
-                  </entry>
-                  <entry name="AVX-10.0.0.0-8">
-                    <nexthop>
-                      <ip-address>10.10.0.81</ip-address>
-                    </nexthop>
-                    <bfd>
-                      <profile>None</profile>
-                    </bfd>
-                    <interface>ethernet1/2</interface>
-                    <path-monitor>
-                      <enable>no</enable>
-                      <failure-condition>any</failure-condition>
-                      <hold-time>2</hold-time>
-                    </path-monitor>
-                    <metric>10</metric>
-                    <destination>10.0.0.0/8</destination>
-                    <route-table>
-                      <unicast/>
-                    </route-table>
-                  </entry>
-                  <entry name="AVX-192.168.0.0-16">
-                    <nexthop>
-                      <ip-address>10.10.0.81</ip-address>
-                    </nexthop>
-                    <bfd>
-                      <profile>None</profile>
-                    </bfd>
-                    <interface>ethernet1/2</interface>
-                    <path-monitor>
-                      <enable>no</enable>
-                      <failure-condition>any</failure-condition>
-                      <hold-time>2</hold-time>
-                    </path-monitor>
-                    <metric>10</metric>
-                    <destination>192.168.0.0/16</destination>
-                    <route-table>
-                      <unicast/>
-                    </route-table>
-                  </entry>
-                  <entry name="AVX-168.63.129.16-32">
-                    <nexthop>
-                      <ip-address>10.10.0.81</ip-address>
-                    </nexthop>
-                    <bfd>
-                      <profile>None</profile>
-                    </bfd>
-                    <interface>ethernet1/2</interface>
-                    <path-monitor>
-                      <enable>no</enable>
-                      <failure-condition>any</failure-condition>
-                      <hold-time>2</hold-time>
-                    </path-monitor>
-                    <metric>10</metric>
-                    <destination>168.63.129.16/32</destination>
-                    <route-table>
-                      <unicast/>
-                    </route-table>
-                  </entry>
                 </static-route>
               </ip>
             </routing-table>
@@ -897,6 +823,71 @@
                 </entry>
               </rules>
             </default-security-rules>
+            <nat>
+              <rules>
+                <entry name="internetSNAT" uuid="5d91323a-e003-4a5f-b081-757d60e14c3c">
+                  <source-translation>
+                    <dynamic-ip-and-port>
+                      <interface-address>
+                        <interface>ethernet1/1</interface>
+                      </interface-address>
+                    </dynamic-ip-and-port>
+                  </source-translation>
+                  <to>
+                    <member>untrust</member>
+                  </to>
+                  <from>
+                    <member>trusted</member>
+                  </from>
+                  <source>
+                    <member>any</member>
+                  </source>
+                  <destination>
+                    <member>any</member>
+                  </destination>
+                  <service>any</service>
+                </entry>
+              </rules>
+            </nat>
+            <security>
+              <rules>
+                <entry name="allowInternet" uuid="30d0bd5f-4fb4-4a4c-b918-eb0fb1bef9cf">
+                  <to>
+                    <member>untrust</member>
+                  </to>
+                  <from>
+                    <member>trusted</member>
+                  </from>
+                  <source>
+                    <member>any</member>
+                  </source>
+                  <destination>
+                    <member>any</member>
+                  </destination>
+                  <source-user>
+                    <member>any</member>
+                  </source-user>
+                  <category>
+                    <member>any</member>
+                  </category>
+                  <application>
+                    <member>any</member>
+                  </application>
+                  <service>
+                    <member>application-default</member>
+                  </service>
+                  <source-hip>
+                    <member>any</member>
+                  </source-hip>
+                  <destination-hip>
+                    <member>any</member>
+                  </destination-hip>
+                  <action>allow</action>
+                  <log-start>yes</log-start>
+                  <log-end>yes</log-end>
+                </entry>
+              </rules>
+            </security>
           </rulebase>
           <import>
             <network>
