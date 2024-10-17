@@ -145,14 +145,14 @@ module "azr_r1_spoke_app1" {
   # For HPE
   #hagw_subnet = "10.10.3.0/26"
   ###
-  region     = var.azure_r1_location
-  account    = var.azure_account
-  transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  attached   = true
+  region  = var.azure_r1_location
+  account = var.azure_account
+  # transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  attached = false
   # Must be enabled for HPE
   ha_gw = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat = false
+  single_ip_snat = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   #local_as_number = 65012
@@ -164,23 +164,23 @@ module "azr_r1_spoke_app1" {
   #enable_bgp_over_lan      = true
 }
 
-# module "we-app1-vm" {
-#   source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-#   environment = var.application_1
-#   tags = {
-#     "application" = var.application_1
-#   }
-#   location            = var.azure_r1_location
-#   location_short      = var.azure_r1_location_short
-#   index_number        = 01
-#   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-#   subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
-#   admin_ssh_key       = var.ssh_public_key
-#   customer_name       = var.customer_name
-#   //vm_size             = "Standard_DS4_v2"
-#   depends_on = [
-#   ]
-# }
+module "we-app1-vm" {
+  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment = var.application_1
+  tags = {
+    "application" = var.application_1
+  }
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  customer_name       = var.customer_name
+  //vm_size             = "Standard_DS4_v2"
+  depends_on = [
+  ]
+}
 
 # module "we-app1-vm-2" {
 #   source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"

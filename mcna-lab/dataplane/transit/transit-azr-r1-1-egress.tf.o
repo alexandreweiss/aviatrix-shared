@@ -19,7 +19,7 @@ module "azure_transit_we_egress" {
   ha_gw                         = false
   resource_group                = azurerm_resource_group.azr-transit-r1-1-rg.name
   enable_egress_transit_firenet = false
-  //instance_size = "Standard_B2ms"
+  instance_size = "Standard_D2s_v3"
 }
 
 output "transit_we_egress" {
