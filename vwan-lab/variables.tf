@@ -13,6 +13,19 @@ variable "ssh_public_key" {
   description = "Linux SSH public key"
 }
 
+data "dns_a_record_set" "controller_ip" {
+  host = var.controller_fqdn
+}
+
+variable "controller_fqdn" {
+  description = "FQDN or IP of the Aviatrix Controller"
+}
+
+variable "admin_password" {
+  sensitive   = true
+  description = "Admin password"
+}
+
 locals {
   data = jsondecode(file("${path.module}/vwan-configuration.json"))
 }

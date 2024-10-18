@@ -20,24 +20,24 @@ resource "azurerm_virtual_hub" "r1-vhubs" {
   sku                 = "Standard"
 }
 
-# resource "azurerm_vpn_gateway" "r1-vpn-gw" {
-#   count               = length(local.data.r1_vpns)
-#   location            = local.data.r1_vhubs[count.index].hub_location
-#   name                = "${local.data.r1_vhubs[count.index].hub_location_short}-vpn-${count.index}"
-#   resource_group_name = azurerm_resource_group.rg.name
-#   virtual_hub_id      = azurerm_virtual_hub.r1-vhubs[local.data.r1_vpns[count.index].hub_index].id
-#   bgp_settings {
-#     peer_weight = 100
-#     asn         = 65515
-#     instance_0_bgp_peering_address {
-#       custom_ips = ["169.254.21.1", "169.254.21.9"]
-#     }
-#     instance_1_bgp_peering_address {
-#       custom_ips = ["169.254.21.5", "169.254.21.13"]
-#     }
-#   }
-#   depends_on = [azurerm_virtual_hub.r1-vhubs]
-# }
+resource "azurerm_vpn_gateway" "r1-vpn-gw" {
+  count               = length(local.data.r1_vpns)
+  location            = local.data.r1_vhubs[count.index].hub_location
+  name                = "${local.data.r1_vhubs[count.index].hub_location_short}-vpn-${count.index}"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_hub_id      = azurerm_virtual_hub.r1-vhubs[local.data.r1_vpns[count.index].hub_index].id
+  bgp_settings {
+    peer_weight = 100
+    asn         = 65515
+    instance_0_bgp_peering_address {
+      custom_ips = ["169.254.21.1", "169.254.21.9"]
+    }
+    instance_1_bgp_peering_address {
+      custom_ips = ["169.254.21.5", "169.254.21.13"]
+    }
+  }
+  depends_on = [azurerm_virtual_hub.r1-vhubs]
+}
 
 resource "azurerm_virtual_hub_connection" "spoke-attachment" {
   count                     = length(local.data.r1_spoke_attachments)
@@ -51,24 +51,24 @@ data "tfe_outputs" "dataplane" {
   workspace    = "aviatrix-shared"
 }
 
-# resource "azurerm_virtual_hub_connection" "aviatrix-attachment" {
-#   count                     = length(local.data.r1_aviatrix_attachments)
-#   name                      = "avx-west-europe-transit"
-#   remote_virtual_network_id = data.tfe_outputs.dataplane.values.transit_we.vpc.azure_vnet_resource_id
-#   virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_aviatrix_attachments[count.index].vhub_index].id
-# }
+resource "azurerm_virtual_hub_connection" "aviatrix-attachment" {
+  count                     = length(local.data.r1_aviatrix_attachments)
+  name                      = "avx-west-europe-transit"
+  remote_virtual_network_id = data.tfe_outputs.dataplane.values.transit_we.vpc.azure_vnet_resource_id
+  virtual_hub_id            = azurerm_virtual_hub.r1-vhubs[local.data.r1_aviatrix_attachments[count.index].vhub_index].id
+}
 
-# resource "azurerm_virtual_hub_bgp_connection" "bgp-aviatrix" {
-#   count                         = length(local.data.r1_bgp_peers)
-#   name                          = local.data.r1_bgp_peers[count.index].name
-#   peer_asn                      = local.data.r1_bgp_peers[count.index].asn
-#   peer_ip                       = local.data.r1_bgp_peers[count.index].peer_ip
-#   virtual_hub_id                = azurerm_virtual_hub.r1-vhubs[local.data.r1_bgp_peers[count.index].hub_index].id
-#   virtual_network_connection_id = azurerm_virtual_hub_connection.aviatrix-attachment[local.data.r1_bgp_peers[count.index].attachment_index].id
-#   depends_on = [
-#     azurerm_virtual_hub_connection.spoke-attachment
-#   ]
-# }
+resource "azurerm_virtual_hub_bgp_connection" "bgp-aviatrix" {
+  count                         = length(local.data.r1_bgp_peers)
+  name                          = local.data.r1_bgp_peers[count.index].name
+  peer_asn                      = local.data.r1_bgp_peers[count.index].asn
+  peer_ip                       = local.data.r1_bgp_peers[count.index].peer_ip
+  virtual_hub_id                = azurerm_virtual_hub.r1-vhubs[local.data.r1_bgp_peers[count.index].hub_index].id
+  virtual_network_connection_id = azurerm_virtual_hub_connection.aviatrix-attachment[local.data.r1_bgp_peers[count.index].attachment_index].id
+  depends_on = [
+    azurerm_virtual_hub_connection.aviatrix-attachment
+  ]
+}
 
 resource "azurerm_virtual_network" "spoke" {
   count               = length(local.data.r1_spokes)
@@ -97,4 +97,23 @@ module "vms" {
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.spoke_subnet[count.index].id
   admin_ssh_key       = var.ssh_public_key
+}
+
+resource "aviatrix_spoke_external_device_conn" "transit-vwan-bgp" {
+  vpc_id            = data.tfe_outputs.dataplane.values.transit_we.vpc.vpc_id
+  connection_name   = "to-vwan"
+  gw_name           = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  connection_type   = "bgp"
+  tunnel_protocol   = "LAN"
+  bgp_local_as_num  = "65007"
+  bgp_remote_as_num = "65515"
+  remote_lan_ip     = "10.100.0.69"
+  local_lan_ip      = "10.10.0.68"
+  # remote_vpc_name          = "${azurerm_virtual_network.azure-spoke-sdwan-r1.name}:${azurerm_resource_group.azr-r1-spoke-sdwan-rg.name}:${data.azurerm_subscription.current.subscription_id}"
+  remote_vpc_name          = "HV_we-vhub-0_97d830e0-0e19-43da-9d9b-28b993180673:RG_we-vhub-0_52bd294f-b7f1-4ac0-b179-da3550e543d5:fd322320-1d93-4a21-807d-8737c6c436b5"
+  backup_local_lan_ip      = "10.10.0.76"
+  backup_remote_lan_ip     = "10.100.0.68"
+  backup_bgp_remote_as_num = "65515"
+  ha_enabled               = true
+  depends_on               = [azurerm_virtual_hub_connection.aviatrix-attachment]
 }
