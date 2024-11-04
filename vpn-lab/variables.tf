@@ -21,3 +21,26 @@ variable "workspace_key" {
 
 variable "vnet_address_space" {
 }
+
+variable "ferme_psk" {
+  description = "Pre shared key of Ferme tunnel"
+  sensitive   = true
+}
+
+variable "admin_username" {
+  default     = "admin"
+  description = "administrator username"
+}
+
+variable "admin_password" {
+  sensitive   = true
+  description = "Admin password"
+}
+
+variable "controller_fqdn" {
+  description = "FQDN or IP of the Aviatrix Controller"
+}
+
+variable "azure_account" {
+  description = "CSP account onboarder on the controller"
+}

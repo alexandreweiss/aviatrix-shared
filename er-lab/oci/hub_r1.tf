@@ -48,6 +48,20 @@ resource "azurerm_subnet" "ars-subnet" {
   virtual_network_name = azurerm_virtual_network.er-vn.name
 }
 
+resource "azurerm_subnet" "avx-gw-subnet" {
+  address_prefixes     = ["10.90.0.96/28"]
+  name                 = "avx-gw-subnet"
+  resource_group_name  = azurerm_resource_group.oci-lab-r1.name
+  virtual_network_name = azurerm_virtual_network.er-vn.name
+}
+
+resource "azurerm_subnet" "avx-hagw-subnet" {
+  address_prefixes     = ["10.90.0.112/28"]
+  name                 = "avx-hagw-subnet"
+  resource_group_name  = azurerm_resource_group.oci-lab-r1.name
+  virtual_network_name = azurerm_virtual_network.er-vn.name
+}
+
 ## Creation of ER GW
 module "er-gw" {
   source = "github.com/alexandreweiss/misc-tf-modules.git/er-gateway"

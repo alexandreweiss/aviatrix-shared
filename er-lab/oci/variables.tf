@@ -34,6 +34,20 @@ variable "ssh_public_key" {
   description = "SSH public key for VM administration"
 }
 
+variable "admin_password" {
+  sensitive   = true
+  description = "Admin password"
+}
+
+variable "controller_fqdn" {
+  description = "FQDN or IP of the Aviatrix Controller"
+  sensitive   = true
+}
+
+variable "azure_account" {
+  description = "CSP account onboarder on the controller"
+}
+
 variable "deploy_er_connection" {
   description = "deploy ER connection"
   type        = bool
@@ -45,3 +59,10 @@ variable "deploy_er_circuit" {
   type        = bool
   default     = true
 }
+
+variable "deploy_ars" {
+  description = "deploy ARS"
+  type        = bool
+  default     = false
+}
+

@@ -1,4 +1,9 @@
 terraform {
+  required_providers {
+    aviatrix = {
+      source = "aviatrixsystems/aviatrix"
+    }
+  }
   cloud {
     organization = "ananableu"
     workspaces {

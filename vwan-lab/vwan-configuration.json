@@ -58,9 +58,5 @@
             "hub_location_short": "we"
         }
     ],
-    "r1_vpns": [
-        {
-            "hub_index": 0
-        }
-    ]
+    "r1_vpns": []
 }

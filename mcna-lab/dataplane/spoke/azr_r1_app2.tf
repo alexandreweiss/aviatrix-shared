@@ -86,17 +86,18 @@ resource "azurerm_container_group" "app2_container_group" {
   os_type         = "Linux"
 }
 
-resource "aviatrix_smart_group" "app2" {
-  name = "${var.application_2}-app"
-  selector {
-    match_expressions {
-      cidr = azurerm_subnet.r1-azure-spoke-app2-aci-subnet.address_prefixes[0]
-    }
-    match_expressions {
-      cidr = aws_subnet.this["front-a"].cidr_block
-    }
-  }
-}
+# COMMENT OUT IF AWS IS NOT DEPLOYED
+# resource "aviatrix_smart_group" "app2" {
+#   name = "${var.application_2}-app"
+#   selector {
+#     match_expressions {
+#       cidr = azurerm_subnet.r1-azure-spoke-app2-aci-subnet.address_prefixes[0]
+#     }
+#     match_expressions {
+#       cidr = aws_subnet.this["front-a"].cidr_block
+#     }
+#   }
+# }
 
 resource "aviatrix_web_group" "allowed_domains" {
   name = "allowed-domains"

@@ -18,5 +18,8 @@ terraform {
       source  = "oracle/oci"
       version = "6.12.0"
     }
+    aviatrix = {
+      source = "aviatrixsystems/aviatrix"
+    }
   }
 }

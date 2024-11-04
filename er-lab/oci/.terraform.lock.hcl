@@ -1,6 +1,27 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
+provider "registry.terraform.io/aviatrixsystems/aviatrix" {
+  version = "3.2.0"
+  hashes = [
+    "h1:ultYRiIJQoRCL1m022NaDtR4j5gvXBSraD++aZiWEfY=",
+    "zh:04dec8123152a9f04a49e313ac2b995bea333bf3d9ac7ec8cd8b7fb79b2ce44a",
+    "zh:6029788007d790653b12ad188bddea40926628dc3b7a3e937b70449eff2f3a6d",
+    "zh:70253111c4a4af5686ecd304ffb80a66ae97ff90fb09dffd6474d634f7338660",
+    "zh:722457eaba18302a0c054f914fa44545c87f7b226d27b303b8c8782baf0a2ca4",
+    "zh:83d0744dfb8b09d51dbd5db017c6a3eed4bb36cca95faf7334cb136d1812692c",
+    "zh:8a53f691e9384a308c03222cc685ccf7ad2dd1d18cbf5402e8664ad9fd0b696e",
+    "zh:8dc7d2b72da7f410d6d30638ea5203085abd267a079c3628a6f411c396a3a7ff",
+    "zh:91ffd3cf3cb9e892a2e4513aaa076b8dfcb31f9ec64dbd15474b1a8115d291dd",
+    "zh:ba0bbe2ba0734766e1e70a8695ab8a42368341d8230a8ece7986e059c20d917d",
+    "zh:c28bddaf06c432383e620b24b690d1e5197ce2e1a1f18aa3eb5f3b0aba980e60",
+    "zh:c3ba049afadb1053b817f391ecff7f2ba3ba7fcc788c6685f4c3e8092a2b5ac1",
+    "zh:d6ae4a1cbe9b673f9735bdb82450afd538dfcd2d274755fb0ed7b6580383c355",
+    "zh:d9b534d7acee02d66b8b8c3dba1658123f9ac6fa2597c50318aea9c6c7830b59",
+    "zh:f76eb4a812d2782f7994aa6ad68314f06cc092ad512b7d251bba426379fd6859",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/azurerm" {
   version = "4.4.0"
   hashes = [
