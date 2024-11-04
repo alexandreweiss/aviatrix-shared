@@ -47,6 +47,34 @@ resource "azurerm_subnet" "r1-azure-spoke-aoi-pe-subnet" {
   virtual_network_name = azurerm_virtual_network.azure-spoke-oai-r1.name
 }
 
+resource "azurerm_subnet" "r1-azure-spoke-aoi-dns-inbound-subnet" {
+  address_prefixes     = ["172.19.10.112/28"]
+  name                 = "dns-inbound-subnet"
+  resource_group_name  = azurerm_resource_group.r1-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-oai-r1.name
+  delegation {
+    name    = "Microsoft.Network/dnsResolvers"
+    service_delegation {
+      name    = "Microsoft.Network/dnsResolvers"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    }
+  }
+}
+
+resource "azurerm_subnet" "r1-azure-spoke-aoi-dns-outbound-subnet" {
+  address_prefixes     = ["172.19.10.128/28"]
+  name                 = "dns-outbound-subnet"
+  resource_group_name  = azurerm_resource_group.r1-rg.name
+  virtual_network_name = azurerm_virtual_network.azure-spoke-oai-r1.name
+  delegation {
+    name    = "Microsoft.Network/dnsResolvers"
+    service_delegation {
+      name    = "Microsoft.Network/dnsResolvers"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    }
+  }
+}
+
 # Create an OpenAI Service named "aviatrix-ignite" in Azure Region R1
 resource "azurerm_cognitive_account" "aviatrix-ignite" {
   name                          = "aviatrix-ignite"
@@ -109,6 +137,15 @@ resource "azurerm_private_endpoint" "oai-srv-pe" {
   }
 }
 
+# Create a private DNS A record for openai service in Azure Region R1 in the private DNS zone "privatelink.openai.azure.com"
+resource "azurerm_private_dns_a_record" "oai-srv-dns" {
+  name                = azurerm_cognitive_account.aviatrix-ignite.name
+  zone_name           = azurerm_private_dns_zone.openai_private_dns_zone.name
+  resource_group_name = azurerm_resource_group.r1-rg.name
+  ttl                 = 300
+  records             = [azurerm_private_endpoint.oai-srv-pe.private_service_connection.0.private_ip_address]
+}
+
 # Create OpenAI search service named "aviatrix-ignite-search" in Azure Region R1 with system assigned identity enabled
 resource "azurerm_search_service" "aviatrix-ignite-search" {
   location            = var.azure_r1_location
@@ -118,17 +155,18 @@ resource "azurerm_search_service" "aviatrix-ignite-search" {
   identity {
     type = "SystemAssigned"
   }
+  public_network_access_enabled = false
 }
 
 # Create private DNS zone from OPenAI search service in Azure Region R1
 resource "azurerm_private_dns_zone" "openai_search_private_dns_zone" {
-  name                = "privatelink.search.azure.com"
+  name                = "privatelink.search.windows.net"
   resource_group_name = azurerm_resource_group.r1-rg.name
 }
 
 # link it to the virtual network "azr-${var.azure_r1_location_short}-spoke-oai-vn"
 resource "azurerm_private_dns_zone_virtual_network_link" "openai_search_private_dns_zone_link" {
-  name                  = "privatelink.search.azure.com"
+  name                  = "privatelink.search.windows.net"
   resource_group_name   = azurerm_resource_group.r1-rg.name
   private_dns_zone_name = azurerm_private_dns_zone.openai_search_private_dns_zone.name
   virtual_network_id    = azurerm_virtual_network.azure-spoke-oai-r1.id
@@ -148,6 +186,15 @@ resource "azurerm_private_endpoint" "oai-search-srv-pe" {
   }
 }
 
+# Create a private DNS A record for openai search service in Azure Region R1 in the private DNS zone "privatelink.search.azure.com"
+resource "azurerm_private_dns_a_record" "oai-search-srv-dns" {
+  name                = azurerm_search_service.aviatrix-ignite-search.name
+  zone_name           = azurerm_private_dns_zone.openai_search_private_dns_zone.name
+  resource_group_name = azurerm_resource_group.r1-rg.name
+  ttl                 = 300
+  records             = [azurerm_private_endpoint.oai-search-srv-pe.private_service_connection.0.private_ip_address]
+}
+
 # Generate random number using values between 00000 and 99999
 resource "random_integer" "random" {
   min = 0
@@ -163,10 +210,25 @@ resource "azurerm_storage_account" "avx-ignite-sa" {
   resource_group_name      = azurerm_resource_group.r1-rg.name
 }
 
+# Create a container named "oai-data" in the storage account "avx-ignite-sa"
+resource "azurerm_storage_container" "oai-data" {
+  name                  = "oai-data"
+  storage_account_name  = azurerm_storage_account.avx-ignite-sa.name
+  container_access_type = "private"
+}
+
 # Create private DNS zone for the storage account in Azure Region R1
 resource "azurerm_private_dns_zone" "avx-ignite-sa-private-dns-zone" {
   name                = "privatelink.blob.core.windows.net"
   resource_group_name = azurerm_resource_group.r1-rg.name
+}
+
+# link it to the virtual network "azr-${var.azure_r1_location_short}-spoke-oai-vn"
+resource "azurerm_private_dns_zone_virtual_network_link" "avx-ignite-sa-private-dns-zone-link" {
+  name                  = "privatelink.blob.core.windows.net"
+  resource_group_name   = azurerm_resource_group.r1-rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.avx-ignite-sa-private-dns-zone.name
+  virtual_network_id    = azurerm_virtual_network.azure-spoke-oai-r1.id
 }
 
 # Create a private endpoint for that storage account in Azure Region R1 in the "pe-subnet" with the name "avx-ignite-sa-pe" registered in private dns zone "privatelink.blob.core.windows.net"
@@ -190,4 +252,51 @@ resource "azurerm_private_dns_a_record" "avx-ignite-sa-dns" {
   resource_group_name = azurerm_resource_group.r1-rg.name
   ttl                 = 300
   records             = [azurerm_private_endpoint.avx-ignite-sa-pe.private_service_connection.0.private_ip_address]
+}
+
+# Create an Azure Private DNS resolver in Azure Region R1 with the name "azr-${var.azure_r1_location_short}-private-dns-resolver"
+resource "azurerm_private_dns_resolver" "r1-private-dns-resolver" {
+  location            = var.azure_r1_location
+  name                = "azr-${var.azure_r1_location_short}-private-dns-resolver"
+  resource_group_name = azurerm_resource_group.r1-rg.name
+  virtual_network_id = azurerm_virtual_network.azure-spoke-oai-r1.id
+}
+
+resource "azurerm_private_dns_resolver_inbound_endpoint" "dns-inbound" {
+  name               = "dns-inbound"
+  location = var.azure_r1_location
+  private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
+  ip_configurations {
+    private_ip_allocation_method = "Dynamic"
+    subnet_id = azurerm_subnet.r1-azure-spoke-aoi-dns-inbound-subnet.id
+  }
+}
+
+resource "azurerm_private_dns_resolver_outbound_endpoint" "dns-outbound" {
+  name               = "dns-outbound"
+  location = var.azure_r1_location
+  subnet_id = azurerm_subnet.r1-azure-spoke-aoi-dns-outbound-subnet.id
+  private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
+}
+
+## Create role assignments
+
+# Create a role assignment for the OpenAI search to access the storage account using its managed identity
+resource "azurerm_role_assignment" "oai-search-sa-access" {
+  principal_id = azurerm_search_service.aviatrix-ignite-search.identity.0.principal_id
+  role_definition_name = "Storage Blob Data Reader"
+  scope = azurerm_storage_account.avx-ignite-sa.id
+}
+
+# Create a role assignement for the OpenAI service to access the search service using its managed identity
+resource "azurerm_role_assignment" "oai-srv-search-access-0" {
+  principal_id = azurerm_cognitive_account.aviatrix-ignite.identity.0.principal_id
+  role_definition_name = "Search Service Contributor"
+  scope = azurerm_search_service.aviatrix-ignite-search.id
+}
+
+resource "azurerm_role_assignment" "oai-srv-search-access-1" {
+  principal_id = azurerm_cognitive_account.aviatrix-ignite.identity.0.principal_id
+  role_definition_name = "Search Index Data Reader"
+  scope = azurerm_search_service.aviatrix-ignite-search.id
 }

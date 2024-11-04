@@ -8,6 +8,7 @@ variable "azure_r1_location_short" {
   default     = "frc"
 }
 
+
 # variable "ssh_public_key" {
 #   sensitive   = true
 #   description = "Linux SSH public key"
@@ -17,11 +18,15 @@ variable "azure_r1_location_short" {
 #   host = var.controller_fqdn
 # }
 
-# variable "controller_fqdn" {
-#   description = "FQDN or IP of the Aviatrix Controller"
-# }
+variable "controller_fqdn" {
+  description = "FQDN or IP of the Aviatrix Controller"
+}
 
-# variable "admin_password" {
-#   sensitive   = true
-#   description = "Admin password"
-# }
+variable "admin_password" {
+  sensitive   = true
+  description = "Admin password"
+}
+
+variable "admin_username" {
+  description = "Admin username"
+}
