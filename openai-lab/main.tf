@@ -68,6 +68,7 @@ resource "azurerm_cognitive_deployment" "aviatrix" {
   model {
     format = "OpenAI"
     name   = "gpt-4"
+    version = "0613"
   }
   sku {
     name = "Standard"
@@ -180,4 +181,13 @@ resource "azurerm_private_endpoint" "avx-ignite-sa-pe" {
     private_connection_resource_id = azurerm_storage_account.avx-ignite-sa.id
     subresource_names              = ["blob"]
   }
+}
+
+# Create a private DNS A record for the storage account in Azure Region R1 in the private DNS zone "privatelink.blob.core.windows.net"
+resource "azurerm_private_dns_a_record" "avx-ignite-sa-dns" {
+  name                = azurerm_storage_account.avx-ignite-sa.name
+  zone_name           = azurerm_private_dns_zone.avx-ignite-sa-private-dns-zone.name
+  resource_group_name = azurerm_resource_group.r1-rg.name
+  ttl                 = 300
+  records             = [azurerm_private_endpoint.avx-ignite-sa-pe.private_service_connection.0.private_ip_address]
 }
