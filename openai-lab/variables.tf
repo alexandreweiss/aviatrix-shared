@@ -8,6 +8,9 @@ variable "azure_r1_location_short" {
   default     = "frc"
 }
 
+variable "azure_account" {
+  description = "Azure account name"
+}
 
 # variable "ssh_public_key" {
 #   sensitive   = true

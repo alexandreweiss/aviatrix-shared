@@ -38,6 +38,13 @@ resource "azurerm_subnet" "r1-azure-spoke-aoi-webapp-subnet" {
   name                 = "webapp-subnet"
   resource_group_name  = azurerm_resource_group.r1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-oai-r1.name
+  delegation {
+    name = "delegation"
+    service_delegation {
+      name    = "Microsoft.Web/serverFarms"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
 }
 
 resource "azurerm_subnet" "r1-azure-spoke-aoi-pe-subnet" {
@@ -53,7 +60,7 @@ resource "azurerm_subnet" "r1-azure-spoke-aoi-dns-inbound-subnet" {
   resource_group_name  = azurerm_resource_group.r1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-oai-r1.name
   delegation {
-    name    = "Microsoft.Network/dnsResolvers"
+    name = "Microsoft.Network/dnsResolvers"
     service_delegation {
       name    = "Microsoft.Network/dnsResolvers"
       actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
@@ -67,7 +74,7 @@ resource "azurerm_subnet" "r1-azure-spoke-aoi-dns-outbound-subnet" {
   resource_group_name  = azurerm_resource_group.r1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-oai-r1.name
   delegation {
-    name    = "Microsoft.Network/dnsResolvers"
+    name = "Microsoft.Network/dnsResolvers"
     service_delegation {
       name    = "Microsoft.Network/dnsResolvers"
       actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
@@ -94,8 +101,8 @@ resource "azurerm_cognitive_deployment" "aviatrix" {
   cognitive_account_id = azurerm_cognitive_account.aviatrix-ignite.id
   name                 = "aviatrix-ignite-gpt-4-deployment"
   model {
-    format = "OpenAI"
-    name   = "gpt-4"
+    format  = "OpenAI"
+    name    = "gpt-4"
     version = "0613"
   }
   sku {
@@ -156,6 +163,8 @@ resource "azurerm_search_service" "aviatrix-ignite-search" {
     type = "SystemAssigned"
   }
   public_network_access_enabled = false
+  local_authentication_enabled  = false
+
 }
 
 # Create private DNS zone from OPenAI search service in Azure Region R1
@@ -259,23 +268,23 @@ resource "azurerm_private_dns_resolver" "r1-private-dns-resolver" {
   location            = var.azure_r1_location
   name                = "azr-${var.azure_r1_location_short}-private-dns-resolver"
   resource_group_name = azurerm_resource_group.r1-rg.name
-  virtual_network_id = azurerm_virtual_network.azure-spoke-oai-r1.id
+  virtual_network_id  = azurerm_virtual_network.azure-spoke-oai-r1.id
 }
 
 resource "azurerm_private_dns_resolver_inbound_endpoint" "dns-inbound" {
-  name               = "dns-inbound"
-  location = var.azure_r1_location
+  name                    = "dns-inbound"
+  location                = var.azure_r1_location
   private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
   ip_configurations {
     private_ip_allocation_method = "Dynamic"
-    subnet_id = azurerm_subnet.r1-azure-spoke-aoi-dns-inbound-subnet.id
+    subnet_id                    = azurerm_subnet.r1-azure-spoke-aoi-dns-inbound-subnet.id
   }
 }
 
 resource "azurerm_private_dns_resolver_outbound_endpoint" "dns-outbound" {
-  name               = "dns-outbound"
-  location = var.azure_r1_location
-  subnet_id = azurerm_subnet.r1-azure-spoke-aoi-dns-outbound-subnet.id
+  name                    = "dns-outbound"
+  location                = var.azure_r1_location
+  subnet_id               = azurerm_subnet.r1-azure-spoke-aoi-dns-outbound-subnet.id
   private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
 }
 
@@ -283,20 +292,20 @@ resource "azurerm_private_dns_resolver_outbound_endpoint" "dns-outbound" {
 
 # Create a role assignment for the OpenAI search to access the storage account using its managed identity
 resource "azurerm_role_assignment" "oai-search-sa-access" {
-  principal_id = azurerm_search_service.aviatrix-ignite-search.identity.0.principal_id
+  principal_id         = azurerm_search_service.aviatrix-ignite-search.identity.0.principal_id
   role_definition_name = "Storage Blob Data Reader"
-  scope = azurerm_storage_account.avx-ignite-sa.id
+  scope                = azurerm_storage_account.avx-ignite-sa.id
 }
 
 # Create a role assignement for the OpenAI service to access the search service using its managed identity
 resource "azurerm_role_assignment" "oai-srv-search-access-0" {
-  principal_id = azurerm_cognitive_account.aviatrix-ignite.identity.0.principal_id
+  principal_id         = azurerm_cognitive_account.aviatrix-ignite.identity.0.principal_id
   role_definition_name = "Search Service Contributor"
-  scope = azurerm_search_service.aviatrix-ignite-search.id
+  scope                = azurerm_search_service.aviatrix-ignite-search.id
 }
 
 resource "azurerm_role_assignment" "oai-srv-search-access-1" {
-  principal_id = azurerm_cognitive_account.aviatrix-ignite.identity.0.principal_id
+  principal_id         = azurerm_cognitive_account.aviatrix-ignite.identity.0.principal_id
   role_definition_name = "Search Index Data Reader"
-  scope = azurerm_search_service.aviatrix-ignite-search.id
+  scope                = azurerm_search_service.aviatrix-ignite-search.id
 }
