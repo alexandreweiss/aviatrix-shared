@@ -1,6 +1,6 @@
 variable "azure_r1_location" {
   description = "Region 1 location"
-  default     = "francecentral"
+  default     = "France Central"
 }
 
 variable "azure_r1_location_short" {

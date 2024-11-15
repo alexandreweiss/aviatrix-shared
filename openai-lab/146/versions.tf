@@ -6,17 +6,18 @@ terraform {
   }
 }
 
+data "azurerm_subscription" "current" {}
+
 provider "azurerm" {
   features {
 
   }
-  subscription_id = "546d1d9f-287b-476d-b8e7-7e5c34831379"
+  subscription_id = "ff71e72e-9667-4783-a17d-e30f52285d3e"
 }
 
 provider "aviatrix" {
-  # controller_ip           = data.dns_a_record_set.controller_ip.addrs[0]
-  controller_ip           = "107.20.161.165"
   username                = var.admin_username
   password                = var.admin_password
+  controller_ip           = data.dns_a_record_set.controller_ip.addrs[0]
   skip_version_validation = true
 }

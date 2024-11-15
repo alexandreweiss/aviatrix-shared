@@ -12,10 +12,22 @@ module "azr_r1_spoke_oai" {
   gw_subnet        = azurerm_subnet.r1-azure-spoke-oai-gw-subnet.address_prefixes[0]
   use_existing_vpc = true
   region           = var.azure_r1_location
+  network_domain   = "azure-oai"
   account          = var.azure_account
   transit_gw       = "azure-transit"
-  attached         = false
+  attached         = true
   single_ip_snat   = false
   single_az_ha     = false
+  ha_gw            = false
   resource_group   = azurerm_resource_group.r1-rg.name
 }
+
+# resource "aviatrix_segmentation_network_domain_association" "azure-oai-domain-association" {
+#   network_domain_name = aviatrix_segmentation_network_domain.azure-oai-domain.domain_name
+#   attachment_name     = module.azr_r1_spoke_oai.spoke_gateway.gw_name
+# }
+
+# resource "aviatrix_segmentation_network_domain_connection_policy" "azure-oai-aws-prod" {
+#   domain_name_1 = "azure-oai"
+#   domain_name_2 = "aws-prod"
+# }
