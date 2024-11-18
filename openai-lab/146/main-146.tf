@@ -238,12 +238,12 @@ resource "azurerm_private_dns_zone" "avx-ignite-sa-private-dns-zone" {
 }
 
 # link it to the virtual network "azr-${var.azure_r1_location_short}-spoke-oai-vn"
-# resource "azurerm_private_dns_zone_virtual_network_link" "avx-ignite-sa-private-dns-zone-link" {
-#   name                  = "privatelink.blob.core.windows.net"
-#   resource_group_name   = azurerm_resource_group.r1-rg.name
-#   private_dns_zone_name = azurerm_private_dns_zone.avx-ignite-sa-private-dns-zone.name
-#   virtual_network_id    = azurerm_virtual_network.azure-spoke-oai-r1.id
-# }
+resource "azurerm_private_dns_zone_virtual_network_link" "avx-ignite-sa-private-dns-zone-link" {
+  name                  = "privatelink.blob.core.windows.net"
+  resource_group_name   = azurerm_resource_group.r1-rg.name
+  private_dns_zone_name = azurerm_private_dns_zone.avx-ignite-sa-private-dns-zone.name
+  virtual_network_id    = azurerm_virtual_network.azure-spoke-oai-r1.id
+}
 
 # Create a private endpoint for that storage account in Azure Region R1 in the "pe-subnet" with the name "avx-ignite-sa-pe" registered in private dns zone "privatelink.blob.core.windows.net"
 resource "azurerm_private_endpoint" "avx-ignite-sa-pe" {
@@ -286,12 +286,12 @@ resource "azurerm_private_dns_resolver_inbound_endpoint" "dns-inbound" {
   }
 }
 
-resource "azurerm_private_dns_resolver_outbound_endpoint" "dns-outbound" {
-  name                    = "dns-outbound"
-  location                = var.azure_r1_location
-  subnet_id               = azurerm_subnet.r1-azure-spoke-aoi-dns-outbound-subnet.id
-  private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
-}
+# resource "azurerm_private_dns_resolver_outbound_endpoint" "dns-outbound" {
+#   name                    = "dns-outbound"
+#   location                = var.azure_r1_location
+#   subnet_id               = azurerm_subnet.r1-azure-spoke-aoi-dns-outbound-subnet.id
+#   private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
+# }
 
 ## Create role assignments
 

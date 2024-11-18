@@ -87,11 +87,11 @@ resource "azurerm_subnet" "r1-azure-spoke-aoi-dns-outbound-subnet" {
 # Create an OpenAI Service named "aviatrix-ignite" in Azure Region R1
 resource "azurerm_cognitive_account" "aviatrix-ignite" {
   name                          = "aviatrix-ignite-147"
-  location                      = var.azure_r1_location
+  location                      = var.azure_oai_location
   resource_group_name           = azurerm_resource_group.r1-rg.name
   kind                          = "OpenAI"
   sku_name                      = "S0"
-  custom_subdomain_name         = "aviatrix-ignite-${var.azure_oai_location_short}-146"
+  custom_subdomain_name         = "aviatrix-ignite-${var.azure_oai_location_short}-147"
   public_network_access_enabled = false
   identity {
     type = "SystemAssigned"
