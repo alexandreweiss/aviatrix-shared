@@ -25,12 +25,12 @@ module "azr_r1_spoke_oai" {
 #   domain_name = "Azure-oai"
 # }
 
-# resource "aviatrix_segmentation_network_domain_association" "azure-oai-domain-association" {
-#   network_domain_name = aviatrix_segmentation_network_domain.azure-oai-domain.domain_name
-#   attachment_name     = module.azr_r1_spoke_oai.spoke_gateway.gw_name
-# }
+resource "aviatrix_segmentation_network_domain_association" "azure-oai-domain-association" {
+  network_domain_name = "azure-oai"
+  attachment_name     = module.azr_r1_spoke_oai.spoke_gateway.gw_name
+}
 
-# resource "aviatrix_segmentation_network_domain_connection_policy" "azure-oai-aws-prod" {
-#   domain_name_1 = "azure-oai"
-#   domain_name_2 = "aws-prod"
-# }
+resource "aviatrix_segmentation_network_domain_connection_policy" "azure-oai-aws-prod" {
+  domain_name_1 = "azure-oai"
+  domain_name_2 = "aws-prod"
+}

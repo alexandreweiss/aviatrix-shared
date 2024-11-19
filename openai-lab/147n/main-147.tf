@@ -150,7 +150,7 @@ resource "azurerm_private_endpoint" "oai-srv-pe" {
 
 # Create a private DNS A record for openai service in Azure Region R1 in the private DNS zone "privatelink.openai.azure.com"
 resource "azurerm_private_dns_a_record" "oai-srv-dns" {
-  name                = azurerm_cognitive_account.aviatrix-ignite.name
+  name                = azurerm_cognitive_account.aviatrix-ignite.custom_subdomain_name
   zone_name           = azurerm_private_dns_zone.openai_private_dns_zone.name
   resource_group_name = azurerm_resource_group.r1-rg.name
   ttl                 = 300
