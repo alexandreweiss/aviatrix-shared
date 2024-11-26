@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "azr-r1-spoke-app1-rg" {
 }
 
 resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
-  address_space       = ["10.10.2.0/23"]
+  address_space       = ["10.10.4.0/23"]
   location            = var.azure_r1_location
   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-vn"
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
@@ -18,21 +18,21 @@ resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
 
 # Comment out for HPE
 resource "azurerm_subnet" "r1-azure-spoke-app1-gw-subnet" {
-  address_prefixes     = ["10.10.2.0/26"]
+  address_prefixes     = ["10.10.4.0/26"]
   name                 = "avx-gw-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 }
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-subnet" {
-  address_prefixes     = ["10.10.2.64/26"]
+  address_prefixes     = ["10.10.4.64/26"]
   name                 = "avx-hagw-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 }
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet" {
-  address_prefixes     = ["10.10.2.128/28"]
+  address_prefixes     = ["10.10.4.128/28"]
   name                 = "avx-vm-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
@@ -57,7 +57,7 @@ resource "azurerm_route_table" "r1-azure-spoke-app1-vm-subnet-rt" {
 }
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet-2" {
-  address_prefixes     = ["10.10.2.144/28"]
+  address_prefixes     = ["10.10.4.144/28"]
   name                 = "avx-vm-subnet-2"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
@@ -65,7 +65,7 @@ resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet-2" {
 
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-aci-subnet" {
-  address_prefixes     = ["10.10.2.160/28"]
+  address_prefixes     = ["10.10.4.160/28"]
   name                 = "aci-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
@@ -145,10 +145,10 @@ module "azr_r1_spoke_app1" {
   # For HPE
   #hagw_subnet = "10.10.3.0/26"
   ###
-  region  = var.azure_r1_location
-  account = var.azure_account
-  # transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  attached = false
+  region     = var.azure_r1_location
+  account    = var.azure_account
+  transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  attached   = false
   # Must be enabled for HPE
   ha_gw = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name

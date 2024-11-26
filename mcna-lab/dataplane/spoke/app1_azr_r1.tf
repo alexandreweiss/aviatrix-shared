@@ -37,11 +37,11 @@ resource "azurerm_storage_share" "app1_aci_share" {
 resource "local_file" "app1_config_yaml" {
   filename = "app1-config.yaml"
   content = templatefile("${path.module}/app1_azr_r1_config.tpl",
-    { "customer_name"        = var.customer_name,
-      "application_2_ip"     = azurerm_container_group.app2_container_group.ip_address,
-      "application_2"        = var.application_2,
-      "application_1"        = var.application_1,
-      "application_2_aws_ip" = module.ec2_instance_linux.private_ip
+    { "customer_name"    = var.customer_name,
+      "application_2_ip" = azurerm_container_group.app2_container_group.ip_address,
+      "application_2"    = var.application_2,
+      "application_1"    = var.application_1,
+      "customer_website" = var.customer_website
     }
   )
 }
@@ -64,11 +64,11 @@ resource "azurerm_container_group" "app1_container_group" {
   depends_on          = [azurerm_subnet.r1-azure-spoke-app1-aci-subnet, azurerm_storage_share_file.app1_config_file]
 
   container {
-    name   = "gatus"
+    name = "gatus"
     # image  = "docker.io/aweiss4876/gatus-aviatrix:latest"
     image  = "aviatrixacr.azurecr.io/aviatrix/gatus-aviatrix:latest"
     cpu    = "1"
-    memory = "1.5"
+    memory = "1"
     ports {
       port     = 8080
       protocol = "TCP"
@@ -95,6 +95,26 @@ resource "aviatrix_smart_group" "app1" {
   selector {
     match_expressions {
       cidr = azurerm_subnet.r1-azure-spoke-app1-aci-subnet.address_prefixes[0]
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "azr-MyApp1-sg" {
+  name = "${var.application_1}-app-vnet"
+  selector {
+    match_expressions {
+      type = "vpc"
+      name = azurerm_virtual_network.azure-spoke-app1-r1.name
+    }
+  }
+}
+
+
+resource "aviatrix_smart_group" "azr-MyApp1-cidr-sg" {
+  name = "${var.application_1}-app-cidr"
+  selector {
+    match_expressions {
+      cidr = azurerm_virtual_network.azure-spoke-app1-r1.address_space[0]
     }
   }
 }

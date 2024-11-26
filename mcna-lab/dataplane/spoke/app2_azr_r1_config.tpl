@@ -8,7 +8,7 @@ endpoints:
     interval: 5s
     group: Applications
     conditions:
-      - "[STATUS] == 403"
+      - "[STATUS] == 200"
   - name : github.com/AviatrixSystems
     method: GET
     url: "https://github.com/AviatrixSystems"

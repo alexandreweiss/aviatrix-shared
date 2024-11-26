@@ -65,7 +65,7 @@ resource "azurerm_container_group" "app2_container_group" {
     # image  = "docker.io/aweiss4876/gatus-aviatrix:latest"
     image  = "aviatrixacr.azurecr.io/aviatrix/gatus-aviatrix:latest"
     cpu    = "1"
-    memory = "1.5"
+    memory = "1"
     ports {
       port     = 8080
       protocol = "TCP"
@@ -99,6 +99,25 @@ resource "azurerm_container_group" "app2_container_group" {
 #     }
 #   }
 # }
+
+resource "aviatrix_smart_group" "azr-MyApp2-sg" {
+  name = "yes${var.application_2}-app-vnet"
+  selector {
+    match_expressions {
+      type = "vpc"
+      name = azurerm_virtual_network.azure-spoke-app2-r1.name
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "azr-MyApp2-cidr-sg" {
+  name = "yes${var.application_2}-app-cidr"
+  selector {
+    match_expressions {
+      cidr = azurerm_virtual_network.azure-spoke-app2-r1.address_space[0]
+    }
+  }
+}
 
 resource "aviatrix_web_group" "allowed_domains" {
   name = "allowed-domains"
