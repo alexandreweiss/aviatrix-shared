@@ -4,7 +4,8 @@ variable "region" {
 }
 
 variable "gw_subnet" {
-  default = "100.64.1.0/24"
+  # default = "100.64.1.0/24"
+  default = "10.52.0.0/24"
 }
 
 variable "vpc_cidr" {
@@ -21,10 +22,10 @@ resource "aws_vpc" "this" {
 }
 
 #Add secondary CIDR
-resource "aws_vpc_ipv4_cidr_block_association" "this" {
-  vpc_id     = aws_vpc.this.id
-  cidr_block = var.gw_subnet
-}
+# resource "aws_vpc_ipv4_cidr_block_association" "this" {
+#   vpc_id     = aws_vpc.this.id
+#   cidr_block = var.gw_subnet
+# }
 
 #Create route tables
 resource "aws_route_table" "this" {
@@ -59,14 +60,16 @@ resource "aws_route" "this" {
 locals {
   subnets = {
     avx-gw-subnet = {
-      route_table       = "avx-gw",
-      cidr              = cidrsubnet(var.gw_subnet, 1, 0)
+      route_table = "avx-gw",
+      # cidr              = cidrsubnet(var.gw_subnet, 1, 0)
+      cidr              = cidrsubnet(var.gw_subnet, 4, 8)
       availability_zone = "a"
     },
     avx-hagw-subnet = {
-      route_table       = "avx-hagw",
-      cidr              = cidrsubnet(var.gw_subnet, 1, 1)
-      availability_zone = "b"
+      route_table = "avx-hagw",
+      # cidr              = cidrsubnet(var.gw_subnet, 1, 1)
+      cidr              = cidrsubnet(var.gw_subnet, 4, 9)
+      availability_zone = "c"
     },
     front-a = {
       route_table       = "rt-internal-a",
@@ -117,17 +120,18 @@ data "http" "myip" {
 
 #Create all subnets
 resource "aws_subnet" "this" {
-  for_each   = local.subnets
-  vpc_id     = aws_vpc.this.id
-  cidr_block = each.value.cidr
+  for_each          = local.subnets
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.availability_zone
 
   tags = {
     Name = each.key
   }
 
-  depends_on = [
-    aws_vpc_ipv4_cidr_block_association.this
-  ]
+  # depends_on = [
+  #   aws_vpc_ipv4_cidr_block_association.this
+  # ]
 }
 
 #Associate all subnets with designated route tables

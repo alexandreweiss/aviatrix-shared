@@ -19,23 +19,24 @@ resource "azurerm_virtual_network" "azure-spoke-app2-r1" {
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app2-rg.name
 }
 
-resource "azurerm_subnet" "r1-azure-spoke-app2-gw-subnet" {
-  # address_prefixes = ["192.168.16.0/26"]
-  address_prefixes = ["10.10.2.0/26"]
-  # address_prefixes     = ["192.168.166.0/26"]
-  name                 = "avx-gw-subnet"
-  resource_group_name  = azurerm_resource_group.azr-r1-spoke-app2-rg.name
-  virtual_network_name = azurerm_virtual_network.azure-spoke-app2-r1.name
-}
+# Comment out GW subnets if HPE is enabled
+# resource "azurerm_subnet" "r1-azure-spoke-app2-gw-subnet" {
+#   # address_prefixes = ["192.168.16.0/26"]
+#   address_prefixes = ["10.10.2.0/26"]
+#   # address_prefixes     = ["192.168.166.0/26"]
+#   name                 = "avx-gw-subnet"
+#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app2-rg.name
+#   virtual_network_name = azurerm_virtual_network.azure-spoke-app2-r1.name
+# }
 
-resource "azurerm_subnet" "r1-azure-spoke-app2-hagw-subnet" {
-  # address_prefixes = ["192.168.16.64/26"]
-  address_prefixes = ["10.10.2.64/26"]
-  # address_prefixes     = ["192.168.166.64/26"]
-  name                 = "avx-hagw-subnet"
-  resource_group_name  = azurerm_resource_group.azr-r1-spoke-app2-rg.name
-  virtual_network_name = azurerm_virtual_network.azure-spoke-app2-r1.name
-}
+# resource "azurerm_subnet" "r1-azure-spoke-app2-hagw-subnet" {
+#   # address_prefixes = ["192.168.16.64/26"]
+#   address_prefixes = ["10.10.2.64/26"]
+#   # address_prefixes     = ["192.168.166.64/26"]
+#   name                 = "avx-hagw-subnet"
+#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app2-rg.name
+#   virtual_network_name = azurerm_virtual_network.azure-spoke-app2-r1.name
+# }
 
 resource "azurerm_subnet" "r1-azure-spoke-app2-vm-subnet" {
   #address_prefixes     = ["192.168.16.128/28"]
@@ -144,22 +145,27 @@ module "azr_r1_spoke_app2" {
   cloud            = "Azure"
   name             = "azr-${var.azure_r1_location_short}-spoke-${var.application_2}-${var.customer_name}"
   vpc_id           = "${azurerm_virtual_network.azure-spoke-app2-r1.name}:${azurerm_resource_group.azr-r1-spoke-app2-rg.name}:${azurerm_virtual_network.azure-spoke-app2-r1.guid}"
-  gw_subnet        = azurerm_subnet.r1-azure-spoke-app2-gw-subnet.address_prefixes[0]
   use_existing_vpc = true
-  hagw_subnet      = azurerm_subnet.r1-azure-spoke-app2-hagw-subnet.address_prefixes[0]
-  region           = var.azure_r1_location
-  account          = var.azure_account
+  # # Comment when HPE is enabled
+  # gw_subnet        = azurerm_subnet.r1-azure-spoke-app2-gw-subnet.address_prefixes[0]
+  # hagw_subnet      = azurerm_subnet.r1-azure-spoke-app2-hagw-subnet.address_prefixes[0]
+  #  For HPE
+  gw_subnet   = "10.10.2.0/26"
+  hagw_subnet = "10.10.3.0/26"
+  region      = var.azure_r1_location
+  account     = var.azure_account
   # transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
   attached = false
-  ha_gw    = false
+  ha_gw    = true
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
   single_ip_snat = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app2-rg.name
   # local_as_number = 65013
-  enable_bgp = false
-  depends_on = [azurerm_subnet_route_table_association.app2-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app2-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app2-subnet-vm-rt-assoc]
-  //instance_size   = "Standard_D4s_v3"
+  enable_bgp    = false
+  depends_on    = [azurerm_subnet_route_table_association.app2-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app2-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app2-subnet-vm-rt-assoc]
+  instance_size = "Standard_D4s_v3"
+  insane_mode   = true
 }
 
 output "spoke_app2" {
@@ -212,11 +218,11 @@ module "we-app2-vm" {
 #   gw_name = module.azr_r1_spoke_app2.spoke_gateway.gw_name
 #   dnat_policy {
 #     src_cidr  = "0.0.0.0/0"
-#     dst_port  = "9515"
+#     dst_port  = "8080"
 #     protocol  = "tcp"
-#     dnat_ips  = "10.11.0.132"
-#     dnat_port = "9515"
-#     # connection = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+#     dnat_ips  = "10.10.2.164"
+#     dnat_port = "8080"
+#     connection = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
 #     interface = "eth0"
 #   }
 # }

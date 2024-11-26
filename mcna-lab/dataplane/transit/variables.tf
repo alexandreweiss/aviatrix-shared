@@ -51,6 +51,18 @@ variable "aws_r1_location_short" {
   type        = string
 }
 
+variable "oci_r1_location" {
+  default     = "eu-frankfurt-1"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "oci_r1_location_short" {
+  default     = "fra"
+  description = "region to deploy resources"
+  type        = string
+}
+
 variable "ferme_fqdn" {
   description = "FQDN of Ferme ISP"
 }
@@ -85,3 +97,6 @@ variable "gcp_account" {
   description = "CSP account onboarder on the controller"
 }
 
+variable "oci_account" {
+  description = "CSP account onboarder on the controller"
+}

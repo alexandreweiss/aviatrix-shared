@@ -36,7 +36,7 @@ resource "azurerm_storage_share" "app2_aci_share" {
 
 resource "local_file" "app2_config_yaml" {
   filename = "app2-config.yaml"
-  content = templatefile("${path.module}/azr_r1_app2_config.tpl",
+  content = templatefile("${path.module}/app2_azr_r1_config.tpl",
     { "customer_name"    = var.customer_name,
       "application_2"    = var.application_2,
       "customer_website" = var.customer_website
@@ -61,8 +61,9 @@ resource "azurerm_container_group" "app2_container_group" {
   depends_on          = [azurerm_subnet.r1-azure-spoke-app2-aci-subnet, azurerm_storage_share_file.app2_config_file]
 
   container {
-    name   = "gatus"
-    image  = "docker.io/aweiss4876/gatus-aviatrix:latest"
+    name = "gatus"
+    # image  = "docker.io/aweiss4876/gatus-aviatrix:latest"
+    image  = "aviatrixacr.azurecr.io/aviatrix/gatus-aviatrix:latest"
     cpu    = "1"
     memory = "1.5"
     ports {

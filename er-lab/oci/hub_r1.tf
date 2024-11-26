@@ -89,14 +89,15 @@ resource "azurerm_virtual_network_gateway_connection" "cr-gw-connection" {
 
 # Test VM
 module "r1-vm" {
-  source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-  environment         = "vm"
-  location            = var.azure_r1_location
-  location_short      = var.azure_r1_location_short
-  index_number        = 01
-  resource_group_name = azurerm_resource_group.oci-lab-r1.name
-  subnet_id           = azurerm_subnet.vm-subnet.id
-  admin_ssh_key       = var.ssh_public_key
+  source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment          = "vm"
+  location             = var.azure_r1_location
+  location_short       = var.azure_r1_location_short
+  index_number         = 01
+  resource_group_name  = azurerm_resource_group.oci-lab-r1.name
+  subnet_id            = azurerm_subnet.vm-subnet.id
+  admin_ssh_key        = var.ssh_public_key
+  enable_ip_forwarding = true
   depends_on = [
   ]
 }
