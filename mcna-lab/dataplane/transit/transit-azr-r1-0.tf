@@ -1,6 +1,6 @@
 module "azure_transit_we" {
-  source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.5.1"
+  source = "terraform-aviatrix-modules/mc-transit/aviatrix"
+  # version = "2.5.1"
 
   # For BGPoLAN, enable insane_mode, add bgp_o_lan interface count, enable bgp_over_lan, set correct sizing for at least 3 eths
   cloud                         = "azure"

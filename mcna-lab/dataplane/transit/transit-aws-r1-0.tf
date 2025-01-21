@@ -1,6 +1,6 @@
 module "aws_transit_r1" {
-  source  = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  version = "2.5.0"
+  source = "terraform-aviatrix-modules/mc-transit/aviatrix"
+  # version = "2.5.0"
 
   cloud                  = "aws"
   region                 = var.aws_r1_location
@@ -11,7 +11,9 @@ module "aws_transit_r1" {
   local_as_number        = 65011
   enable_segmentation    = true
   //insane_mode            = true
-  name = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
+  name         = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
+  ha_gw        = false
+  single_az_ha = false
 }
 
 output "aws_transit_r1" {

@@ -63,53 +63,53 @@ locals {
       route_table = "avx-gw",
       # cidr              = cidrsubnet(var.gw_subnet, 1, 0)
       cidr              = cidrsubnet(var.gw_subnet, 4, 8)
-      availability_zone = "a"
+      availability_zone = "${var.aws_r1_location}a"
     },
     avx-hagw-subnet = {
       route_table = "avx-hagw",
       # cidr              = cidrsubnet(var.gw_subnet, 1, 1)
       cidr              = cidrsubnet(var.gw_subnet, 4, 9)
-      availability_zone = "c"
+      availability_zone = "${var.aws_r1_location}c"
     },
     front-a = {
       route_table       = "rt-internal-a",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 0)
-      availability_zone = "a"
+      availability_zone = "${var.aws_r1_location}a"
     },
     back-a = {
       route_table       = "rt-internal-a",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 1)
-      availability_zone = "a"
+      availability_zone = "${var.aws_r1_location}a"
     },
     front-b = {
       route_table       = "rt-internal-b",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 2)
-      availability_zone = "b"
+      availability_zone = "${var.aws_r1_location}b"
     },
     back-b = {
       route_table       = "rt-internal-b",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 3)
-      availability_zone = "b"
+      availability_zone = "${var.aws_r1_location}b"
     },
     public1 = {
       route_table       = "public1",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 4)
-      availability_zone = "a"
+      availability_zone = "${var.aws_r1_location}a"
     },
     public2 = {
       route_table       = "public1",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 5)
-      availability_zone = "a"
+      availability_zone = "${var.aws_r1_location}a"
     },
     public3 = {
       route_table       = "public2",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 6)
-      availability_zone = "b"
+      availability_zone = "${var.aws_r1_location}b"
     },
     public4 = {
       route_table       = "public2",
       cidr              = cidrsubnet(var.vpc_cidr, 4, 7)
-      availability_zone = "b"
+      availability_zone = "${var.aws_r1_location}b"
     },
   }
 }
@@ -159,11 +159,11 @@ module "aws_r1_spoke_app1" {
   single_ip_snat   = true
   vpc_id           = aws_vpc.this.id
   gw_subnet        = aws_subnet.this["avx-gw-subnet"].cidr_block
-  hagw_subnet      = aws_subnet.this["avx-hagw-subnet"].cidr_block
-  ha_gw            = false
-  single_az_ha     = false
-  enable_bgp       = true
-  local_as_number  = 65001
+  # hagw_subnet      = aws_subnet.this["avx-hagw-subnet"].cidr_block
+  ha_gw           = false
+  single_az_ha    = false
+  enable_bgp      = true
+  local_as_number = 65001
 }
 
 # Workload VMs

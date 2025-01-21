@@ -13,6 +13,7 @@ module "transit_peering" {
 
   transit_gateways = [
     nonsensitive(data.tfe_outputs.dataplane.values.transit_we_gw_name),
+    # nonsensitive(data.tfe_outputs.dataplane.values.transit_r2_gw_name)
     nonsensitive(data.tfe_outputs.dataplane.values.aws_transit_r1_gw_name)
   ]
   //enable_insane_mode_encryption_over_internet = true

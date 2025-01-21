@@ -43,25 +43,27 @@ module "azr_r1_spoke_vpn" {
   use_existing_vpc = true
   region           = var.azure_r1_location
   account          = var.azure_account
-  transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  ha_gw            = false
-  single_az_ha     = false
+  # transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  transit_gw   = "azr-we-ars-transit"
+  ha_gw        = false
+  single_az_ha = false
   //network_domain   = aviatrix_segmentation_network_domain.vpn_nd.domain_name
   resource_group = azurerm_resource_group.azr-r1-spoke-vpn-rg.name
 }
 
 resource "aviatrix_gateway" "we-vpn-0" {
+  count = 1
 
   cloud_type       = 8
   account_name     = var.azure_account
-  gw_name          = "${var.azure_r1_location_short}-vpn-${var.customer_name}-0"
+  gw_name          = "${var.azure_r1_location_short}-vpn-${var.customer_name}-${count.index}"
   vpc_id           = "${azurerm_virtual_network.azr-r1-spoke-vpn.name}:${azurerm_resource_group.azr-r1-spoke-vpn-rg.name}:${azurerm_virtual_network.azr-r1-spoke-vpn.guid}"
   vpc_reg          = var.azure_r1_location
   gw_size          = "Standard_B1ms"
   subnet           = "10.10.5.0/28"
   zone             = "az-1"
   vpn_access       = true
-  vpn_cidr         = "172.20.20.0/24"
+  vpn_cidr         = "172.20.2${count.index}.0/24"
   additional_cidrs = var.p2s_additional_cidrs
   max_vpn_conn     = "100"
   split_tunnel     = true
@@ -94,7 +96,7 @@ resource "aviatrix_vpn_user" "aweiss" {
 
   user_email = "aweiss@aviatrix.com"
   user_name  = "aweiss"
-  gw_name    = aviatrix_gateway.we-vpn-0.gw_name
+  gw_name    = aviatrix_gateway.we-vpn-0[0].gw_name
   vpc_id     = module.azr_r1_spoke_vpn.spoke_gateway.vpc_id
   //gw_name    = aviatrix_gateway.we-vpn-0[0].gw_name
   //vpc_id     = aviatrix_gateway.we-vpn-0[0].vpc_id

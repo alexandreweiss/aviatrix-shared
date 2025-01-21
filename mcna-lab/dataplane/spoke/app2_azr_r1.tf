@@ -110,14 +110,14 @@ resource "aviatrix_smart_group" "azr-MyApp2-sg" {
   }
 }
 
-resource "aviatrix_smart_group" "azr-MyApp2-cidr-sg" {
-  name = "yes${var.application_2}-app-cidr"
-  selector {
-    match_expressions {
-      cidr = azurerm_virtual_network.azure-spoke-app2-r1.address_space[0]
-    }
-  }
-}
+# resource "aviatrix_smart_group" "azr-MyApp2-cidr-sg" {
+#   name = "yes${var.application_2}-app-cidr"
+#   selector {
+#     match_expressions {
+#       cidr = azurerm_virtual_network.azure-spoke-app2-r1.address_space[0]
+#     }
+#   }
+# }
 
 resource "aviatrix_web_group" "allowed_domains" {
   name = "allowed-domains"

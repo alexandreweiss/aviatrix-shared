@@ -1,11 +1,7 @@
-output "vpn-public-ip-0" {
-  value = azurerm_public_ip.pip_0.ip_address
+output "vpn-public-ip" {
+  value = module.vpn_gw.vpn_gateway_public_ip
 }
 
-output "vpn-public-ip-1" {
-  value = azurerm_public_ip.pip_1.ip_address
-}
-
-output "bgp-ip" {
-  value = azurerm_virtual_network_gateway.vpn-gw.bgp_settings
+output "bgp_settings" {
+  value = module.vpn_gw.vpn_gateway.bgp_settings
 }

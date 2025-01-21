@@ -41,6 +41,17 @@ variable "controller_fqdn" {
   description = "FQDN or IP of the Aviatrix Controller"
 }
 
+variable "ferme_fqdn" {
+  description = "FQDN of Ferme ISP"
+}
+
 variable "azure_account" {
   description = "CSP account onboarder on the controller"
+}
+
+locals {
+  controller = {
+    controller_vnet_name           = "avx-cplane-frc-vn"
+    controller_resource_group_name = "avx-cplane-we-rg"
+  }
 }

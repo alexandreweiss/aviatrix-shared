@@ -165,7 +165,7 @@ module "azr_r1_spoke_app2" {
   # local_as_number = 65013
   enable_bgp    = false
   depends_on    = [azurerm_subnet_route_table_association.app2-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app2-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app2-subnet-vm-rt-assoc]
-  instance_size = "Standard_D4s_v3"
+  instance_size = "Standard_B1ms"
   # insane_mode   = true # for HPE
   insane_mode = false
 }

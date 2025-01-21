@@ -90,31 +90,31 @@ resource "azurerm_container_group" "app1_container_group" {
   os_type         = "Linux"
 }
 
-resource "aviatrix_smart_group" "app1" {
-  name = "${var.application_1}-app"
-  selector {
-    match_expressions {
-      cidr = azurerm_subnet.r1-azure-spoke-app1-aci-subnet.address_prefixes[0]
-    }
-  }
-}
+# resource "aviatrix_smart_group" "app1" {
+#   name = "${var.application_1}-app"
+#   selector {
+#     match_expressions {
+#       cidr = azurerm_subnet.r1-azure-spoke-app1-aci-subnet.address_prefixes[0]
+#     }
+#   }
+# }
 
-resource "aviatrix_smart_group" "azr-MyApp1-sg" {
-  name = "${var.application_1}-app-vnet"
-  selector {
-    match_expressions {
-      type = "vpc"
-      name = azurerm_virtual_network.azure-spoke-app1-r1.name
-    }
-  }
-}
+# resource "aviatrix_smart_group" "azr-MyApp1-sg" {
+#   name = "${var.application_1}-app-vnet"
+#   selector {
+#     match_expressions {
+#       type = "vpc"
+#       name = azurerm_virtual_network.azure-spoke-app1-r1.name
+#     }
+#   }
+# }
 
 
-resource "aviatrix_smart_group" "azr-MyApp1-cidr-sg" {
-  name = "${var.application_1}-app-cidr"
-  selector {
-    match_expressions {
-      cidr = azurerm_virtual_network.azure-spoke-app1-r1.address_space[0]
-    }
-  }
-}
+# resource "aviatrix_smart_group" "azr-MyApp1-cidr-sg" {
+#   name = "${var.application_1}-app-cidr"
+#   selector {
+#     match_expressions {
+#       cidr = azurerm_virtual_network.azure-spoke-app1-r1.address_space[0]
+#     }
+#   }
+# }

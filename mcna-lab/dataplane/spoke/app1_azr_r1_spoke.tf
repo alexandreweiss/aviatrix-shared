@@ -158,7 +158,7 @@ module "azr_r1_spoke_app1" {
   #local_as_number = 65012
   enable_bgp = false
   depends_on = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
-  //instance_size            = "Standard_D4s_v3"
+  //instance_size = "Standard_D4s_v3"
   insane_mode = false
   #bgp_lan_interfaces_count = 1
   #enable_bgp_over_lan      = true
