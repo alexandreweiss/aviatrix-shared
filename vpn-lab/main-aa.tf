@@ -59,7 +59,7 @@ module "vn-peering" {
   right_allow_gateway_transit    = false
   right_use_remote_gateways      = true
 
-  depends_on = []
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 # Create peering between VPN GW vnet and controller vnet
@@ -76,7 +76,7 @@ module "controller-vpn-peering" {
   right_allow_gateway_transit    = false
   right_use_remote_gateways      = true
 
-  depends_on = []
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 
