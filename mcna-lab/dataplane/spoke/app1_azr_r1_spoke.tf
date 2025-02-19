@@ -145,21 +145,22 @@ module "azr_r1_spoke_app1" {
   # For HPE
   #hagw_subnet = "10.10.3.0/26"
   ###
-  region     = var.azure_r1_location
-  account    = var.azure_account
-  transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  attached   = false
+  region  = var.azure_r1_location
+  account = var.azure_account
+  # transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  transit_gw = "azr-we-ars-transit"
+  attached   = true
   # Must be enabled for HPE
-  ha_gw = false
+  ha_gw = true
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
   single_ip_snat = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   #local_as_number = 65012
-  enable_bgp = false
-  depends_on = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
-  //instance_size = "Standard_D4s_v3"
-  insane_mode = false
+  enable_bgp    = false
+  depends_on    = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
+  instance_size = "Standard_B2ms"
+  insane_mode   = false
   #bgp_lan_interfaces_count = 1
   #enable_bgp_over_lan      = true
 }
