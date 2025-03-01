@@ -145,11 +145,11 @@ module "azr_r1_spoke_app1" {
   # For HPE
   #hagw_subnet = "10.10.3.0/26"
   ###
-  region  = var.azure_r1_location
-  account = var.azure_account
-  # transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  transit_gw = "azr-we-ars-transit"
-  attached   = true
+  region     = var.azure_r1_location
+  account    = var.azure_account
+  transit_gw = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  # transit_gw = "azr-we-ars-transit"
+  attached = true
   # Must be enabled for HPE
   ha_gw = true
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name

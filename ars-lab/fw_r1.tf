@@ -29,12 +29,12 @@ module "r1-fw-1-vm" {
   location_short       = var.azure_r1_location_short
   index_number         = 01
   resource_group_name  = azurerm_resource_group.ars-lab-r1.name
-  subnet_id            = azurerm_subnet.vm-subnet.id
+  subnet_id            = azurerm_subnet.fw-vm-subnet.id
   admin_ssh_key        = var.ssh_public_key
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
   custom_data          = data.template_cloudinit_config.config.rendered
-  # lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
+  lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
 }
 
 module "r1-fw-2-vm" {
@@ -44,12 +44,12 @@ module "r1-fw-2-vm" {
   location_short       = var.azure_r1_location_short
   index_number         = 02
   resource_group_name  = azurerm_resource_group.ars-lab-r1.name
-  subnet_id            = azurerm_subnet.vm-subnet.id
+  subnet_id            = azurerm_subnet.fw-vm-subnet.id
   admin_ssh_key        = var.ssh_public_key
   vm_size              = "Standard_B1ms"
   enable_ip_forwarding = true
   custom_data          = data.template_cloudinit_config.config.rendered
-  # lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
+  lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
 }
 
 resource "azurerm_lb" "fw_lb" {
@@ -61,7 +61,7 @@ resource "azurerm_lb" "fw_lb" {
 
   frontend_ip_configuration {
     name                          = "PrivateIp"
-    subnet_id                     = azurerm_subnet.vm-subnet.id
+    subnet_id                     = azurerm_subnet.fw-vm-subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }

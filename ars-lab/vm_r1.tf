@@ -16,7 +16,7 @@ resource "azurerm_route_table" "rt-to-fw" {
   location                      = var.azure_r1_location
   name                          = "fw-tiered-vm"
   resource_group_name           = azurerm_resource_group.ars-lab-r1.name
-  disable_bgp_route_propagation = true
+  bgp_route_propagation_enabled = false
 
   route {
     address_prefix         = "0.0.0.0/0"
