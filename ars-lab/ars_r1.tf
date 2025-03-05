@@ -26,6 +26,7 @@ resource "azurerm_route_server_bgp_connection" "avx-hagw" {
   peer_asn        = 65014
   peer_ip         = module.azure_transit_ars.transit_gateway.ha_bgp_lan_ip_list[0]
   route_server_id = module.ars_r1.ars.id
+  depends_on      = [azurerm_route_server_bgp_connection.avx-gw]
 }
 
 resource "azurerm_route_server_bgp_connection" "fw-1" {
@@ -33,11 +34,13 @@ resource "azurerm_route_server_bgp_connection" "fw-1" {
   peer_asn        = var.asn_fw
   peer_ip         = module.r1-fw-1-vm.vm_private_ip
   route_server_id = module.ars_r1.ars.id
+  depends_on      = [azurerm_route_server_bgp_connection.avx-hagw]
 }
 
-resource "azurerm_route_server_bgp_connection" "fw-2" {
-  name            = "fw-vm-2"
-  peer_asn        = var.asn_fw
-  peer_ip         = module.r1-fw-2-vm.vm_private_ip
-  route_server_id = module.ars_r1.ars.id
-}
+# resource "azurerm_route_server_bgp_connection" "fw-2" {
+#   name            = "fw-vm-2"
+#   peer_asn        = var.asn_fw
+#   peer_ip         = module.r1-fw-2-vm.vm_private_ip
+#   route_server_id = module.ars_r1.ars.id
+#   depends_on      = [azurerm_route_server_bgp_connection.fw-1]
+# }

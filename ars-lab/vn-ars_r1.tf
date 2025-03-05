@@ -71,34 +71,3 @@ resource "azurerm_subnet" "avx-hagw-subnet" {
   resource_group_name  = azurerm_resource_group.ars-lab-r1.name
   virtual_network_name = azurerm_virtual_network.avx-vn.name
 }
-
-module "vn-peering" {
-  source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
-
-  left_vnet_resource_group_name  = azurerm_resource_group.ars-lab-r1.name
-  left_vnet_name                 = azurerm_virtual_network.ars-vn.name
-  right_vnet_resource_group_name = azurerm_resource_group.ars-lab-r1.name
-  right_vnet_name                = module.azure_transit_ars.vpc.name
-  allow_forwarded_traffic        = true
-
-  depends_on = [
-    azurerm_virtual_network.ars-vn,
-    module.azure_transit_ars
-  ]
-}
-
-module "spoke-vn-peering" {
-  source = "github.com/alexandreweiss/terraform-azurerm-vnetpeering"
-
-  left_vnet_resource_group_name  = azurerm_resource_group.ars-lab-r1.name
-  left_vnet_name                 = azurerm_virtual_network.ars-vn.name
-  right_vnet_resource_group_name = azurerm_resource_group.ars-lab-r1.name
-  right_vnet_name                = azurerm_virtual_network.spoke-vn.name
-  allow_forwarded_traffic        = true
-
-
-  depends_on = [
-    azurerm_virtual_network.ars-vn,
-    azurerm_virtual_network.spoke-vn
-  ]
-}

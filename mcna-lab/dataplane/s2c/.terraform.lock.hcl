@@ -4,6 +4,7 @@
 provider "registry.terraform.io/aviatrixsystems/aviatrix" {
   version = "3.1.1"
   hashes = [
+    "h1:1Pp57vjcWI9FGZhRO000iZ3PG/1Hjlf9xTY6aoyXCmw=",
     "h1:ePp/fwXWL0DAOaN9gugxUVHImCBd4cSaL2zL24KgQG4=",
     "zh:2094da3a51ee6eb338e13c13bbe0f02dffdf86da413cdb533dc24f6d759f0067",
     "zh:2310c032e0f47d330ec5cffc7b2740efea73b026e419f72c168f6973587f2d0d",
@@ -25,6 +26,7 @@ provider "registry.terraform.io/aviatrixsystems/aviatrix" {
 provider "registry.terraform.io/hashicorp/azurerm" {
   version = "3.64.0"
   hashes = [
+    "h1:g2p1LQQy+Ih6gWzMQTmlb6v5s9iXP3EusXIwd63APg0=",
     "h1:mjWPxOTzxJcw4QCRopBwO568tnfZRZPAbCIEzQj2ous=",
     "zh:08463ceca4208419715b5816d120fe05f2abda9bea083cfe1818e25517483581",
     "zh:130760c5ab791bd114b3edbb79b95138a60cd97f1b72e4096b33a207b367d126",
@@ -44,6 +46,7 @@ provider "registry.terraform.io/hashicorp/azurerm" {
 provider "registry.terraform.io/hashicorp/dns" {
   version = "3.3.2"
   hashes = [
+    "h1:HjskPLRqmCw8Q/kiSuzti3iJBSpcAvcBFdlwFFQuoDE=",
     "h1:iQWbwrmQn+FwIjZjJVmkGMVaTGUvfnUpDZGgDrQ1wko=",
     "zh:05d2d50e301318362a4a82e6b7a9734ace07bc01abaaa649c566baf98814755f",
     "zh:1e9fd1c3bfdda777e83e42831dd45b7b9e794250a0f351e5fd39762e8a0fe15b",
@@ -63,6 +66,7 @@ provider "registry.terraform.io/hashicorp/dns" {
 provider "registry.terraform.io/hashicorp/tfe" {
   version = "0.46.0"
   hashes = [
+    "h1:+MpkT+2BwxXwX559GbyubpBQ/Bzlsfvv3q0fcgP45uA=",
     "h1:pXkzA4qdaCkVDrMIUsv7QHWsDM2cxVd8psr14kfykKI=",
     "zh:0176ba631987d3e5193f25437f09b30255580f2be9b7fdd38ca4f72f0ec9970f",
     "zh:160984fec9483957e2766629eb75e01b18b7ba14804434148fc0da6202e3aba5",

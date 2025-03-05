@@ -37,8 +37,9 @@ resource "azurerm_storage_share" "app1_aci_share" {
 resource "local_file" "app1_config_yaml" {
   filename = "app1-config.yaml"
   content = templatefile("${path.module}/app1_azr_r1_config.tpl",
-    { "customer_name"    = var.customer_name,
-      "application_2_ip" = azurerm_container_group.app2_container_group.ip_address,
+    { "customer_name" = var.customer_name,
+      # Commented out because we are not using the IP address in the config file as app2 is not deployed yet
+      # "application_2_ip" = azurerm_container_group.app2_container_group.ip_address,
       "application_2"    = var.application_2,
       "application_1"    = var.application_1,
       "customer_website" = var.customer_website

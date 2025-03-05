@@ -151,16 +151,16 @@ module "azr_r1_spoke_app1" {
   # transit_gw = "azr-we-ars-transit"
   attached = true
   # Must be enabled for HPE
-  ha_gw = true
+  ha_gw = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
   single_ip_snat = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   #local_as_number = 65012
-  enable_bgp    = false
-  depends_on    = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
-  instance_size = "Standard_B2ms"
-  insane_mode   = false
+  enable_bgp = false
+  depends_on = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
+  # instance_size = "Standard_B2ms"
+  insane_mode = false
   #bgp_lan_interfaces_count = 1
   #enable_bgp_over_lan      = true
 }
