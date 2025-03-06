@@ -75,7 +75,7 @@ module "spoke-vn-peering" {
   depends_on = [
     azurerm_virtual_network.ars-spoke-vn,
     azurerm_virtual_network.spoke-vn,
-    module.module.ars_spoke_r1
+    module.ars_spoke_r1
   ]
 }
 
@@ -143,14 +143,15 @@ module "spoke-vn-fw-vn-peering" {
   right_vnet_resource_group_name = azurerm_resource_group.ars-lab-r1.name
   right_vnet_name                = azurerm_virtual_network.fw-vn.name
   allow_forwarded_traffic        = true
-  left_allow_gateway_transit     = true
-  left_use_remote_gateways       = false
-  right_allow_gateway_transit    = false
-  right_use_remote_gateways      = true
+  # left_allow_gateway_transit     = true
+  # left_use_remote_gateways       = false
+  # right_allow_gateway_transit    = false
+  # right_use_remote_gateways      = true
 
 
   depends_on = [
     azurerm_virtual_network.fw-vn,
-    azurerm_virtual_network.ars-spoke-vn
+    azurerm_virtual_network.ars-spoke-vn,
+    module.ars_spoke_r1
   ]
 }
