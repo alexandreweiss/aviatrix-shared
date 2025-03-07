@@ -4,6 +4,8 @@ data "template_file" "cloudconfig-fw" {
   vars = {
     bgp_peer_1_ip       = tolist(module.ars_r1.ars.virtual_router_ips)[0]
     bgp_peer_2_ip       = tolist(module.ars_r1.ars.virtual_router_ips)[1]
+    bgp_peer_3_ip       = tolist(module.ars_spoke_r1.ars.virtual_router_ips)[0]
+    bgp_peer_4_ip       = tolist(module.ars_spoke_r1.ars.virtual_router_ips)[1]
     peer_ilb_ip_address = azurerm_lb.fw_lb.private_ip_address
     asn_fw              = var.asn_fw
     asn_transit         = var.asn_transit
@@ -37,20 +39,20 @@ module "r1-fw-1-vm" {
   lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
 }
 
-# module "r1-fw-2-vm" {
-#   source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-#   environment          = "fw"
-#   location             = var.azure_r1_location
-#   location_short       = var.azure_r1_location_short
-#   index_number         = 02
-#   resource_group_name  = azurerm_resource_group.ars-lab-r1.name
-#   subnet_id            = azurerm_subnet.fw-vm-subnet.id
-#   admin_ssh_key        = var.ssh_public_key
-#   vm_size              = "Standard_B1ms"
-#   enable_ip_forwarding = true
-#   custom_data          = data.template_cloudinit_config.config.rendered
-#   lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
-# }
+module "r1-fw-2-vm" {
+  source               = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment          = "fw"
+  location             = var.azure_r1_location
+  location_short       = var.azure_r1_location_short
+  index_number         = 02
+  resource_group_name  = azurerm_resource_group.ars-lab-r1.name
+  subnet_id            = azurerm_subnet.fw-vm-subnet.id
+  admin_ssh_key        = var.ssh_public_key
+  vm_size              = "Standard_B1ms"
+  enable_ip_forwarding = true
+  custom_data          = data.template_cloudinit_config.config.rendered
+  lb_backend_pool_id   = azurerm_lb_backend_address_pool.be_lb.id
+}
 
 resource "azurerm_lb" "fw_lb" {
   name                = "fw-lb"

@@ -27,7 +27,7 @@ resource "azurerm_route_table" "rt-to-fw" {
 }
 
 # Route table association to TEST VM subnet
-resource "azurerm_subnet_route_table_association" "tiered-vm-rt-assoc" {
-  route_table_id = azurerm_route_table.rt-to-fw.id
-  subnet_id      = azurerm_subnet.spoke-vm-subnet.id
-}
+# resource "azurerm_subnet_route_table_association" "tiered-vm-rt-assoc" {
+#   route_table_id = azurerm_route_table.rt-to-fw.id
+#   subnet_id      = azurerm_subnet.spoke-vm-subnet.id
+# }

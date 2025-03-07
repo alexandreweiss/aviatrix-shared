@@ -74,8 +74,8 @@ module "spoke-vn-peering" {
 
   depends_on = [
     azurerm_virtual_network.ars-spoke-vn,
-    azurerm_virtual_network.spoke-vn,
-    module.ars_spoke_r1
+    azurerm_virtual_network.spoke-vn
+    # module.ars_spoke_r1
   ]
 }
 
@@ -151,7 +151,7 @@ module "spoke-vn-fw-vn-peering" {
 
   depends_on = [
     azurerm_virtual_network.fw-vn,
-    azurerm_virtual_network.ars-spoke-vn,
-    module.ars_spoke_r1
+    azurerm_virtual_network.ars-spoke-vn
+    # module.ars_spoke_r1
   ]
 }

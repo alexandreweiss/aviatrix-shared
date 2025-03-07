@@ -37,17 +37,18 @@ resource "azurerm_subnet" "ars-subnet" {
 
 ## Creation of SPOKE VNET containing Spoke GW
 resource "azurerm_virtual_network" "spoke-vn" {
-  address_space       = ["10.95.0.0/24"]
+  address_space       = ["57.1.0.0/24"]
   location            = azurerm_resource_group.ars-lab-r1.location
   name                = "spoke-vn"
   resource_group_name = azurerm_resource_group.ars-lab-r1.name
 }
 
 resource "azurerm_subnet" "spoke-vm-subnet" {
-  address_prefixes     = ["10.95.0.0/28"]
+  address_prefixes     = ["57.1.0.0/28"]
   name                 = "vm-subnet"
   resource_group_name  = azurerm_resource_group.ars-lab-r1.name
   virtual_network_name = azurerm_virtual_network.spoke-vn.name
+  depends_on           = [azurerm_virtual_network.spoke-vn]
 }
 
 ## Creation of AVX Transit VNET and peering to HUB VNET (we have a dedicated kind of spoke vnet for ER and ARS that we peer with that Aviatrix Transit vnet)
