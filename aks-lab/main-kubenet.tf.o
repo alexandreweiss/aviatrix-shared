@@ -89,45 +89,48 @@ resource "azurerm_subnet_route_table_association" "pod-subnet-rt-assoc" {
 #   virtual_network_name = azurerm_virtual_network.vnet[count.index].name
 # }
 
-# Azure Kubernetes Cluster Creation
-resource "azurerm_kubernetes_cluster" "k8s" {
-  count = var.aks_cluster_qty
+# # Azure Kubernetes Cluster Creation
+ resource "azurerm_kubernetes_cluster" "k8s" {
+   count = var.aks_cluster_qty
 
-  location            = var.azure_r1_location
-  name                = "aks-clust-${count.index}"
-  resource_group_name = azurerm_resource_group.aks-lab-rg[count.index].name
-  dns_prefix          = "ananableu"
+   location            = var.azure_r1_location
+   name                = "aks-clust-${count.index}"
+   resource_group_name = azurerm_resource_group.aks-lab-rg[count.index].name
+   dns_prefix          = "ananableu"
 
 
-  identity {
-    type = "SystemAssigned"
-  }
+   identity {
+     type = "SystemAssigned"
+   }
+   default_node_pool {
+     name       = "agentpool"
+     vm_size    = "Standard_D2_v2"
+     node_count = var.node_count
+     # pod_subnet_id  = azurerm_subnet.pod-subnet[count.index].id
+     # vnet_subnet_id = azurerm_subnet.node-subnet[count.index].id
+   }
+   linux_profile {
+     admin_username = "admin-lab"
+     ssh_key {
+       # key_data = jsondecode(azapi_resource_action.ssh_public_key_gen.output).publicKey
+       key_data = var.ssh_public_key
+     }
+   }
+   network_profile {
+     network_plugin = "kubenet"
+     # network_plugin = "azure"
+     # outbound_type     = "userDefinedRouting"
+     load_balancer_sku = "standard"
+     # service_cidr      = var.internal_service_address_space
+     # dns_service_ip    = cidrhost(var.internal_service_address_space, 10)
+   }
 
-  default_node_pool {
-    name           = "agentpool"
-    vm_size        = "Standard_D2_v2"
-    node_count     = var.node_count
-    pod_subnet_id  = azurerm_subnet.pod-subnet[count.index].id
-    vnet_subnet_id = azurerm_subnet.node-subnet[count.index].id
-  }
-  linux_profile {
-    admin_username = "admin-lab"
+   # depends_on = [
+   #   module.azr_r1_spoke_aks
+   # ]
+ }
 
-    ssh_key {
-      //key_data = jsondecode(azapi_resource_action.ssh_public_key_gen.output).publicKey
-      key_data = var.ssh_public_key
-    }
-  }
-  network_profile {
-    //network_plugin    = "kubenet"
-    network_plugin = "azure"
-    //outbound_type     = "userDefinedRouting"
-    load_balancer_sku = "standard"
-    service_cidr      = var.internal_service_address_space
-    dns_service_ip    = cidrhost(var.internal_service_address_space, 10)
-  }
-
-  depends_on = [
-    module.azr_r1_spoke_aks
-  ]
-}
+ output "kube_config" {
+   value     = azurerm_kubernetes_cluster.k8s
+   sensitive = true
+ }

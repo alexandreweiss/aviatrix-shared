@@ -3,27 +3,6 @@ variable "customer_name" {
   default     = "contoso"
 }
 
-variable "application_1" {
-  description = "Name of application 1"
-  default     = "MyApp1"
-}
-
-variable "application_2" {
-  description = "Name of application 2"
-  default     = "MyApp2"
-}
-
-variable "application_3" {
-  description = "Name of application 3"
-  default     = "MyApp3"
-}
-
-variable "customer_website" {
-  description = "FQDN of customer website"
-  default     = "www.aviatrix.com"
-}
-
-
 variable "azure_r1_location" {
   default     = "West Europe"
   description = "region to deploy resources"
@@ -32,30 +11,6 @@ variable "azure_r1_location" {
 
 variable "azure_r1_location_short" {
   default     = "we"
-  description = "region to deploy resources"
-  type        = string
-}
-
-variable "aws_r1_location" {
-  default     = "eu-central-1"
-  description = "region to deploy resources"
-  type        = string
-}
-
-variable "aws_r1_location_short" {
-  default     = "fra"
-  description = "region to deploy resources"
-  type        = string
-}
-
-variable "oci_r1_location" {
-  default     = "France Central"
-  description = "region to deploy resources"
-  type        = string
-}
-
-variable "oci_r1_location_short" {
-  default     = "frc"
   description = "region to deploy resources"
   type        = string
 }
@@ -90,6 +45,25 @@ variable "aws_account" {
 
 variable "gcp_account" {
   description = "CSP account onboarder on the controller"
+}
+
+locals {
+  controller = {
+    controller_vnet_name           = "avx-cplane-frc-vn"
+    controller_resource_group_name = "avx-cplane-we-rg"
+  }
+}
+
+variable "oci_r1_location" {
+  default     = "France Central"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "oci_r1_location_short" {
+  default     = "frc"
+  description = "region to deploy resources"
+  type        = string
 }
 
 variable "oci_account" {

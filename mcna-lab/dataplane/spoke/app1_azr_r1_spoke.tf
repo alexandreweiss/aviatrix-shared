@@ -130,8 +130,7 @@ resource "azurerm_subnet_route_table_association" "app1-subnet-aci-rt-assoc" {
 }
 
 module "azr_r1_spoke_app1" {
-  source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.6.3"
+  source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
 
   cloud     = "Azure"
   name      = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"

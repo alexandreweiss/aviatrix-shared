@@ -10,8 +10,8 @@ terraform {
       version = "~>1.5"
     }
     azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~>3.0"
+      source = "hashicorp/azurerm"
+      # version = "~>3.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -31,11 +31,13 @@ terraform {
 }
 
 provider "azurerm" {
+  resource_provider_registrations = "none"
   features {}
 }
 
 provider "aviatrix" {
-  controller_ip = data.dns_a_record_set.controller_ip.addrs[0]
-  username      = "admin"
-  password      = var.admin_password
+  controller_ip           = data.dns_a_record_set.controller_ip.addrs[0]
+  username                = "admin"
+  password                = var.admin_password
+  skip_version_validation = true
 }
