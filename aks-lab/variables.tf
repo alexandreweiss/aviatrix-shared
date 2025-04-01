@@ -13,7 +13,7 @@ variable "azure_r1_location_short" {
 variable "node_count" {
   type        = number
   description = "The initial quantity of nodes for the node pool."
-  default     = 3
+  default     = 1
 }
 
 variable "aks_cluster_qty" {
