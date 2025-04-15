@@ -168,23 +168,23 @@ resource "aviatrix_gateway" "we-vpn-0" {
 #   #enable_bgp_over_lan      = true
 # }
 
-# module "we-app1-vm" {
-#   source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-#   environment = var.application_1
-#   tags = {
-#     "application" = var.application_1
-#   }
-#   location            = var.azure_r1_location
-#   location_short      = var.azure_r1_location_short
-#   index_number        = 01
-#   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-#   subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
-#   admin_ssh_key       = var.ssh_public_key
-#   customer_name       = var.customer_name
-#   //vm_size             = "Standard_DS4_v2"
-#   depends_on = [
-#   ]
-# }
+module "we-app1-vm" {
+  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment = var.application_1
+  tags = {
+    "application" = var.application_1
+  }
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 01
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet-2.id
+  admin_ssh_key       = var.ssh_public_key
+  customer_name       = var.customer_name
+  //vm_size             = "Standard_DS4_v2"
+  depends_on = [
+  ]
+}
 
 # module "we-app1-vm-2" {
 #   source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"

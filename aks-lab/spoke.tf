@@ -19,8 +19,8 @@ module "azr_r1_spoke_aks" {
   resource_group = azurerm_resource_group.aks-lab-rg[count.index].name
 
   depends_on = [
-    azurerm_subnet_route_table_association.pod-subnet-rt-assoc,
-    azurerm_subnet_route_table_association.node-subnet-rt-assoc
+    # azurerm_subnet_route_table_association.pod-subnet-rt-assoc,
+    azurerm_subnet_route_table_association.aks-subnet-rt-assoc
   ]
 }
 
