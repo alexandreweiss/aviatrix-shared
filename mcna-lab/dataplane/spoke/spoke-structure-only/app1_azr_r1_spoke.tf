@@ -110,28 +110,28 @@ resource "azurerm_subnet_route_table_association" "app1-subnet-aci-rt-assoc" {
   subnet_id      = azurerm_subnet.r1-azure-spoke-app1-aci-subnet.id
 }
 
-resource "aviatrix_gateway" "we-vpn-0" {
+# resource "aviatrix_gateway" "we-vpn-0" {
 
-  cloud_type       = 8
-  account_name     = var.azure_account
-  gw_name          = "${var.azure_r1_location_short}-vpn-${var.customer_name}-island-0"
-  vpc_id           = "${azurerm_virtual_network.azure-spoke-app1-r1.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}:${azurerm_virtual_network.azure-spoke-app1-r1.guid}"
-  vpc_reg          = var.azure_r1_location
-  gw_size          = "Standard_B1ms"
-  subnet           = azurerm_subnet.r1-azure-spoke-app1-vpn-gw-subnet.address_prefixes[0]
-  zone             = "az-1"
-  vpn_access       = true
-  vpn_cidr         = "172.20.20.0/24"
-  additional_cidrs = "10.0.0.0/8"
-  max_vpn_conn     = "100"
-  split_tunnel     = true
-  enable_vpn_nat   = true
+#   cloud_type       = 8
+#   account_name     = var.azure_account
+#   gw_name          = "${var.azure_r1_location_short}-vpn-${var.customer_name}-island-0"
+#   vpc_id           = "${azurerm_virtual_network.azure-spoke-app1-r1.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}:${azurerm_virtual_network.azure-spoke-app1-r1.guid}"
+#   vpc_reg          = var.azure_r1_location
+#   gw_size          = "Standard_B1ms"
+#   subnet           = azurerm_subnet.r1-azure-spoke-app1-vpn-gw-subnet.address_prefixes[0]
+#   zone             = "az-1"
+#   vpn_access       = true
+#   vpn_cidr         = "172.20.20.0/24"
+#   additional_cidrs = "10.0.0.0/8"
+#   max_vpn_conn     = "100"
+#   split_tunnel     = true
+#   enable_vpn_nat   = true
 
 
-  depends_on = [
-    azurerm_subnet.r1-azure-spoke-app1-vpn-gw-subnet
-  ]
-}
+#   depends_on = [
+#     azurerm_subnet.r1-azure-spoke-app1-vpn-gw-subnet
+#   ]
+# }
 
 # module "azr_r1_spoke_app1" {
 #   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
@@ -161,7 +161,7 @@ resource "aviatrix_gateway" "we-vpn-0" {
 #   resource_group = azurerm_resource_group.azr-r1-spoke-app1-rg.name
 #   #local_as_number = 65012
 #   enable_bgp = false
-#   depends_on = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
+#   depends_on = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc]
 #   //instance_size            = "Standard_D4s_v3"
 #   insane_mode = false
 #   #bgp_lan_interfaces_count = 1
