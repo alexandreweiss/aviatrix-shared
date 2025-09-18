@@ -48,6 +48,18 @@ variable "aws_r1_location_short" {
   type        = string
 }
 
+variable "gcp_r1_location" {
+  default     = "europe-west-1"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "gcp_r1_location_short" {
+  default     = "we"
+  description = "region to deploy resources"
+  type        = string
+}
+
 variable "oci_r1_location" {
   default     = "France Central"
   description = "region to deploy resources"

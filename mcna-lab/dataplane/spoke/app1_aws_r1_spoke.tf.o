@@ -145,7 +145,7 @@ resource "aws_route_table_association" "this" {
 //Spoke GW
 module "aws_r1_spoke_app1" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.6.3"
+  # version = "1.6.3"
 
   cloud      = "AWS"
   name       = "aws-${var.aws_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"

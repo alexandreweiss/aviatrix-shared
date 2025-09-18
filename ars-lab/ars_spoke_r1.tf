@@ -14,13 +14,13 @@ output "ars_spoke_r1" {
   value = module.ars_spoke_r1.ars
 }
 
-resource "azurerm_route_server_bgp_connection" "fw-1-ars-spoke" {
-  name            = "fw-vm-1"
-  peer_asn        = var.asn_fw
-  peer_ip         = module.r1-fw-1-vm.vm_private_ip
-  route_server_id = module.ars_spoke_r1.ars.id
-  depends_on      = [azurerm_route_server_bgp_connection.avx-hagw]
-}
+# resource "azurerm_route_server_bgp_connection" "fw-1-ars-spoke" {
+#   name            = "fw-vm-1"
+#   peer_asn        = var.asn_fw
+#   peer_ip         = module.r1-fw-1-vm.vm_private_ip
+#   route_server_id = module.ars_spoke_r1.ars.id
+#   depends_on      = [azurerm_route_server_bgp_connection.avx-hagw]
+# }
 
 # resource "azurerm_route_server_bgp_connection" "fw-2" {
 #   name            = "fw-vm-2"

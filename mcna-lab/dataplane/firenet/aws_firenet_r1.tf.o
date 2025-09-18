@@ -5,9 +5,12 @@ module "aws_firenet_r1" {
 
   transit_module  = data.tfe_outputs.dataplane.values.aws_transit_r1
   firewall_image  = "Palo Alto Networks VM-Series Next-Generation Firewall (BYOL)"
-  custom_fw_names = ["aws-${var.aws_r1_location_short}-firenet-1", "aws-${var.aws_r1_location_short}-firenet-2"]
+  # firewall_image = "Fortinet FortiGate (BYOL) Next-Generation Firewall"
+  # custom_fw_names = ["aws-${var.aws_r1_location_short}-firenet-1", "aws-${var.aws_r1_location_short}-firenet-2"]
+  # fw_amount       = 2
+  custom_fw_names = ["aws-${var.aws_r1_location_short}-firenet-1"]
   egress_enabled  = false
-  fw_amount       = 2
+  
   username        = var.firewall_admin_username
   password        = var.admin_password
 }

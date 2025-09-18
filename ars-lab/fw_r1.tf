@@ -2,15 +2,20 @@ data "template_file" "cloudconfig-fw" {
   template = file("${path.module}/cloud-init.tpl")
 
   vars = {
-    bgp_peer_1_ip       = tolist(module.ars_r1.ars.virtual_router_ips)[0]
-    bgp_peer_2_ip       = tolist(module.ars_r1.ars.virtual_router_ips)[1]
-    bgp_peer_3_ip       = tolist(module.ars_spoke_r1.ars.virtual_router_ips)[0]
-    bgp_peer_4_ip       = tolist(module.ars_spoke_r1.ars.virtual_router_ips)[1]
+    #   bgp_peer_1_ip       = tolist(module.ars_r1.ars.virtual_router_ips)[0]
+    #   bgp_peer_2_ip       = tolist(module.ars_r1.ars.virtual_router_ips)[1]
+    #   bgp_peer_3_ip       = tolist(module.ars_spoke_r1.ars.virtual_router_ips)[0]
+    #   bgp_peer_4_ip       = tolist(module.ars_spoke_r1.ars.virtual_router_ips)[1]
+    bgp_peer_1_ip       = "10.0.0.10"
+    bgp_peer_2_ip       = "10.0.0.11"
+    bgp_peer_3_ip       = "10.0.0.12"
+    bgp_peer_4_ip       = "10.0.0.13"
     peer_ilb_ip_address = azurerm_lb.fw_lb.private_ip_address
     asn_fw              = var.asn_fw
     asn_transit         = var.asn_transit
     spoke_vnet_cidr     = azurerm_subnet.spoke-vm-subnet.address_prefixes[0]
-    ars_asn             = module.ars_r1.ars.virtual_router_asn
+    # ars_asn             = module.ars_r1.ars.virtual_router_asn
+    ars_asn = 65011
   }
 }
 

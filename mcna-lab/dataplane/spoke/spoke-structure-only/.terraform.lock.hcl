@@ -2,10 +2,10 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/aviatrixsystems/aviatrix" {
-  version     = "3.1.6"
-  constraints = "~> 3.1.0"
+  version = "3.1.6"
   hashes = [
     "h1:CEGaIRh3LjsO1nR/F7FO4uo7ykwefevOAwfTaCBTXmU=",
+    "h1:b8BxUISxTgvsEgffYYcYHFFfJW9Sgf7M5b8klUFSOic=",
     "zh:099137f99fe8e05e74da9f0d30d21ab986f5bac413809a93ae99ae74fab02c4b",
     "zh:0e2d36b2d2f2b1a31211cd5ffe9d912e1a21e8228b6a17ab79ef2991206ccfbd",
     "zh:24bdb99ca7eda5a48d5b98d4c771b8bea0fff8cf0517e53afd409b44d60a3d54",
@@ -26,6 +26,7 @@ provider "registry.terraform.io/aviatrixsystems/aviatrix" {
 provider "registry.terraform.io/hashicorp/aws" {
   version = "5.98.0"
   hashes = [
+    "h1:/RMObGCrfJlVoQCf9h88hFkSyLafDXnw6r0yi4gpO80=",
     "h1:KgOCdSG6euSc2lquuFlISJU/CzQTRhAO7WoaASxLZRc=",
     "zh:23377bd90204b6203b904f48f53edcae3294eb072d8fc18a4531c0cde531a3a1",
     "zh:2e55a6ea14cc43b08cf82d43063e96c5c2f58ee953c2628523d0ee918fe3b609",
@@ -49,6 +50,7 @@ provider "registry.terraform.io/hashicorp/azurerm" {
   version = "4.29.0"
   hashes = [
     "h1:c9tmtEdVTb9siGa3hVxPrMVl9ij5zijnD02JMHcHjrE=",
+    "h1:jC2GJo4VzTKnKociUDLVv8/+u9Mz+4scZrqbEasV+Y0=",
     "zh:16590eea68c7c8aedb7af19f690eb34ab6636ef417b3fa9e06ca038fdb4c44b8",
     "zh:1c907dfe44d00a54aa63d443004add90188f9a53ef3e919aff8aba92f715f42b",
     "zh:258a0ff4198d80cae33c89091cd556d84c1b522c4416458484f23719a0cdf4cc",
@@ -68,6 +70,7 @@ provider "registry.terraform.io/hashicorp/dns" {
   version = "3.4.3"
   hashes = [
     "h1:8wz2nUJwdMb9YWFX67SbX5HoFLINXm+XRQxWxVy0I1I=",
+    "h1:RDFGFXIFy5K6LlupWOSjLAOupeUWopR3j63Mcp8Tg+8=",
     "zh:11526db629adb59e5069aa9af6549f9a274e00365db5e2ea32ed3fef548b2112",
     "zh:198a1cd01c6bcb2c00146ac38aabcf04e9f027442bbe9c3ec7aa31220a6964d9",
     "zh:3b6d141ef3ad2978b6efddc780b3444e50e4c3988ccd45f8756398669ec52189",
@@ -87,6 +90,7 @@ provider "registry.terraform.io/hashicorp/tfe" {
   version = "0.65.2"
   hashes = [
     "h1:UxEh15RsENRjxyEpm14ZbH1c2UThEvNM3smwOw2Po+g=",
+    "h1:fkIgeQ1pXi0L6UZLTmilIvqdk1+a4MmS+t1qIICkTME=",
     "zh:229889762f8b7631ca26242df781f66b72635658b9421d104721432d1526cfed",
     "zh:28e90e56d9142ceea9cee953d6d856196eafa6486dfa3c4ba1e548c9224186bd",
     "zh:4862a251f0842b65a0cf3f0550ad268f8f6ef03912a5c08283e5b7c6208aaf27",
