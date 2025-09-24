@@ -14,6 +14,12 @@ module "aws_transit_r1" {
   name         = "aws-${var.aws_r1_location_short}-transit-${var.customer_name}"
   ha_gw        = false
   single_az_ha = false
+  tags = {
+    csp-environment : "tst",
+    csp-department : "dept-530",
+    shutdown : "stop",
+    schedule : "08:00-11:00;mo,tu,we,th,fr;europe-paris"
+  }
 }
 
 output "aws_transit_r1" {

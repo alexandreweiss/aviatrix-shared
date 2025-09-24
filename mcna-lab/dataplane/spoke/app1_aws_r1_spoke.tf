@@ -144,16 +144,16 @@ resource "aws_route_table_association" "this" {
 
 //Spoke GW
 module "aws_r1_spoke_app1" {
-  source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
+  source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
   # version = "1.6.3"
 
-  cloud      = "AWS"
-  name       = "aws-${var.aws_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
-  cidr       = var.vpc_cidr
-  region     = var.aws_r1_location
-  account    = var.aws_account
-  transit_gw = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
-  # transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  cloud   = "AWS"
+  name    = "aws-${var.aws_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
+  cidr    = var.vpc_cidr
+  region  = var.aws_r1_location
+  account = var.aws_account
+  # transit_gw = data.tfe_outputs.dataplane.values.aws_transit_r1.transit_gateway.gw_name
+  transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
   attached         = true
   use_existing_vpc = true
   single_ip_snat   = true
@@ -186,14 +186,23 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# Deploy Guacamole AMI for remote desktop access to the Windows host in VPC1. Configuration happens in the separate "config-guacamole" Terraform plan
-module "ec2_instance_linux" {
+######TEMP
+data "aws_ami" "ubuntu-recent" {
+  most_recent = true
+  owners      = ["099720109477"]
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/*ubuntu-noble-24.04-amd64-server-*"]
+  }
+}
+
+module "ec2_instance_linux_recent" {
   source = "terraform-aws-modules/ec2-instance/aws"
 
-  name = var.application_1
+  name = "${var.application_1}-recent"
 
-  ami                         = data.aws_ami.ubuntu.image_id
-  instance_type               = "t3a.small"
+  ami                         = data.aws_ami.ubuntu-recent.image_id
+  instance_type               = "t3.medium"
   key_name                    = "ssh-linux-non-prod"
   monitoring                  = true
   subnet_id                   = aws_subnet.this["front-a"].id
@@ -202,9 +211,31 @@ module "ec2_instance_linux" {
 
   tags = {
     Cloud       = "AWS"
-    Application = "Dev Server"
+    Application = "Dev Server Recent"
   }
 }
+
+#######TEMP
+
+# Deploy Guacamole AMI for remote desktop access to the Windows host in VPC1. Configuration happens in the separate "config-guacamole" Terraform plan
+# module "ec2_instance_linux" {
+#   source = "terraform-aws-modules/ec2-instance/aws"
+
+#   name = var.application_1
+
+#   ami                         = data.aws_ami.ubuntu.image_id
+#   instance_type               = "t3a.small"
+#   key_name                    = "ssh-linux-non-prod"
+#   monitoring                  = true
+#   subnet_id                   = aws_subnet.this["front-a"].id
+#   vpc_security_group_ids      = [aws_security_group.allow_all_rfc1918.id]
+#   associate_public_ip_address = false
+
+#   tags = {
+#     Cloud       = "AWS"
+#     Application = "Dev Server"
+#   }
+# }
 
 resource "aws_security_group" "allow_all_rfc1918" {
   name        = "allow_all_rfc1918_vpc"
@@ -215,7 +246,7 @@ resource "aws_security_group" "allow_all_rfc1918" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["10.0.0.0/8"]
+    cidr_blocks = ["10.0.0.0/8", "192.168.0.0/16", "172.16.0.0/12"]
   }
 
   egress {

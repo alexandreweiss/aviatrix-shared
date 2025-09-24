@@ -181,6 +181,7 @@ module "we-app1-vm" {
   subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet-2.id
   admin_ssh_key       = var.ssh_public_key
   customer_name       = var.customer_name
+  enable_public_ip    = true
   //vm_size             = "Standard_DS4_v2"
   depends_on = [
   ]

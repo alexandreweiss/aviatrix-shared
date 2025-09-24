@@ -12,6 +12,13 @@ module "gcp_transit_we" {
   enable_transit_firenet = true
   lan_cidr               = "10.30.2.0/24"
   ha_gw                  = false
+  # tags addition is not supported on GCP
+  # tags = {
+  #   csp-environment : "tst",
+  #   csp-department : "dept-530",
+  #   shutdown : "stop",
+  #   schedule : "08:00-11:00;mo,tu,we,th,fr;europe-paris"
+  # }
 }
 
 

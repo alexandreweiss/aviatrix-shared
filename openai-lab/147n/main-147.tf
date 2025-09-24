@@ -105,11 +105,11 @@ resource "azurerm_cognitive_deployment" "aviatrix" {
   rai_policy_name      = "Microsoft.DefaultV2"
   model {
     format  = "OpenAI"
-    name    = "gpt-4"
-    version = "0613"
+    name    = "gpt-4.1"
+    version = "2025-04-14"
   }
   sku {
-    name     = "Standard"
+    name     = "GlobalStandard"
     capacity = 10
   }
   version_upgrade_option = "OnceCurrentVersionExpired"
@@ -159,10 +159,11 @@ resource "azurerm_private_dns_a_record" "oai-srv-dns" {
 
 # Create OpenAI search service named "aviatrix-ignite-search" in Azure Region R1 with system assigned identity enabled
 resource "azurerm_search_service" "aviatrix-ignite-search" {
-  location            = var.azure_r1_location
-  name                = "aviatrix-ignite-search-147"
-  resource_group_name = azurerm_resource_group.r1-rg.name
-  sku                 = "basic"
+  location                   = var.azure_r1_location
+  name                       = "aviatrix-ignite-search-147"
+  resource_group_name        = azurerm_resource_group.r1-rg.name
+  network_rule_bypass_option = "AzureServices"
+  sku                        = "basic"
   identity {
     type = "SystemAssigned"
   }
@@ -227,7 +228,7 @@ resource "azurerm_storage_account" "avx-ignite-sa" {
 # Create a container named "oai-data" in the storage account "avx-ignite-sa"
 resource "azurerm_storage_container" "oai-data" {
   name                  = "oai-data"
-  storage_account_name  = azurerm_storage_account.avx-ignite-sa.name
+  storage_account_id    = azurerm_storage_account.avx-ignite-sa.id
   container_access_type = "private"
 }
 

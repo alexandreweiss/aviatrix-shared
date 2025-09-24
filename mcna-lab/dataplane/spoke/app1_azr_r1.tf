@@ -29,9 +29,9 @@ resource "azurerm_storage_account" "app1_aci_sa" {
 }
 
 resource "azurerm_storage_share" "app1_aci_share" {
-  name                 = "aci-config"
-  storage_account_name = azurerm_storage_account.app1_aci_sa.name
-  quota                = 1
+  name               = "aci-config"
+  storage_account_id = azurerm_storage_account.app1_aci_sa.id
+  quota              = 1
 }
 
 resource "local_file" "app1_config_yaml" {

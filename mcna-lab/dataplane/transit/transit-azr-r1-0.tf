@@ -7,17 +7,25 @@ module "azure_transit_we" {
   region                        = var.azure_r1_location
   cidr                          = "10.10.0.0/23"
   account                       = var.azure_account
-  enable_transit_firenet        = true
+  enable_transit_firenet        = false
   name                          = "azr-${var.azure_r1_location_short}-transit-${var.customer_name}"
   local_as_number               = 65007
   enable_advertise_transit_cidr = false
   single_az_ha                  = false
   ha_gw                         = false
+  enable_segmentation           = true
   resource_group                = azurerm_resource_group.azr-transit-r1-0-rg.name
-  bgp_lan_interfaces_count      = 1
-  enable_bgp_over_lan           = true
-  # instance_size       = "Standard_D2s_v3"
+  # bgp_lan_interfaces_count      = 1
+  enable_bgp_over_lan = false
+  instance_size       = "Standard_B2s"
+  # instance_size       = "Standard_D3_v"
   insane_mode = false
+  tags = {
+    csp-environment : "tst",
+    csp-department : "dept-530",
+    shutdown : "stop",
+    schedule : "08:00-11:00;mo,tu,we,th,fr;europe-paris"
+  }
 }
 
 output "transit_we" {

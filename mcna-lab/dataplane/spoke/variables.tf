@@ -49,7 +49,7 @@ variable "aws_r1_location_short" {
 }
 
 variable "gcp_r1_location" {
-  default     = "europe-west-1"
+  default     = "europe-west1"
   description = "region to deploy resources"
   type        = string
 }

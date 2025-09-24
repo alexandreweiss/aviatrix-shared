@@ -50,6 +50,11 @@ variable "firewall_admin_username" {
   description = "Admin username for Firewall (usually requires a stronger one than just admin)"
 }
 
+variable "firewall_admin_password" {
+  sensitive   = true
+  description = "Firewall Admin password"
+}
+
 variable "admin_password" {
   sensitive   = true
   description = "Admin password"

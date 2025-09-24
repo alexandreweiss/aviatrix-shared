@@ -227,7 +227,7 @@ resource "azurerm_storage_account" "avx-ignite-sa" {
 # Create a container named "oai-data" in the storage account "avx-ignite-sa"
 resource "azurerm_storage_container" "oai-data" {
   name                  = "oai-data"
-  storage_account_name  = azurerm_storage_account.avx-ignite-sa.name
+  storage_account_id    = azurerm_storage_account.avx-ignite-sa.id
   container_access_type = "private"
 }
 
