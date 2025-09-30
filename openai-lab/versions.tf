@@ -4,6 +4,12 @@ terraform {
       source = "aviatrixsystems/aviatrix"
     }
   }
+  cloud {
+    organization = "ananableu"
+    workspaces {
+      name = "aviatrix-oai-01"
+    }
+  }
 }
 
 provider "azurerm" {
@@ -12,6 +18,9 @@ provider "azurerm" {
   }
   # ACE147 subscription_id = "546d1d9f-287b-476d-b8e7-7e5c34831379"
   subscription_id = "cc67e95e-9baa-4ef4-bfac-a33a19ef2232"
+}
+
+provider "aws" {
 }
 
 provider "aviatrix" {

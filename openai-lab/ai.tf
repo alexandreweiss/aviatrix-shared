@@ -287,13 +287,6 @@ resource "azurerm_private_dns_resolver_inbound_endpoint" "dns-inbound" {
   }
 }
 
-# resource "azurerm_private_dns_resolver_outbound_endpoint" "dns-outbound" {
-#   name                    = "dns-outbound"
-#   location                = var.azure_r1_location
-#   subnet_id               = azurerm_subnet.r1-azure-spoke-aoi-dns-outbound-subnet.id
-#   private_dns_resolver_id = azurerm_private_dns_resolver.r1-private-dns-resolver.id
-# }
-
 ## Create role assignments
 
 # Create a role assignment for the OpenAI search to access the storage account using its managed identity

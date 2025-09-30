@@ -2,24 +2,42 @@ data "dns_a_record_set" "controller_ip" {
   host = var.controller_fqdn
 }
 
+module "azure_transit_oai" {
+  source = "terraform-aviatrix-modules/mc-transit/aviatrix"
+
+  cloud           = "azure"
+  region          = var.azure_r1_location
+  cidr            = "10.60.0.0/23"
+  account         = var.azure_account
+  name            = "azr-oai-transit"
+  local_as_number = 65012
+  single_az_ha    = false
+  ha_gw           = false
+  instance_size   = "Standard_B2s"
+  tags = {
+    csp-environment : "tst",
+    csp-department : "dept-530",
+    shutdown : "stop",
+    schedule : "08:00-11:00;mo,tu,we,th,fr;europe-paris"
+  }
+}
+
 module "azr_r1_spoke_oai" {
-  source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.6.3"
+  source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
 
   cloud            = "Azure"
-  name             = "azure-oai"
+  name             = "azure-oai-spoke"
   vpc_id           = "${azurerm_virtual_network.azure-spoke-oai-r1.name}:${azurerm_resource_group.r1-rg.name}:${azurerm_virtual_network.azure-spoke-oai-r1.guid}"
   gw_subnet        = azurerm_subnet.r1-azure-spoke-oai-gw-subnet.address_prefixes[0]
   use_existing_vpc = true
   region           = var.azure_r1_location
   account          = var.azure_account
-  transit_gw       = "azr-we-transit-avx"
-  # network_domain = aviatrix_segmentation_network_domain.azure-oai-domain
-  attached       = true
-  single_ip_snat = false
-  single_az_ha   = false
-  ha_gw          = false
-  resource_group = azurerm_resource_group.r1-rg.name
+  transit_gw       = module.azure_transit_oai.transit_gateway.gw_name
+  instance_size    = "Standard_B1ms"
+  attached         = true
+  single_az_ha     = false
+  ha_gw            = false
+  resource_group   = azurerm_resource_group.r1-rg.name
 }
 
 resource "aviatrix_gateway" "azr_r1_spoke_vpn_oai" {
@@ -44,17 +62,6 @@ resource "aviatrix_gateway" "azr_r1_spoke_vpn_oai" {
     azurerm_subnet.r1-azure-spoke-oai-gw-subnet
   ]
 }
-
-# module "azr_r1_oai_vm" {
-#   source              = "github.com/alexandreweiss/misc-tf-modules/azr-win-vm"
-#   environment         = "rdp"
-#   location            = var.azure_r1_location
-#   location_short      = var.azure_r1_location_short
-#   index_number        = 01
-#   resource_group_name = azurerm_resource_group.r1-rg.name
-#   subnet_id           = azurerm_subnet.r1-azure-spoke-oai-vm-subnet.id
-#   admin_password      = var.admin_password
-# }
 
 # resource "aviatrix_segmentation_network_domain" "azure-oai-domain" {
 #   domain_name = "Azure-oai"
