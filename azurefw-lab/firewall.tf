@@ -63,7 +63,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
       source_addresses    = ["*"]
       destination_address = azurerm_public_ip.firewall_pip.ip_address
       destination_ports   = ["22"]
-      translated_address  = "10.1.1.4"  # VM private IP (adjust as needed)
+      translated_address  = "10.1.1.4" # VM private IP (adjust as needed)
       translated_port     = "22"
     }
   }

@@ -1,3 +1,17 @@
+
+
+resource "aviatrix_web_group" "vdi-test" {
+  name = "vdi-test"
+  selector {
+    match_expressions {
+      snifilter = "*azure.com"
+    }
+    match_expressions {
+      snifilter = "*windows.com"
+    }
+  }
+}
+
 resource "random_integer" "app1_example" {
   min = 10000
   max = 99999
@@ -52,7 +66,7 @@ resource "azurerm_storage_share_file" "app1_config_file" {
   name             = "config.yaml"
   content_type     = "text/yaml"
   source           = local_file.app1_config_yaml.filename
-  storage_share_id = azurerm_storage_share.app1_aci_share.id
+  storage_share_id = azurerm_storage_share.app1_aci_share.url
   lifecycle {
     replace_triggered_by = [null_resource.app1_always_run]
   }
@@ -62,7 +76,8 @@ resource "azurerm_container_group" "app1_container_group" {
   name                = "${var.application_1}-cg"
   resource_group_name = azurerm_resource_group.app1_vms_rg.name
   location            = var.azure_r1_location
-  depends_on          = [azurerm_subnet.r1-azure-spoke-app1-aci-subnet, azurerm_storage_share_file.app1_config_file]
+  # depends_on          = [azurerm_subnet.r1-azure-spoke-app1-aci-subnet, azurerm_storage_share_file.app1_config_file]
+  depends_on = [azurerm_subnet.r1-azure-spoke-app1-aci-subnet]
 
   container {
     name = "gatus"

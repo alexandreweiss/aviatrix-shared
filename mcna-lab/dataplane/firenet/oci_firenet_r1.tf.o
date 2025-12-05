@@ -1,0 +1,20 @@
+// Disabled to remove Firewall instance $$
+module "oci_firenet_r1" {
+  source = "terraform-aviatrix-modules/mc-firenet/aviatrix"
+
+  transit_module = data.tfe_outputs.dataplane.values.oci_transit_r1_0
+  # firewall_image = "Palo Alto Networks VM-Series Next-Generation Firewall (BYOL)"
+  firewall_image         = "FortiGate Next-Gen Firewall (BYOL)"
+  firewall_image_version = "7.6.4"
+  # custom_fw_names = ["oci-${var.oci_r1_location_short}-firenet-1", "oci-${var.oci_r1_location_short}-firenet-2"]
+  # fw_amount       = 2
+  custom_fw_names = ["oci-${var.oci_r1_location_short}-firenet-1"]
+  egress_enabled  = false
+
+  tags = {
+    csp-environment : "tst",
+    csp-department : "dept-530",
+    shutdown : "stop",
+    schedule : "08:00-11:00;mo,tu,we,th,fr;europe-paris"
+  }
+}

@@ -46,6 +46,19 @@ variable "aws_r1_location_short" {
   type        = string
 }
 
+variable "oci_r1_location" {
+  default     = "France Central"
+  description = "region to deploy resources"
+  type        = string
+}
+
+variable "oci_r1_location_short" {
+  default     = "frc"
+  description = "region to deploy resources"
+  type        = string
+}
+
+
 variable "firewall_admin_username" {
   description = "Admin username for Firewall (usually requires a stronger one than just admin)"
 }

@@ -1,6 +1,5 @@
 module "oci_transit_r1_0" {
   source = "terraform-aviatrix-modules/mc-transit/aviatrix"
-  # version = "2.5.3"
 
   cloud           = "OCI"
   region          = var.oci_r1_location
@@ -8,9 +7,18 @@ module "oci_transit_r1_0" {
   account         = var.oci_account
   local_as_number = 65002
   single_az_ha    = false
-  ha_gw           = true
-  insane_mode     = true
+  ha_gw           = false
   name            = "oci-${var.oci_r1_location_short}-transit-${var.customer_name}"
   # bgp_lan_interfaces_count      = 1
-  enable_bgp_over_lan = false
+  enable_bgp_over_lan    = false
+  enable_transit_firenet = true
+}
+
+output "oci_transit_r1_0" {
+  value     = module.oci_transit_r1_0
+  sensitive = true
+}
+
+output "oci_transit_r1_0_gw_name" {
+  value = module.oci_transit_r1_0.transit_gateway.gw_name
 }
