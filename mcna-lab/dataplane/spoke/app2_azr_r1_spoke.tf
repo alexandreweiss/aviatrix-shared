@@ -139,7 +139,7 @@ resource "azurerm_subnet_route_table_association" "app2-subnet-aci-rt-assoc" {
 }
 
 module "azr_r1_spoke_app2" {
-  source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
+  source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
 
   cloud            = "Azure"
   name             = "azr-${var.azure_r1_location_short}-spoke-${var.application_2}-${var.customer_name}"
@@ -158,7 +158,7 @@ module "azr_r1_spoke_app2" {
   # For HPE ha_gw = true
   ha_gw = false
   //network_domain = aviatrix_segmentation_network_domain.dev_nd.domain_name
-  single_ip_snat = true
+  single_ip_snat = false
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app2-rg.name
   # local_as_number = 65013
