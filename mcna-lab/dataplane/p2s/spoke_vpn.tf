@@ -33,8 +33,8 @@ resource "azurerm_subnet" "azr-r1-spoke-vpn-vm-subnet" {
 }
 
 module "azr_r1_spoke_vpn" {
-  source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.6.1"
+  source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
+  # version = "1.6.1"
 
   cloud            = "Azure"
   name             = "${var.azure_r1_location_short}-spoke-vpn-${var.customer_name}"

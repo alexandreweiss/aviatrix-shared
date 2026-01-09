@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "azr-r1-spoke-app1-rg" {
 }
 
 resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
-  address_space       = ["10.10.4.0/23"]
+  address_space       = ["10.10.4.0/23", "fd00:10:10::/48"]
   location            = var.azure_r1_location
   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-vn"
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
@@ -18,21 +18,35 @@ resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
 
 # Comment out for HPE
 resource "azurerm_subnet" "r1-azure-spoke-app1-gw-subnet" {
-  address_prefixes     = ["10.10.4.0/26"]
+  address_prefixes     = ["10.10.4.0/26", "fd00:10:10:2::/64"]
   name                 = "avx-gw-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 }
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-subnet" {
-  address_prefixes     = ["10.10.4.64/26"]
+  address_prefixes     = ["10.10.4.64/26", "fd00:10:10:3::/64"]
   name                 = "avx-hagw-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 }
 
+# resource "azurerm_subnet" "r1-azure-spoke-app1-gw-ipv6-subnet" {
+#   address_prefixes     = ["fd00:10:10:2::/64"]
+#   name                 = "avx-gw-ipv6-subnet"
+#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+#   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
+# }
+
+# resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-ipv6-subnet" {
+#   address_prefixes     = ["fd00:10:10:3::/64"]
+#   name                 = "avx-hagw-ipv6-subnet"
+#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+#   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
+# }
+
 resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet" {
-  address_prefixes     = ["10.10.4.128/28"]
+  address_prefixes     = ["10.10.4.128/28", "fd00:10:10:1::/64"]
   name                 = "avx-vm-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
@@ -62,6 +76,13 @@ resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet-2" {
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 }
+
+# resource "azurerm_subnet" "r1-azure-spoke-app1-vm-ipv6-subnet" {
+#   address_prefixes     = ["fd00:10:10:1::/64"]
+#   name                 = "avx-vm-ipv6-subnet"
+#   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+#   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
+# }
 
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-aci-subnet" {
@@ -114,6 +135,24 @@ resource "azurerm_route_table" "r1-azure-spoke-app1-aci-subnet-rt" {
   }
 }
 
+# resource "azurerm_route_table" "r1-azure-spoke-app1-vm-ipv6-subnet-rt" {
+#   location            = var.azure_r1_location
+#   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-vm-ipv6-subnet-rt"
+#   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+
+#   route {
+#     address_prefix = "::/0"
+#     name           = "internetDefaultBlackhole"
+#     next_hop_type  = "None"
+#   }
+
+#   lifecycle {
+#     ignore_changes = [
+#       route,
+#     ]
+#   }
+# }
+
 resource "azurerm_subnet_route_table_association" "app1-subnet-vm-rt-assoc" {
   route_table_id = azurerm_route_table.r1-azure-spoke-app1-vm-subnet-rt.id
   subnet_id      = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
@@ -129,18 +168,26 @@ resource "azurerm_subnet_route_table_association" "app1-subnet-aci-rt-assoc" {
   subnet_id      = azurerm_subnet.r1-azure-spoke-app1-aci-subnet.id
 }
 
+# resource "azurerm_subnet_route_table_association" "app1-subnet-vm-ipv6-rt-assoc" {
+#   route_table_id = azurerm_route_table.r1-azure-spoke-app1-vm-ipv6-subnet-rt.id
+#   subnet_id      = azurerm_subnet.r1-azure-spoke-app1-vm-ipv6-subnet.id
+# }
+
 module "azr_r1_spoke_app1" {
   source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
 
-  cloud     = "Azure"
-  name      = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
-  vpc_id    = "${azurerm_virtual_network.azure-spoke-app1-r1.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}:${azurerm_virtual_network.azure-spoke-app1-r1.guid}"
-  gw_subnet = azurerm_subnet.r1-azure-spoke-app1-gw-subnet.address_prefixes[0]
+  cloud          = "Azure"
+  name           = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
+  vpc_id         = "${azurerm_virtual_network.azure-spoke-app1-r1.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}:${azurerm_virtual_network.azure-spoke-app1-r1.guid}"
+  gw_subnet      = azurerm_subnet.r1-azure-spoke-app1-gw-subnet.address_prefixes[0]
+  enable_ipv6    = true
+  ipv6_gw_subnet = azurerm_subnet.r1-azure-spoke-app1-gw-subnet.address_prefixes[1]
   #  For HPE
   #gw_subnet = "10.10.2.0/26"
   ###
   use_existing_vpc = true
-  hagw_subnet      = azurerm_subnet.r1-azure-spoke-app1-hagw-subnet.address_prefixes[0]
+  # hagw_subnet      = azurerm_subnet.r1-azure-spoke-app1-hagw-subnet.address_prefixes[0]
+  # ipv6_hagw_subnet = azurerm_subnet.r1-azure-spoke-app1-hagw-ipv6-subnet.address_prefixes[0]
   # For HPE
   #hagw_subnet = "10.10.3.0/26"
   ###
@@ -156,10 +203,10 @@ module "azr_r1_spoke_app1" {
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   #local_as_number = 65012
-  enable_bgp = false
-  depends_on = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
+  enable_bgp    = false
+  depends_on    = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
   instance_size = "Standard_B2ms"
-  insane_mode = false
+  insane_mode   = false
   #bgp_lan_interfaces_count = 1
   #enable_bgp_over_lan      = true
 }
@@ -178,6 +225,27 @@ module "we-app1-vm" {
   admin_ssh_key       = var.ssh_public_key
   customer_name       = var.customer_name
   //vm_size             = "Standard_DS4_v2"
+  depends_on = [
+  ]
+}
+
+module "azr-app1-ipv6-vm" {
+  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment = var.application_1
+  tags = {
+    "application" = var.application_1
+    "environment" = "ipv6-workload"
+  }
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 02
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
+  ipv6_subnet_id      = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  customer_name       = var.customer_name
+  enable_ipv6         = true
+
   depends_on = [
   ]
 }

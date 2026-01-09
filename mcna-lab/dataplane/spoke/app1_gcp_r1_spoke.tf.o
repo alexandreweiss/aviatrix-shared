@@ -7,12 +7,12 @@
 module "gcp_r1_spoke_app1" {
   source = "terraform-aviatrix-modules/mc-spoke/aviatrix"
 
-  cloud          = "GCP"
-  name           = "gcp-${var.gcp_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
-  region         = var.gcp_r1_location
-  account        = var.gcp_account
-  transit_gw     = data.tfe_outputs.dataplane.values.transit_gcp_r1_gw_name
-  attached       = true
+  cloud   = "GCP"
+  name    = "gcp-${var.gcp_r1_location_short}-spoke-${var.application_1}-${var.customer_name}"
+  region  = var.gcp_r1_location
+  account = var.gcp_account
+  # transit_gw     = data.tfe_outputs.dataplane.values.transit_gcp_r1_gw_name
+  attached       = false
   ha_gw          = false
   single_ip_snat = false
   single_az_ha   = false

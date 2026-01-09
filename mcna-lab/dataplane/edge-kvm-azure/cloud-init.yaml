@@ -25,28 +25,28 @@ write_files:
       set -euo pipefail
       
       DISK="/dev/nvme0n2"
-      PART="$${DISK}p1"
+      PART="${DISK}p1"
       MOUNTPOINT="/virtu"
       FS_TYPE="ext4"
       FSTAB="/etc/fstab"
       
-      echo "Starting disk setup for $${DISK}"
+      echo "Starting disk setup for ${DISK}"
       
       # Create mount point
       mkdir -p "$MOUNTPOINT"
       
       # Check if already mounted
-      if mount | grep -qE "on $${MOUNTPOINT} "; then
+      if mount | grep -qE "on ${MOUNTPOINT} "; then
         echo "$MOUNTPOINT already mounted. Skipping."
         exit 0
       fi
       
       # Create partition if it doesn't exist
       if [[ ! -b "$PART" ]]; then
-        echo "Creating GPT and primary partition on $${DISK}..."
+        echo "Creating GPT and primary partition on ${DISK}..."
         wipefs -f -a "$DISK" || true
         parted -s "$DISK" mklabel gpt
-        parted -s "$DISK" mkpart primary "$${FS_TYPE}" 0% 100%
+        parted -s "$DISK" mkpart primary "${FS_TYPE}" 0% 100%
         partprobe "$DISK" || true
         udevadm settle || true
       fi
@@ -54,13 +54,13 @@ write_files:
       # Format if no filesystem exists
       EXISTING_FS=$(blkid -s TYPE -o value "$PART" 2>/dev/null || true)
       if [[ -z "$EXISTING_FS" ]]; then
-        echo "Formatting $${PART} as $${FS_TYPE}..."
-        mkfs.$${FS_TYPE} -F "$PART"
+        echo "Formatting ${PART} as ${FS_TYPE}..."
+        mkfs.${FS_TYPE} -F "$PART"
       fi
       
       # Get UUID and add to fstab
       UUID=$(blkid -s UUID -o value "$PART")
-      FSTAB_LINE="UUID=$${UUID} $${MOUNTPOINT} $${FS_TYPE} defaults,nofail 0 2"
+      FSTAB_LINE="UUID=${UUID} ${MOUNTPOINT} ${FS_TYPE} defaults,nofail 0 2"
       
       if ! grep -q "$UUID" "$FSTAB"; then
         echo "$FSTAB_LINE" >> "$FSTAB"
@@ -74,8 +74,8 @@ write_files:
       chmod 755 "$MOUNTPOINT"
       
       # Create required directories
-      mkdir -p "$${MOUNTPOINT}/vm"
-      mkdir -p "$${MOUNTPOINT}/iso"
+      mkdir -p "${MOUNTPOINT}/vm"
+      mkdir -p "${MOUNTPOINT}/iso"
       
       echo "Disk setup completed successfully"
     path: /tmp/setup-disk.sh
@@ -144,8 +144,8 @@ write_files:
       STORAGE_ACCOUNT="$1"
       STORAGE_KEY="$2"
       
-      sudo mount -t cifs //$${STORAGE_ACCOUNT}.file.core.windows.net/edge-isos /mnt/edge-isos \
-          -o vers=3.0,username=$${STORAGE_ACCOUNT},password=$${STORAGE_KEY},dir_mode=0777,file_mode=0777,serverino
+      sudo mount -t cifs //${STORAGE_ACCOUNT}.file.core.windows.net/edge-isos /mnt/edge-isos \
+          -o vers=3.0,username=${STORAGE_ACCOUNT},password=${STORAGE_KEY},dir_mode=0777,file_mode=0777,serverino
       
       echo "File share mounted at /mnt/edge-isos"
       MOUNT_EOF
@@ -232,7 +232,7 @@ write_files:
       for network in "$${networks[@]}"
       do
         echo "Creating network: $network"
-        virsh net-define /tmp/$${network}-network.xml
+        virsh net-define /tmp/${network}-network.xml
         virsh net-start $network
         virsh net-autostart $network
         echo "Network $network created and started successfully"
@@ -254,19 +254,19 @@ write_files:
       set -euo pipefail
 
       # Check if VM name is provided
-      if [ $$# -lt 1 ]; then
-          echo "Usage: $$0 <vm-name> [site]"
-          echo "Example: $$0 edge-gw-01"
-          echo "Example: $$0 edge-gw-01 mumbai"
+      if [ $# -lt 1 ]; then
+          echo "Usage: $0 <vm-name> [site]"
+          echo "Example: $0 edge-gw-01"
+          echo "Example: $0 edge-gw-01 mumbai"
           echo "Default site: india"
           exit 1
       fi
 
-      VM_NAME="$$1"
-      SITE="$${2:-india}"  # Default to india if not provided
+      VM_NAME="$1"
+      SITE="${2:-india}"  # Default to india if not provided
       SOURCE_IMAGE="/virtu/iso/avx-gateway-g4-202507291722.qcow2"
-      AVIATRIX_ISO="/mnt/edge-isos/$${VM_NAME}-$${SITE}.iso"
-      VM_DISK="/virtu/vm/$${VM_NAME}.qcow2"
+      AVIATRIX_ISO="/mnt/edge-isos/${VM_NAME}-${SITE}.iso"
+      VM_DISK="/virtu/vm/${VM_NAME}.qcow2"
       VM_DIR="/virtu/vm"
 
       # Validate VM name (alphanumeric, hyphens, underscores only)
@@ -276,16 +276,16 @@ write_files:
       fi
 
       # Check if source image exists
-      if [[ ! -f "$$SOURCE_IMAGE" ]]; then
-          echo "Error: Source image not found at $$SOURCE_IMAGE"
+      if [[ ! -f "$SOURCE_IMAGE" ]]; then
+          echo "Error: Source image not found at $SOURCE_IMAGE"
           exit 1
       fi
 
       # Check if Aviatrix ISO exists
-      if [[ ! -f "$$AVIATRIX_ISO" ]]; then
-          echo "Error: Aviatrix ISO not found at $$AVIATRIX_ISO"
+      if [[ ! -f "$AVIATRIX_ISO" ]]; then
+          echo "Error: Aviatrix ISO not found at $AVIATRIX_ISO"
           echo "Please ensure the Aviatrix Edge ISO is available in /mnt/edge-isos/"
-          echo "Expected filename: $${VM_NAME}-$${SITE}.iso"
+          echo "Expected filename: ${VM_NAME}-${SITE}.iso"
           exit 1
       fi
 
@@ -304,11 +304,11 @@ write_files:
       # Ensure VM directory exists
       mkdir -p "$VM_DIR"
 
-      echo "Creating virtual machine: $$VM_NAME"
-      echo "Site: $$SITE"
-      echo "Source image: $$SOURCE_IMAGE"
-      echo "Aviatrix ISO: $$AVIATRIX_ISO"
-      echo "VM disk: $$VM_DISK"
+      echo "Creating virtual machine: $VM_NAME"
+      echo "Site: $SITE"
+      echo "Source image: $SOURCE_IMAGE"
+      echo "Aviatrix ISO: $AVIATRIX_ISO"
+      echo "VM disk: $VM_DISK"
 
       # Copy the source image to create VM disk
       echo "Copying Aviatrix image to VM disk..."
@@ -319,7 +319,7 @@ write_files:
       chmod 644 "$VM_DISK"
 
       # Create and start the VM with virt-install
-      echo "Creating and starting VM with virt-install using ISO: $${AVIATRIX_ISO}..."
+      echo "Creating and starting VM with virt-install using ISO: ${AVIATRIX_ISO}..."
       virt-install \
           --name="$VM_NAME" \
           --vcpus=2 \
@@ -328,7 +328,7 @@ write_files:
           --network network=wan,model=virtio \
           --network network=lan,model=virtio \
           --network network=mgmt,model=virtio \
-          --disk path="$${AVIATRIX_ISO}",device=cdrom,bus=sata,readonly=on \
+          --disk path="${AVIATRIX_ISO}",device=cdrom,bus=sata,readonly=on \
           --graphics vnc,listen=0.0.0.0,port=-1 \
           --console pty,target_type=serial \
           --boot hd \
@@ -345,7 +345,7 @@ write_files:
       echo "  Memory: 2048 MB"
       echo "  vCPUs: 2"
       echo "  Disk: $VM_DISK"
-      echo "  ISO: $${AVIATRIX_ISO}"
+      echo "  ISO: ${AVIATRIX_ISO}"
       echo "  Networks: wan, lan, mgmt (in that order)"
       echo "  VNC Graphics: Enabled"
       echo "  Autostart: Enabled"
@@ -356,7 +356,7 @@ write_files:
       virsh dominfo "$VM_NAME"
 
       echo ""
-      echo "The VM has been created and started with the site-specific ISO ($${AVIATRIX_ISO}) attached to the CD/DVD drive."
+      echo "The VM has been created and started with the site-specific ISO (${AVIATRIX_ISO}) attached to the CD/DVD drive."
       echo "To connect via console: virsh console $VM_NAME"
       echo "To get VNC port: virsh vncdisplay $VM_NAME"
       echo "To destroy the VM: virsh destroy $VM_NAME && virsh undefine $VM_NAME --remove-all-storage"
@@ -375,7 +375,7 @@ write_files:
       fi
 
       VM_NAME="$1"
-      VM_DISK="/virtu/vm/$${VM_NAME}.qcow2"
+      VM_DISK="/virtu/vm/${VM_NAME}.qcow2"
 
       # Validate VM name (alphanumeric, hyphens, underscores only)
       if [[ ! "$VM_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
@@ -535,14 +535,14 @@ write_files:
       fi
 
       # Set file paths
-      VM_DISK="$VM_DIR/$${VM_NAME}.qcow2"
+      VM_DISK="$VM_DIR/${VM_NAME}.qcow2"
       ISO_PATH="$ISO_DIR/$UBUNTU_ISO"
-      CLOUD_INIT_ISO="$VM_DIR/$${VM_NAME}-cloud-init.iso"
+      CLOUD_INIT_ISO="$VM_DIR/${VM_NAME}-cloud-init.iso"
 
       echo "Creating EVP Router VM: $VM_NAME"
       echo "ASN: $ASN"
       echo "Remote Peer: $REMOTE_PEER_IP"
-      echo "Memory: $${VM_MEMORY}MB"
+      echo "Memory: ${VM_MEMORY}MB"
       echo "vCPUs: $VM_VCPUS"
       echo "Disk Size: $VM_DISK_SIZE"
 
@@ -569,12 +569,12 @@ write_files:
       mkdir -p "$VM_DIR"
 
       # Generate router ID from peer IP (use last octet + 100)
-      ROUTER_ID=$$(echo "$REMOTE_PEER_IP" | awk -F. '{print $$1"."$$2"."$$3"."($$4+100)}')
+      ROUTER_ID=$(echo "$REMOTE_PEER_IP" | awk -F. '{print $1"."$2"."$3"."($4+100)}')
 
       # Create cloud-init user-data
-      cat > "/tmp/$${VM_NAME}-user-data" << EOF
+      cat > "/tmp/${VM_NAME}-user-data" << EOF
       #cloud-config
-      hostname: $${VM_NAME}
+      hostname: ${VM_NAME}
       manage_etc_hosts: true
 
       # Default user
@@ -584,7 +584,7 @@ write_files:
           groups: users, admin
           shell: /bin/bash
           lock_passwd: false
-          passwd: \$$6\$$rounds=4096\$$saltsalt\$$hash  # password: ubuntu
+          passwd: \$6\$rounds=4096\$saltsalt\$hash  # password: ubuntu
           ssh_authorized_keys: []
 
       # Package installation
@@ -628,21 +628,21 @@ write_files:
             !
             ! BGP Configuration for EVP Router
             !
-            hostname $${VM_NAME}
+            hostname ${VM_NAME}
             password zebra
             enable password zebra
             !
-            router bgp $${ASN}
-             bgp router-id $${ROUTER_ID}
+            router bgp ${ASN}
+             bgp router-id ${ROUTER_ID}
              bgp log-neighbor-changes
              !
-             neighbor $${REMOTE_PEER_IP} remote-as 65000
-             neighbor $${REMOTE_PEER_IP} description "Aviatrix Edge Gateway"
-             neighbor $${REMOTE_PEER_IP} timers 30 90
+             neighbor ${REMOTE_PEER_IP} remote-as 65000
+             neighbor ${REMOTE_PEER_IP} description "Aviatrix Edge Gateway"
+             neighbor ${REMOTE_PEER_IP} timers 30 90
              !
              address-family ipv4 unicast
-              neighbor $${REMOTE_PEER_IP} activate
-              neighbor $${REMOTE_PEER_IP} soft-reconfiguration inbound
+              neighbor ${REMOTE_PEER_IP} activate
+              neighbor ${REMOTE_PEER_IP} soft-reconfiguration inbound
              exit-address-family
             !
             line vty
@@ -691,14 +691,14 @@ write_files:
       EOF
 
       # Create cloud-init meta-data
-      cat > "/tmp/$${VM_NAME}-meta-data" << EOF
-      instance-id: $${VM_NAME}
-      local-hostname: $${VM_NAME}
+      cat > "/tmp/${VM_NAME}-meta-data" << EOF
+      instance-id: ${VM_NAME}
+      local-hostname: ${VM_NAME}
       EOF
 
       # Create cloud-init ISO
       echo "Creating cloud-init ISO..."
-      genisoimage -output "$CLOUD_INIT_ISO" -volid cidata -joliet -rock "/tmp/$${VM_NAME}-user-data" "/tmp/$${VM_NAME}-meta-data"
+      genisoimage -output "$CLOUD_INIT_ISO" -volid cidata -joliet -rock "/tmp/${VM_NAME}-user-data" "/tmp/${VM_NAME}-meta-data"
 
       # Create VM disk
       echo "Creating VM disk..."
@@ -732,18 +732,18 @@ write_files:
       echo ""
       echo "VM Details:"
       echo "  Name: $VM_NAME"
-      echo "  Memory: $${VM_MEMORY} MB"
+      echo "  Memory: ${VM_MEMORY} MB"
       echo "  vCPUs: $VM_VCPUS"
       echo "  Disk: $VM_DISK"
       echo "  Network: LAN"
       echo "  BGP ASN: $ASN"
       echo "  BGP Peer: $REMOTE_PEER_IP"
-      echo "  Router ID: $${ROUTER_ID}"
+      echo "  Router ID: ${ROUTER_ID}"
       echo ""
       echo "Login: admin-lab/ubuntu"
 
       # Clean up temporary files
-      rm -f "/tmp/$${VM_NAME}-user-data" "/tmp/$${VM_NAME}-meta-data"
+      rm -f "/tmp/${VM_NAME}-user-data" "/tmp/${VM_NAME}-meta-data"
     path: /home/admin-lab/create-evp-router.sh
     permissions: '0755'
 
