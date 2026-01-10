@@ -1,3 +1,6 @@
+# That config file relates to the Multiwriter DCF Policy (MWP) feature in Aviatrix.
+# https://docs.aviatrix.com/documentation/latest/security/multiwriter-policy-terraform.html
+
 data "aviatrix_dcf_attachment_point" "tf_before_ui" {
   name = "TERRAFORM_BEFORE_UI_MANAGED"
 }
