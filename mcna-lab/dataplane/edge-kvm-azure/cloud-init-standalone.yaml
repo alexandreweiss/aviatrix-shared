@@ -1,0 +1,121 @@
+#cloud-config
+# Standalone Cloud-init script for Azure VM Standard_D2as_v6 with Ubuntu 22.04.1
+# Downloads and executes standalone scripts from Azure Storage
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - qemu-kvm
+  - libvirt-daemon-system
+  - libvirt-clients
+  - bridge-utils
+  - virt-manager
+  - cockpit
+  - cockpit-machines
+  - cockpit-pcp
+  - parted
+  - util-linux
+  - cifs-utils
+  - genisoimage
+  - wget
+  - curl
+
+runcmd:
+  # Enable and start libvirtd service
+  - systemctl enable libvirtd
+  - systemctl start libvirtd
+  
+  # Enable and start cockpit
+  - systemctl enable cockpit.socket
+  - systemctl start cockpit.socket
+  
+  # Add the admin-lab user to libvirt group
+  - usermod -aG libvirt admin-lab
+  
+  # Set password for admin-lab user
+  - echo "admin-lab:${admin_password}" | chpasswd
+  
+  # Wait for system to be ready
+  - sleep 10
+  
+  # Download configuration and scripts from Azure Storage
+  - wget -O /tmp/config.env "https://${storage_account_name}.blob.core.windows.net/scripts/config.env"
+  - wget -O /tmp/setup-disk.sh "https://${storage_account_name}.blob.core.windows.net/scripts/setup-disk.sh"
+  - wget -O /tmp/setup-edge.sh "https://${storage_account_name}.blob.core.windows.net/scripts/setup-edge.sh"
+  - wget -O /tmp/setup-fileshare.sh "https://${storage_account_name}.blob.core.windows.net/scripts/setup-fileshare.sh"
+  - wget -O /tmp/setup-networks.sh "https://${storage_account_name}.blob.core.windows.net/scripts/setup-networks.sh"
+  - wget -O /tmp/create-vm.sh "https://${storage_account_name}.blob.core.windows.net/scripts/create-vm.sh"
+  - wget -O /tmp/delete-vm.sh "https://${storage_account_name}.blob.core.windows.net/scripts/delete-vm.sh"
+  - wget -O /tmp/create-evp-router.sh "https://${storage_account_name}.blob.core.windows.net/scripts/create-evp-router.sh"
+  
+  # Make scripts executable
+  - chmod +x /tmp/setup-*.sh /tmp/create-*.sh /tmp/delete-*.sh
+  
+  # Run disk setup script
+  - /tmp/setup-disk.sh
+  
+  # Update AppArmor profile for libvirtd
+  - |
+    if grep -q "/virtu/\*\* rwk," /etc/apparmor.d/usr.sbin.libvirtd; then
+      echo "AppArmor profile already updated"
+    else
+      # Add the /virtu/** rwk, line before the closing brace
+      sed -i '/^}$/i\  /virtu/** rwk,' /etc/apparmor.d/usr.sbin.libvirtd
+      apparmor_parser -r /etc/apparmor.d/usr.sbin.libvirtd
+      systemctl restart libvirtd
+    fi
+  
+  # Run remaining setup scripts
+  - /tmp/setup-fileshare.sh
+  - /tmp/setup-networks.sh
+  - /tmp/setup-edge.sh
+  
+  # Create libvirt config directories for admin-lab user
+  - mkdir -p /home/admin-lab/.config/libvirt/secrets
+  - mkdir -p /home/admin-lab/.config/libvirt/storage
+  - mkdir -p /home/admin-lab/.cache/libvirt
+  - chown -R admin-lab:admin-lab /home/admin-lab/.config
+  - chown -R admin-lab:admin-lab /home/admin-lab/.cache
+  - chmod -R 755 /home/admin-lab/.config
+  - chmod -R 755 /home/admin-lab/.cache
+  
+  # Copy VM management scripts to admin-lab home
+  - cp /tmp/create-vm.sh /home/admin-lab/
+  - cp /tmp/delete-vm.sh /home/admin-lab/
+  - cp /tmp/create-evp-router.sh /home/admin-lab/
+  - cp /tmp/config.env /home/admin-lab/
+  - chown admin-lab:admin-lab /home/admin-lab/*.sh /home/admin-lab/config.env
+  - chmod +x /home/admin-lab/*.sh
+  - chmod 644 /home/admin-lab/config.env
+  
+  # Test KVM functionality
+  - kvm-ok || echo "KVM check completed"
+  
+  # Clean up temporary files
+  - rm -f /tmp/setup-*.sh /tmp/create-*.sh /tmp/delete-*.sh /tmp/config.env
+
+final_message: |
+  Cloud-init setup completed successfully!
+  
+  The following has been configured:
+  - KVM/QEMU virtualization environment
+  - LibVirt daemon and management tools
+  - Cockpit web interface for VM management
+  - Secondary disk (/dev/nvme0n2) mounted at /virtu
+  - Aviatrix Edge Gateway image downloaded and prepared
+  - Ubuntu 24.04.3 Server ISO downloaded to /virtu/iso/
+  - Azure File Share mounted at /mnt/edge-isos/
+  - AppArmor profile updated for libvirt access
+  - KVM virtual networks created (wan, lan, mgmt)
+  
+  You can access Cockpit at: https://<vm-ip>:9090
+  VM images are stored in: /virtu/iso/
+  
+  Management scripts available in /home/admin-lab/:
+  - create-vm.sh
+  - delete-vm.sh  
+  - create-evp-router.sh
+  
+  The admin-lab user has been added to the libvirt group.
+  You may need to log out and back in for group changes to take effect.

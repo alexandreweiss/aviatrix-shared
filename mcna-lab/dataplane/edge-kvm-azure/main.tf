@@ -141,21 +141,46 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-# Read cloud-init file
-data "local_file" "cloud_init" {
-  filename = "${path.module}/cloud-init.yaml"
-}
-
-# Process cloud-init template with workspace variable
+# Create configuration file for scripts
 locals {
   workspace_id = tonumber(terraform.workspace)
-  cloud_init_content = templatefile("${path.module}/cloud-init.yaml", {
+  config_content = templatefile("${path.module}/config.env.tpl", {
     workspace_id         = local.workspace_id
     admin_password       = var.admin_password
     storage_account_name = azurerm_storage_account.main.name
     storage_account_key  = azurerm_storage_account.main.primary_access_key
     site                 = var.site
   })
+}
+
+# Upload configuration and scripts to storage account
+resource "azurerm_storage_blob" "config" {
+  name                   = "config.env"
+  storage_account_name   = azurerm_storage_account.main.name
+  storage_container_name = azurerm_storage_container.scripts.name
+  type                   = "Block"
+  source_content         = local.config_content
+}
+
+resource "azurerm_storage_container" "scripts" {
+  name                  = "scripts"
+  storage_account_name  = azurerm_storage_account.main.name
+  container_access_type = "blob"
+}
+
+# Upload all script files
+resource "azurerm_storage_blob" "scripts" {
+  for_each               = fileset("${path.module}/scripts", "*.sh")
+  name                   = each.value
+  storage_account_name   = azurerm_storage_account.main.name
+  storage_container_name = azurerm_storage_container.scripts.name
+  type                   = "Block"
+  source                 = "${path.module}/scripts/${each.value}"
+}
+
+# Simple cloud-init that downloads and runs scripts
+data "local_file" "cloud_init" {
+  filename = "${path.module}/cloud-init-standalone.yaml"
 }
 
 # Managed disk for /virtu mount point
@@ -204,7 +229,11 @@ resource "azurerm_linux_virtual_machine" "main" {
   }
 
   # Cloud-init configuration
-  custom_data = base64encode(local.cloud_init_content)
+  custom_data = base64encode(templatefile("${path.module}/cloud-init-standalone.yaml", {
+    storage_account_name = azurerm_storage_account.main.name
+    storage_account_key  = azurerm_storage_account.main.primary_access_key
+    admin_password       = var.admin_password
+  }))
 
   # Enable boot diagnostics
   boot_diagnostics {

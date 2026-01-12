@@ -49,74 +49,52 @@ if [[ -f "$VM_DISK" ]]; then
     exit 1
 fi
 
-# Ensure VM directory exists
-mkdir -p "$VM_DIR"
-
-echo "Creating virtual machine: $VM_NAME"
-echo "Site: $SITE"
+echo "Creating Aviatrix Edge Gateway VM: $VM_NAME"
+echo "Using site: $SITE"
 echo "Source image: $SOURCE_IMAGE"
 echo "Aviatrix ISO: $AVIATRIX_ISO"
-echo "VM disk: $VM_DISK"
 
-# Copy the source image to create VM disk
-echo "Copying Aviatrix image to VM disk..."
+# Create VM directory if it doesn't exist
+mkdir -p "$VM_DIR"
+
+# Copy source image as VM disk
+echo "Creating VM disk from source image..."
 cp "$SOURCE_IMAGE" "$VM_DISK"
-
-# Set proper ownership and permissions
 chown libvirt-qemu:kvm "$VM_DISK"
 chmod 644 "$VM_DISK"
+
+# Set VM specifications
+VM_MEMORY=4096  # 4GB RAM
+VM_VCPUS=2      # 2 vCPUs
 
 # Create the VM with virt-install
 echo "Creating VM with virt-install..."
 virt-install \
     --name="$VM_NAME" \
-    --vcpus=2 \
-    --memory=2048 \
+    --vcpus="$VM_VCPUS" \
+    --memory="$VM_MEMORY" \
     --disk path="$VM_DISK",format=qcow2,bus=virtio \
+    --disk path="$AVIATRIX_ISO",device=cdrom,bus=sata,readonly=on \
     --network network=wan,model=virtio \
     --network network=lan,model=virtio \
     --network network=mgmt,model=virtio \
-    --disk path="$AVIATRIX_ISO",device=cdrom,bus=sata,readonly=on \
     --graphics vnc,listen=0.0.0.0,port=-1 \
     --console pty,target_type=serial \
     --boot hd,cdrom \
-    --os-variant=generic \
+    --os-variant=ubuntu22.04 \
     --noautoconsole \
-    --print-xml > /home/admin-lab/${VM_NAME}.xml
-
-# Define the VM from XML
-echo "Defining VM..."
-virsh define /home/admin-lab/${VM_NAME}.xml
-
-# Enable autostart
-virsh autostart "$VM_NAME"
-
-# Clean up temporary XML file
-rm -f /home/admin-lab/${VM_NAME}.xml
+    --autostart
 
 echo ""
-echo "Virtual machine '$VM_NAME' created successfully (not started)!"
+echo "Aviatrix Edge Gateway VM '$VM_NAME' created successfully!"
 echo ""
 echo "VM Details:"
 echo "  Name: $VM_NAME"
-echo "  Site: $SITE"
-echo "  Memory: 2048 MB"
-echo "  vCPUs: 2"
+echo "  Memory: ${VM_MEMORY} MB"
+echo "  vCPUs: $VM_VCPUS"
 echo "  Disk: $VM_DISK"
-echo "  Networks: wan, lan, mgmt (in that order)"
-echo "  Aviatrix ISO: $AVIATRIX_ISO"
-echo "  VNC Graphics: Enabled"
-echo "  Autostart: Enabled"
-echo "  Status: Defined but not started"
+echo "  Networks: WAN, LAN, MGMT"
+echo "  Site: $SITE"
 echo ""
-
-# Show VM info
-virsh dominfo "$VM_NAME"
-
-echo ""
-echo "To attach an ISO to the CD/DVD drive:"
-echo "  virsh attach-disk $VM_NAME /path/to/your.iso hdb --type cdrom --mode readonly"
-echo "To start the VM: virsh start $VM_NAME"
-echo "To connect via console: virsh console $VM_NAME"
-echo "To get VNC port: virsh vncdisplay $VM_NAME"
-echo "To destroy the VM: virsh destroy $VM_NAME && virsh undefine $VM_NAME --remove-all-storage"
+echo "The VM will boot from the Aviatrix Edge Gateway image and the configuration ISO."
+echo "Check Cockpit web interface for VM status and console access."
