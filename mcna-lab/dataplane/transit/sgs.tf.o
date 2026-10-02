@@ -1,0 +1,30 @@
+# Create an aviatrix smartgroup of type "AzureIPs" named "test-service-tags"
+resource "aviatrix_smart_group" "azure-st-azurecloud-westeurope" {
+  name = "azure-st-azurecloud-westeurope"
+  selector {
+    match_expressions {
+      external = "azureips"
+      ext_args = {
+        service_name = "AzureCloud.westeurope"
+        region       = "westeurope"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "azure-st-powerbi" {
+  name = "azure-st-powerbi"
+  selector {
+    match_expressions {
+      external = "azureips"
+      ext_args = {
+        service_name = "PowerBI"
+        region       = "westeurope"
+      }
+    }
+  }
+}
+
+output "azure-st-powerbi-list" {
+  value = aviatrix_smart_group.azure-st-powerbi.uuid
+}

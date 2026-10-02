@@ -1,0 +1,11 @@
+set interfaces vti vti5 address 169.254.100.9/30
+set vpn ipsec site-to-site peer 1.2.3.4 authentication mode pre-shared-secret
+set vpn ipsec site-to-site peer 1.2.3.4 authentication pre-shared-secret 'xxxxxxxxxxxxxxx'
+set vpn ipsec site-to-site peer 1.2.3.4 authentication remote-id 192.168.50.2
+set vpn ipsec site-to-site peer 1.2.3.4 connection-type initiate
+set vpn ipsec site-to-site peer 1.2.3.4 description test
+set vpn ipsec site-to-site peer 1.2.3.4 ike-group magasin-ike
+set vpn ipsec site-to-site peer 1.2.3.4 ikev2-reauth inherit
+set vpn ipsec site-to-site peer 1.2.3.4 local-address 192.168.50.2
+set vpn ipsec site-to-site peer 1.2.3.4 vti bind vti5
+set vpn ipsec site-to-site peer 1.2.3.4 vti esp-group magasin-esp

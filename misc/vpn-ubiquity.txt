@@ -1,0 +1,20 @@
+set vpn ipsec site-to-site peer 20.50.223.24 authentication id 90.45.76.36
+set vpn ipsec site-to-site peer 20.50.223.24 authentication mode pre-shared-secret
+set vpn ipsec site-to-site peer 20.50.223.24 authentication pre-shared-secret xxxxxxxx
+set vpn ipsec site-to-site peer 20.50.223.24 connection-type initiate
+set vpn ipsec site-to-site peer 20.50.223.24 description 'azr-transit-we-0-rg PRI'
+set vpn ipsec site-to-site peer 20.50.223.24 ike-group aviatrix-ike
+set vpn ipsec site-to-site peer 20.50.223.24 ikev2-reauth inherit
+set vpn ipsec site-to-site peer 20.50.223.24 local-address 192.168.15.2
+set vpn ipsec site-to-site peer 20.50.223.24 vti bind vti0
+set vpn ipsec site-to-site peer 20.50.223.24 vti esp-group aviatrix-esp
+set vpn ipsec site-to-site peer 172.211.199.44 authentication id 90.45.76.36
+set vpn ipsec site-to-site peer 172.211.199.44 authentication mode pre-shared-secret
+set vpn ipsec site-to-site peer 172.211.199.44 authentication pre-shared-secret xxxxxxxxxxxx
+set vpn ipsec site-to-site peer 172.211.199.44 connection-type initiate
+set vpn ipsec site-to-site peer 172.211.199.44 description 'azr-transit-we-0-rg HA'
+set vpn ipsec site-to-site peer 172.211.199.44 ike-group aviatrix-ike
+set vpn ipsec site-to-site peer 172.211.199.44 ikev2-reauth inherit
+set vpn ipsec site-to-site peer 172.211.199.44 local-address 192.168.15.2
+set vpn ipsec site-to-site peer 172.211.199.44 vti bind vti1
+set vpn ipsec site-to-site peer 172.211.199.44 vti esp-group aviatrix-esp

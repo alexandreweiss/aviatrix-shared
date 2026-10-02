@@ -1,0 +1,62 @@
+{
+    "r1_aviatrix_attachments": [
+        {
+            "attachment_index": 0,
+            "vhub_index": 0
+        }
+    ],
+    "r1_bgp_peers": [
+        {
+            "asn": 65007,
+            "attachment_index": 0,
+            "bgp_index": 0,
+            "hub_index": 0,
+            "name": "azr-we-transit-avx",
+            "peer_ip": "10.10.0.68"
+        },
+        {
+            "asn": 65007,
+            "attachment_index": 0,
+            "bgp_index": 1,
+            "hub_index": 0,
+            "name": "azr-we-transit-avx-hagw",
+            "peer_ip": "10.10.0.76"
+        }
+    ],
+    "r1_spoke_attachments": [
+        {
+            "attachment_id": 0,
+            "hub_index": 0,
+            "spoke_index": 0
+        }
+    ],
+    "r1_spokes": [
+        {
+            "spoke_address_spaces": [
+                "10.101.0.0/24"
+            ],
+            "spoke_environment": "prd",
+            "spoke_index": 0,
+            "spoke_location": "westeurope",
+            "spoke_location_short": "we"
+        }
+    ],
+    "r1_subnets": [
+        {
+            "address_prefixes": [
+                "10.101.0.0/28"
+            ],
+            "spoke_index": 0,
+            "subnet_name": "vm-subnet"
+        }
+    ],
+    "r1_vhubs": [
+        {
+            "hub_cidr": "10.100.0.0/23",
+            "hub_index": 0,
+            "hub_location": "westeurope",
+            "hub_location_short": "we"
+        }
+    ],
+    "r1_vpns": []
+}

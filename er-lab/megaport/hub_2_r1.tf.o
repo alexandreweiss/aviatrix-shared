@@ -1,0 +1,84 @@
+## First region
+resource "random_integer" "random-2" {
+  min = 10000
+  max = 99999
+}
+
+resource "azurerm_resource_group" "mp_lab_2_r1" {
+  location = var.azure_r1_location
+  name     = "er-lab-${var.azure_r1_location_short}-${random_integer.random-2.result}"
+}
+## Creation of HUB VNET containing ER GW, ARS
+resource "azurerm_virtual_network" "er-2-vn" {
+  address_space = ["10.190.0.0/24"]
+  # location            = azurerm_resource_group.mp_lab_r1.location
+  location            = "East US"
+  name                = "er-2-vn"
+  resource_group_name = azurerm_resource_group.mp_lab_2_r1.name
+}
+
+resource "azurerm_subnet" "gw-2-subnet" {
+  address_prefixes     = ["10.190.0.0/27"]
+  name                 = "GatewaySubnet"
+  resource_group_name  = azurerm_resource_group.mp_lab_2_r1.name
+  virtual_network_name = azurerm_virtual_network.er-2-vn.name
+}
+
+resource "azurerm_subnet" "vm-2-subnet" {
+  address_prefixes     = ["10.190.0.32/28"]
+  name                 = "vm-2-subnet"
+  resource_group_name  = azurerm_resource_group.mp_lab_2_r1.name
+  virtual_network_name = azurerm_virtual_network.er-2-vn.name
+}
+
+resource "azurerm_subnet" "ars-2-subnet" {
+  address_prefixes     = ["10.190.0.64/27"]
+  name                 = "RouteServerSubnet"
+  resource_group_name  = azurerm_resource_group.mp_lab_2_r1.name
+  virtual_network_name = azurerm_virtual_network.er-2-vn.name
+}
+
+## Creation of ER GW
+module "er-2-gw" {
+  source = "github.com/alexandreweiss/misc-tf-modules.git/er-gateway"
+
+  resource_group_name = azurerm_resource_group.mp_lab_2_r1.name
+  # location            = azurerm_resource_group.mp_lab_r1.location
+  location = "East US"
+  # gateway_name = "er-${var.azure_r1_location_short}-gw"
+  gateway_name = "er-2-eus-gw"
+  gw_subnet_id = azurerm_subnet.gw-2-subnet.id
+  gw_sku       = "Standard"
+}
+
+## ER GW connection to ER Circuit
+## THIS ONE MUST BE COMMENTED OUT IF ER CIRCUIT IS UNDEFINIED
+resource "azurerm_virtual_network_gateway_connection" "cr-gw-2-connection" {
+  # name = "er-connection-${var.azure_r1_location_short}"
+  name = "er-2-connection-eus"
+  # location            = azurerm_resource_group.mp_lab_r1.location
+  location            = "East US"
+  resource_group_name = azurerm_resource_group.mp_lab_2_r1.name
+
+  type                       = "ExpressRoute"
+  virtual_network_gateway_id = module.er-2-gw.er_gateway.id
+  express_route_circuit_id   = module.azr_er_circuit_1.circuit_id
+  # shared_key                 = "dummy"
+}
+
+## Test VM
+module "r1-vm-2" {
+  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment = "vm"
+  # location            = azurerm_resource_group.mp_lab_r1.location
+  location = "East US"
+  # location_short      = var.azure_r1_location_short
+  location_short      = "eus"
+  index_number        = 02
+  resource_group_name = azurerm_resource_group.mp_lab_2_r1.name
+  subnet_id           = azurerm_subnet.vm-2-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  enable_public_ip    = true
+  depends_on = [
+  ]
+}

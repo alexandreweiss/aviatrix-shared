@@ -1,0 +1,25 @@
+## ARS creation in region 2
+
+module "ars_r2" {
+  source = "github.com/alexandreweiss/misc-tf-modules.git/ars"
+
+  resource_group_name = azurerm_resource_group.er-lab-r2.name
+  location            = var.azure_r2_location
+  subnet_id           = azurerm_subnet.ars-subnet-r2.id
+  ars_name            = "ars-${var.azure_r2_location_short}"
+  enable_b2b          = true
+}
+
+resource "azurerm_route_server_bgp_connection" "avx-gw-r2" {
+  name            = "ne-bgp-transit-gw"
+  peer_asn        = 64002
+  peer_ip         = "10.81.0.20"
+  route_server_id = module.ars_r2.ars.id
+}
+
+resource "azurerm_route_server_bgp_connection" "avx-hagw-r2" {
+  name            = "ne-bgp-transit-hagw"
+  peer_asn        = 64002
+  peer_ip         = "10.81.0.28"
+  route_server_id = module.ars_r2.ars.id
+}
