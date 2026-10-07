@@ -74,7 +74,7 @@ module "azr_r1_spoke_app3" {
   ipv6_gw_subnet   = azurerm_subnet.r1-azure-spoke-app3-gw-subnet.address_prefixes[1]
   region           = var.azure_r1_location
   account          = var.azure_account
-  transit_gw       = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
+  transit_gw       = data.tfe_outputs.dataplane.values.transit_we_1.transit_gateway.gw_name
   attached         = true
   ha_gw            = false
   single_ip_snat   = true
