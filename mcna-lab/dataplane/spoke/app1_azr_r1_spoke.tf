@@ -63,6 +63,12 @@ resource "azurerm_route_table" "r1-azure-spoke-app1-vm-subnet-rt" {
     next_hop_type  = "None"
   }
 
+  route {
+    address_prefix = "::/0"
+    name           = "internetDefaultBlackholeIPv6"
+    next_hop_type  = "None"
+  }
+
   lifecycle {
     ignore_changes = [
       route,
@@ -246,7 +252,7 @@ module "we-app1-vm" {
 #   admin_ssh_key       = var.ssh_public_key
 #   customer_name       = var.customer_name
 #   enable_ipv6         = true
-
+#
 #   depends_on = [
 #   ]
 # }
