@@ -1,22 +1,16 @@
-// Disabled to remove Firewall instance $$
-module "azr-firenet_r1" {
-  source = "terraform-aviatrix-modules/mc-firenet/aviatrix"
-  # version = "v1.5.3"
-
-  transit_module = data.tfe_outputs.dataplane.values.transit_we
-  # firewall_image = "Palo Alto Networks VM-Series Flex Next-Generation Firewall (BYOL)"
-  firewall_image  = "Check Point CloudGuard IaaS Single Gateway R82.20 - Bring Your Own License"
-  custom_fw_names = ["azr-${var.azure_r1_location_short}-firenet", "azr-${var.azure_r1_location_short}-firenet-2"]
-  # custom_fw_names = ["azr-${var.azure_r1_location_short}-firenet"]
-  egress_enabled = false
-  fw_amount      = 2
-  instance_size  = "Standard_D2s_v5"
-  username       = var.firewall_admin_username
-  # password      = var.firewall_admin_password
-  # bootstrap_storage_name_1 = "avxnesa"
-  # file_share_folder_1      = "pan-bootstrap"
-  # storage_access_key_1     = var.storage_access_key
-}
+// Deployed OOB — transit-0 (IPv6) firenet managed outside Terraform
+# module "azr-firenet_r1" {
+#   source = "terraform-aviatrix-modules/mc-firenet/aviatrix"
+#   # version = "v1.5.3"
+#
+#   transit_module = data.tfe_outputs.dataplane.values.transit_we
+#   firewall_image  = "Check Point CloudGuard IaaS Single Gateway R82.20 - Bring Your Own License"
+#   custom_fw_names = ["azr-${var.azure_r1_location_short}-firenet", "azr-${var.azure_r1_location_short}-firenet-2"]
+#   egress_enabled = false
+#   fw_amount      = 2
+#   instance_size  = "Standard_D2s_v5"
+#   username       = var.firewall_admin_username
+# }
 
 # module "azr-firenet-2_r1" {
 #   source  = "terraform-aviatrix-modules/mc-firenet/aviatrix"
