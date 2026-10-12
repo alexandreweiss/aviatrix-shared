@@ -12,7 +12,7 @@ module "azure_transit_we" {
   local_as_number               = 65007
   enable_advertise_transit_cidr = false
   single_az_ha                  = false
-  ha_gw                         = true
+  ha_gw                         = false
   enable_segmentation           = true
   resource_group                = azurerm_resource_group.azr-transit-r1-0-rg.name
   # bgp_lan_interfaces_count      = 1
@@ -20,6 +20,8 @@ module "azure_transit_we" {
   # instance_size       = "Standard_B2s"
   instance_size = "Standard_D8s_v5"
   insane_mode   = false
+  enable_ipv6   = true
+  ipv6_cidr     = "fd00:10:0::/48"
   tags = {
     csp-environment : "tst",
     csp-department : "dept-530",
