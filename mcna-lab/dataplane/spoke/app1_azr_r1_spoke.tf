@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "azr-r1-spoke-app1-rg" {
 }
 
 resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
-  address_space       = ["10.10.4.0/23", "fd00:10:10::/48"]
+  address_space       = ["10.10.4.0/23", "fd00:10:20::/48"]
   location            = var.azure_r1_location
   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-vn"
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
@@ -18,14 +18,14 @@ resource "azurerm_virtual_network" "azure-spoke-app1-r1" {
 
 # Comment out for HPE
 resource "azurerm_subnet" "r1-azure-spoke-app1-gw-subnet" {
-  address_prefixes     = ["10.10.4.0/26", "fd00:10:10:2::/64"]
+  address_prefixes     = ["10.10.4.0/26", "fd00:10:20::/64"]
   name                 = "avx-gw-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 }
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-subnet" {
-  address_prefixes     = ["10.10.4.64/26", "fd00:10:10:3::/64"]
+  address_prefixes     = ["10.10.4.64/26"]
   name                 = "avx-hagw-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
@@ -46,7 +46,7 @@ resource "azurerm_subnet" "r1-azure-spoke-app1-hagw-subnet" {
 # }
 
 resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet" {
-  address_prefixes     = ["10.10.4.128/28", "fd00:10:10:1::/64"]
+  address_prefixes     = ["10.10.4.128/28", "fd00:10:20:2::/64"]
   name                 = "avx-vm-subnet"
   resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
@@ -236,26 +236,26 @@ module "we-app1-vm" {
   ]
 }
 
-# module "azr-app1-ipv6-vm" {
-#   source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
-#   environment = var.application_1
-#   tags = {
-#     "application" = var.application_1
-#     "environment" = "ipv6-workload"
-#   }
-#   location            = var.azure_r1_location
-#   location_short      = var.azure_r1_location_short
-#   index_number        = 02
-#   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-#   subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
-#   ipv6_subnet_id      = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
-#   admin_ssh_key       = var.ssh_public_key
-#   customer_name       = var.customer_name
-#   enable_ipv6         = true
-#
-#   depends_on = [
-#   ]
-# }
+module "azr-app1-ipv6-vm" {
+  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment = var.application_1
+  tags = {
+    "application" = var.application_1
+    "environment" = "ipv6-workload"
+  }
+  location            = var.azure_r1_location
+  location_short      = var.azure_r1_location_short
+  index_number        = 02
+  resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  subnet_id           = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
+  ipv6_subnet_id      = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
+  admin_ssh_key       = var.ssh_public_key
+  customer_name       = var.customer_name
+  enable_ipv6         = true
+
+  depends_on = [
+  ]
+}
 
 # module "we-app1-vm-2" {
 #   source              = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
