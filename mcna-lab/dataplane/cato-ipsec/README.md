@@ -8,44 +8,54 @@ only path off the VNet. Terraform builds both ends (Cato provider + Aviatrix pro
 
 ```mermaid
 flowchart LR
-  subgraph AZ["Azure Central India"]
-    VM["MyApp2 test VM<br/>10.10.6.128/28"]
-    subgraph SP["MyApp2 spoke VNet 10.10.6.0/23 (AS 65012)"]
-      GW1["Spoke GW<br/>20.235.215.125"]
-      GW2["Spoke HA GW<br/>4.224.188.60"]
-    end
-    subgraph TR["Transit VNet 10.10.0.0/23 (AS 65007)"]
+  subgraph L["MyApp1 (Azure Central India)"]
+    direction TB
+    VM1["MyApp1 test VM<br/>10.10.4.x"]
+    G1["MyApp1 spoke GW<br/>10.10.4.0/23"]
+    VM1 --- G1
+  end
+
+  subgraph M["Aviatrix transit and Cato"]
+    direction LR
+    subgraph TR["Aviatrix transit 10.10.0.0/23 (AS 65007)"]
+      direction TB
       T1["Transit GW<br/>135.13.176.96"]
       T2["Transit HA GW<br/>20.204.189.186"]
     end
-    subgraph SP1["MyApp1 spoke VNet 10.10.4.0/23"]
-      G1["MyApp1 spoke GW"]
-      VM1["MyApp1 test VM"]
+    subgraph CATO["Cato Cloud (AS 65111)"]
+      direction TB
+      S1["Cato site azure-central-india<br/>(id 228022, transit, unmanaged)"]
+      P1["PoP 1<br/>113.30.136.81"]
+      P2["PoP 2<br/>113.30.136.22"]
+      S2["Cato site azure-central-india-myapp2<br/>(id 229555, this repo)"]
+      S1 --- P1
+      S1 --- P2
+      P1 --- S2
+      P2 --- S2
+      S1 <== backbone ==> S2
     end
-    T1 --- G1
-    G1 --- VM1
   end
 
-  subgraph CATO["Cato Cloud (AS 65111)"]
-    P1["PoP 1<br/>113.30.136.81"]
-    P2["PoP 2<br/>113.30.136.22"]
-    S2["Cato site<br/>azure-central-india-myapp2<br/>(id 229555, this repo)"]
-    S1["Cato site<br/>azure-central-india<br/>(id 228022, transit, unmanaged)"]
+  subgraph R["MyApp2 (Azure Central India)"]
+    direction LR
+    subgraph RG["Spoke gateways 10.10.6.0/23"]
+      direction TB
+      GW1["MyApp2 spoke GW<br/>20.235.215.125"]
+      GW2["MyApp2 spoke HA GW<br/>4.224.188.60"]
+    end
+    VM2["MyApp2 test VM<br/>10.10.6.128/28"]
+    GW1 --- VM2
+    GW2 --- VM2
   end
 
-  VM -- "10/8, 172.16/12,<br/>192.168/16, 0/0 via UDR" --> GW1
-  GW1 -- "2 tunnels" --> P1
-  GW1 -- "2 tunnels" --> P2
-  GW2 -- "tunnels" --> P1
-  GW2 -- "tunnels" --> P2
-  P1 --- S2
-  P2 --- S2
-  S2 <== backbone ==> S1
-
+  G1 --- T1
+  G1 --- T2
   T1 -. "existing tunnels,<br/>never touched" .-> P1
   T2 -.-> P2
-  P1 --- S1
-  P2 --- S1
+  P1 -- "2 tunnels" --- GW1
+  P2 -- "2 tunnels" --- GW1
+  P1 --- GW2
+  P2 --- GW2
 ```
 
 Both Cato sites share the same two PoP public IPs. The transit connection (`Cato`, in
