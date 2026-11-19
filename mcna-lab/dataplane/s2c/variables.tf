@@ -17,3 +17,9 @@ variable "ferme_psk" {
   description = "Pre shared key of Ferme tunnel"
   sensitive   = true
 }
+
+variable "cato_psk" {
+  description = "Pre shared key of the Cato tunnels (set in the workspace, never in git)"
+  type        = string
+  sensitive   = true
+}

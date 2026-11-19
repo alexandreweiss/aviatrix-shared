@@ -57,18 +57,6 @@ resource "azurerm_route_table" "r1-azure-spoke-app1-vm-subnet-rt" {
   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-vm-subnet-rt"
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
 
-  route {
-    address_prefix = "0.0.0.0/0"
-    name           = "internetDefaultBlackhole"
-    next_hop_type  = "None"
-  }
-
-  route {
-    address_prefix = "::/0"
-    name           = "internetDefaultBlackholeIPv6"
-    next_hop_type  = "None"
-  }
-
   lifecycle {
     ignore_changes = [
       route,
@@ -91,7 +79,6 @@ resource "azurerm_subnet" "r1-azure-spoke-app1-vm-subnet-2" {
 #   virtual_network_name = azurerm_virtual_network.azure-spoke-app1-r1.name
 # }
 
-
 resource "azurerm_subnet" "r1-azure-spoke-app1-aci-subnet" {
   address_prefixes     = ["10.10.4.160/28"]
   name                 = "aci-subnet"
@@ -111,12 +98,6 @@ resource "azurerm_route_table" "r1-azure-spoke-app1-vm-subnet-2-rt" {
   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-vm-subnet-2-rt"
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
 
-  route {
-    address_prefix = "0.0.0.0/0"
-    name           = "internetDefaultBlackhole"
-    next_hop_type  = "None"
-  }
-
   lifecycle {
     ignore_changes = [
       route,
@@ -128,12 +109,6 @@ resource "azurerm_route_table" "r1-azure-spoke-app1-aci-subnet-rt" {
   location            = var.azure_r1_location
   name                = "azr-${var.azure_r1_location_short}-spoke-${var.application_1}-aci-subnet-rt"
   resource_group_name = azurerm_resource_group.azr-r1-spoke-app1-rg.name
-
-  route {
-    address_prefix = "0.0.0.0/0"
-    name           = "internetDefaultBlackhole"
-    next_hop_type  = "None"
-  }
 
   lifecycle {
     ignore_changes = [
@@ -209,6 +184,13 @@ module "azr_r1_spoke_app1" {
   single_ip_snat = true
   single_az_ha   = false
   resource_group = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+
+  # Egress: Aviatrix programs the default route on these private route tables
+  private_route_table_config = [
+    "${azurerm_route_table.r1-azure-spoke-app1-vm-subnet-rt.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}",
+    "${azurerm_route_table.r1-azure-spoke-app1-vm-subnet-2-rt.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}",
+    "${azurerm_route_table.r1-azure-spoke-app1-aci-subnet-rt.name}:${azurerm_resource_group.azr-r1-spoke-app1-rg.name}",
+  ]
   #local_as_number = 65012
   enable_bgp    = false
   depends_on    = [azurerm_subnet_route_table_association.app1-subnet-aci-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-2-rt-assoc, azurerm_subnet_route_table_association.app1-subnet-vm-rt-assoc]
