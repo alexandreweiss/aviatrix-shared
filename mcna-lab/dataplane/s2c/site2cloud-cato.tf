@@ -13,7 +13,6 @@ resource "aviatrix_transit_external_device_conn" "cato" {
   remote_gateway_ip  = "113.30.136.81"
   local_tunnel_cidr  = "192.168.20.1/30,192.168.20.5/30"
   remote_tunnel_cidr = "192.168.20.2/30,192.168.20.6/30"
-  pre_shared_key     = var.cato_psk
 
   # Backup tunnel (transit HA gw)
   ha_enabled                = true
@@ -21,5 +20,10 @@ resource "aviatrix_transit_external_device_conn" "cato" {
   backup_bgp_remote_as_num  = "65111"
   backup_local_tunnel_cidr  = "192.168.20.9/30,192.168.20.13/30"
   backup_remote_tunnel_cidr = "192.168.20.10/30,192.168.20.14/30"
-  backup_pre_shared_key     = var.cato_psk
+
+  # PSKs are managed outside Terraform (never in git or workspace variables).
+  # Changing them would force replacement of the connection and drop the tunnels.
+  lifecycle {
+    ignore_changes = [pre_shared_key, backup_pre_shared_key]
+  }
 }
