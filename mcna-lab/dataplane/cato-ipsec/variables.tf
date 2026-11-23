@@ -55,3 +55,33 @@ variable "cato_transit_site_name" {
   type        = string
   default     = "azure-central-india"
 }
+
+variable "backup_prepend_as_path" {
+  description = "AS path prepended on the backup (PoP 2) connection towards Cato"
+  type        = list(string)
+  default     = []
+}
+
+variable "metric_primary" {
+  description = "Cato BGP peer metric for the primary PoP (lower is preferred)"
+  type        = number
+  default     = 100
+}
+
+variable "metric_backup" {
+  description = "Cato BGP peer metric for the backup PoP (lower is preferred)"
+  type        = number
+  default     = 100
+}
+
+variable "active_pops" {
+  description = "Cato PoPs the Aviatrix spoke connects to: primary (PoP 1) and/or secondary (PoP 2)"
+  type        = list(string)
+  default     = ["primary", "secondary"]
+}
+
+variable "transit_active_pops" {
+  description = "Cato PoPs the transit connects to: primary (PoP 1) and/or secondary (PoP 2)"
+  type        = list(string)
+  default     = ["primary", "secondary"]
+}

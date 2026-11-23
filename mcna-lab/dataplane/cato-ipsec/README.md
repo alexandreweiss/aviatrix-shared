@@ -58,8 +58,15 @@ flowchart LR
   P2 --- GW2
 ```
 
-Both Cato sites share the same two PoP public IPs. The transit connection (`Cato`, in
-`../s2c`) is independent and stays up; it uses the other site.
+Both Cato sites share the same two PoP public IPs. The transit and the MyApp2 spoke each have
+their own Cato site and, per PoP, their own dedicated Aviatrix connection (`Cato-pop1`,
+`Cato-pop2` on the transit; `Cato-MyApp2-pop1`, `Cato-MyApp2-pop2` on the spoke). All of them are
+built in this workspace and share one PSK variable (`cato_ipsec_psk`). Which PoPs are built is
+controlled by `transit_active_pops` and `active_pops` (both default to PoP 1 + PoP 2 as tested).
+
+Cato itself treats the secondary PoP of an IPsec site as a backup (it adds an extra AS to its
+routes), so even with no prepend on our side, PoP 1 stays preferred for traffic towards us.
+Inside each PoP both Aviatrix gateways (primary + HA) keep a tunnel and are active/active.
 
 ## Tunnels
 
@@ -106,7 +113,7 @@ Pinging from the MyApp1 VM to the MyApp2 VM follows the mirror path: MyApp1 gate
 Cato (transit site), Cato (MyApp2 site), a MyApp2 tunnel, MyApp2 gateway, MyApp2 VM.
 
 If a ping fails, check in this order:
-- All 8 tunnels Up (4 on `Cato-MyApp2`, 4 on `Cato`) and BGP established on both ends.
+- All tunnels Up (2 per connection: `Cato-MyApp2-pop1/pop2`, `Cato-pop1/pop2`) and BGP established on both ends.
 - `10.10.6.0/23` is known on the transit side and `10.10.4.0/23` on the MyApp2 side
   (`show ip bgp` on the spoke gateways and the transit).
 - Cato firewall and Aviatrix DCF allow ICMP; the VMs' own firewall too.
@@ -115,10 +122,10 @@ If a ping fails, check in this order:
 ## Checks
 
 ```
-# Aviatrix: all 4 tunnels Up
-aviatrix_get_s2c_connection_details  connection_name=Cato-MyApp2
+# Aviatrix: tunnels Up on each connection
+aviatrix_get_s2c_connection_details  connection_name=Cato-MyApp2-pop1   # and -pop2, Cato-pop1, Cato-pop2
 
-# BGP on each spoke gateway (expect 2 established neighbors each)
+# BGP on the spoke gateway (2 neighbors with both PoPs) and on the transit gateway
 show ip bgp summary           # gateways azr-ci-spoke-MyApp2-avx and ...-hagw
 ```
 
@@ -129,13 +136,16 @@ gateway, all AS 65111.
 
 | File | What |
 |---|---|
-| `main.tf` | Cato site + BGP peers, Aviatrix `aviatrix_spoke_external_device_conn` |
+| `main.tf` | Cato sites + BGP peers, Aviatrix connections for the spoke (`aviatrix_spoke_external_device_conn`) and the transit (`aviatrix_transit_external_device_conn`) |
 | `variables.tf` | Inputs (Cato key, account, PSK, PoP IPs, AS numbers) |
 | `versions.tf` | Providers and HCP workspace `aviatrix-shared-cato` |
 
-- Cato site `azure-central-india` (228022, transit tunnels) is imported with
-  `ignore_changes = all`: Terraform never changes it. Cato allows at most 3 tunnels per
-  PoP on a site, which is why the spoke has its own site.
+- Cato site `azure-central-india` (228022, the transit) was imported; Terraform manages its
+  IPsec tunnels (name, location and range are ignored). Cato allows at most 3 tunnels per PoP
+  on a site, which is why the spoke has its own site (229555).
+- The Cato BGP peers on the transit site (4 of them) are not in Terraform.
+- Changing a PSK forces replacement of the Aviatrix connections (tunnels drop). Cato calls
+  must run one at a time (`TFE_PARALLELISM=1` if needed); HCP Terraform rejects `-parallelism`.
 - `terraform.tfvars` holds the secrets (`cato_api_key`, `cato_account_id`, `cato_ipsec_psk`)
   and is gitignored.
 - Cato calls should run one at a time: set `TFE_PARALLELISM=1` on the workspace if Cato

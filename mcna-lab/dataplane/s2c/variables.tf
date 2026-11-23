@@ -17,3 +17,9 @@ variable "ferme_psk" {
   description = "Pre shared key of Ferme tunnel"
   sensitive   = true
 }
+
+variable "cato_active_pops" {
+  description = "Cato PoPs the transit connects to: primary (PoP 1) and/or secondary (PoP 2)"
+  type        = list(string)
+  default     = ["primary"]
+}
