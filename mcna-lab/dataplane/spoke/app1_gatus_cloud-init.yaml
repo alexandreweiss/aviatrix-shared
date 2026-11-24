@@ -1,0 +1,48 @@
+#cloud-config
+# Gatus: probes the MyApp2 targets from inside the MyApp1 spoke (traffic goes through the
+# Aviatrix dataplane). Dashboard on HTTP port 80, private only (no public IP).
+package_update: true
+packages:
+  - docker.io
+write_files:
+  - path: /opt/gatus/config.yaml
+    permissions: "0644"
+    content: |
+      web:
+        port: 8080
+      storage:
+        type: memory
+      ui:
+        title: "MyApp1 -> MyApp2 over the Aviatrix dataplane / Cato"
+        header: "Cato path tests (from MyApp1 spoke)"
+      endpoints:
+        - name: MyApp2 spoke gateway (10.10.6.4) ICMP
+          group: spoke
+          url: "icmp://10.10.6.4"
+          interval: 10s
+          conditions:
+            - "[CONNECTED] == true"
+            - "[RESPONSE_TIME] < 400"
+        - name: MyApp2 spoke HA gateway (10.10.6.68) ICMP
+          group: spoke
+          url: "icmp://10.10.6.68"
+          interval: 10s
+          conditions:
+            - "[CONNECTED] == true"
+            - "[RESPONSE_TIME] < 400"
+        - name: MyApp2 test VM (10.10.6.132) ICMP
+          group: spoke
+          url: "icmp://10.10.6.132"
+          interval: 10s
+          conditions:
+            - "[CONNECTED] == true"
+            - "[RESPONSE_TIME] < 400"
+        - name: MyApp2 test VM (10.10.6.132) TCP 22
+          group: spoke
+          url: "tcp://10.10.6.132:22"
+          interval: 10s
+          conditions:
+            - "[CONNECTED] == true"
+runcmd:
+  - systemctl enable --now docker
+  - docker run -d --name gatus --restart always -p 80:8080 --cap-add NET_RAW --sysctl net.ipv4.ping_group_range="0 2147483647" -v /opt/gatus/config.yaml:/config/config.yaml twinproduction/gatus:latest

@@ -1,0 +1,32 @@
+#cloud-config
+# Single Gatus dashboard: aggregates the other Gatus sources (remote instances).
+package_update: true
+packages:
+  - docker.io
+write_files:
+  - path: /opt/gatus/config.yaml
+    permissions: "0644"
+    content: |
+      web:
+        port: 8080
+      storage:
+        type: memory
+      ui:
+        title: "Cato path tests: all sources (MyApp1 -> MyApp2)"
+        header: "All Gatus sources"
+      endpoints:
+        - name: Dashboard self check
+          group: dashboard
+          url: "http://localhost:8080/health"
+          interval: 30s
+          conditions:
+            - "[STATUS] == 200"
+      remote:
+        instances:
+%{ for name, ip in sources ~}
+          - endpoint-prefix: "${name}-"
+            url: "http://${ip}/api/v1/endpoints/statuses"
+%{ endfor ~}
+runcmd:
+  - systemctl enable --now docker
+  - docker run -d --name gatus --restart always -p 80:8080 -v /opt/gatus/config.yaml:/config/config.yaml twinproduction/gatus:latest

@@ -56,12 +56,6 @@ variable "cato_transit_site_name" {
   default     = "azure-central-india"
 }
 
-variable "backup_prepend_as_path" {
-  description = "AS path prepended on the backup (PoP 2) connection towards Cato"
-  type        = list(string)
-  default     = []
-}
-
 variable "metric_primary" {
   description = "Cato BGP peer metric for the primary PoP (lower is preferred)"
   type        = number
@@ -74,14 +68,32 @@ variable "metric_backup" {
   default     = 100
 }
 
-variable "active_pops" {
-  description = "Cato PoPs the Aviatrix spoke connects to: primary (PoP 1) and/or secondary (PoP 2)"
-  type        = list(string)
-  default     = ["primary", "secondary"]
+variable "peer_metric_overrides" {
+  description = "Per Cato BGP peer metric override (50-255, lower preferred). Keys: primary-0 = spoke primary GW, primary-1 = spoke HA GW (PoP 1); secondary-0/1 for PoP 2. Asymmetry test: HA GW preferred for ingress."
+  type        = map(number)
+  default     = {}
 }
 
-variable "transit_active_pops" {
-  description = "Cato PoPs the transit connects to: primary (PoP 1) and/or secondary (PoP 2)"
-  type        = list(string)
-  default     = ["primary", "secondary"]
+variable "enable_dcf_stateful_test" {
+  description = "Create the temporary DCF rules used to test statefulness with asymmetric paths"
+  type        = bool
+  default     = false
+}
+
+variable "enable_dcf_allweb_rule" {
+  description = "Create the DCF rule that permits web (AllWeb web group) egress for the Gatus VMs, at the top of the policy list"
+  type        = bool
+  default     = false
+}
+
+variable "single_pop_transit" {
+  description = "Test switch: connect the Aviatrix transit to Cato PoP 1 only (no backup peer, 2 tunnels) instead of the HA full mesh"
+  type        = bool
+  default     = false
+}
+
+variable "single_pop_spoke" {
+  description = "Test switch: connect the MyApp2 spoke to Cato PoP 1 only (no backup peer, 2 tunnels) instead of the HA full mesh"
+  type        = bool
+  default     = false
 }

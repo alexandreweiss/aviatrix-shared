@@ -196,7 +196,7 @@ resource "cato_bgp_peer" "spoke" {
   peer_asn       = 65012
   peer_ip        = each.value
   default_action = "ACCEPT"
-  metric         = startswith(each.key, "primary") ? var.metric_primary : var.metric_backup
+  metric         = lookup(var.peer_metric_overrides, each.key, startswith(each.key, "primary") ? var.metric_primary : var.metric_backup)
 
   advertise_all_routes    = true
   advertise_default_route = false
@@ -207,66 +207,56 @@ resource "cato_bgp_peer" "spoke" {
 }
 
 # ------------------------------------------------------------ Aviatrix side
-# One dedicated connection per Cato PoP (no backup peer). With an HA spoke, Aviatrix
-# ActiveMesh still builds a tunnel from each spoke gateway to the PoP, so each
-# connection has 2 tunnels (spoke primary + spoke HA).
-resource "aviatrix_spoke_external_device_conn" "cato" {
-  # Only the PoPs listed in var.active_pops get an Aviatrix connection
-  for_each = {
-    for k, v in { primary = "pop1", secondary = "pop2" } : k => v
-    if contains(var.active_pops, k)
-  }
+# One HA (full mesh) connection per Aviatrix device: PoP 1 is the primary remote peer, PoP 2 the
+# backup remote peer. With HA gateways, ActiveMesh builds a tunnel from each gateway to each
+# peer (4 tunnels per connection). Same PSK variable for everything.
 
+resource "aviatrix_spoke_external_device_conn" "cato_ha" {
   vpc_id            = local.spoke.vpc_id
   gw_name           = local.spoke.gw_name
-  connection_name   = "Cato-MyApp2-${each.value}"
+  connection_name   = "Cato-MyApp2"
   connection_type   = "bgp"
   tunnel_protocol   = "IPSEC"
   enable_ikev2      = true
   bgp_local_as_num  = "65012"
   bgp_remote_as_num = tostring(var.cato_asn)
 
-  # Algorithms: Aviatrix defaults already are AES-256-CBC / SHA-256 / DH 14 for both
-  # phases, so custom_algorithms is left off (it is rejected when all six values are
-  # defaults). The Cato site sets the same values explicitly (init/auth message).
-
-  remote_gateway_ip  = local.tunnels[each.key].pop
-  local_tunnel_cidr  = join(",", [for t in local.tunnels[each.key].gw : "${t.site}/30"])
-  remote_tunnel_cidr = join(",", [for t in local.tunnels[each.key].gw : "${t.cato}/30"])
+  remote_gateway_ip  = local.tunnels.primary.pop
+  local_tunnel_cidr  = join(",", [for t in local.tunnels.primary.gw : "${t.site}/30"])
+  remote_tunnel_cidr = join(",", [for t in local.tunnels.primary.gw : "${t.cato}/30"])
   pre_shared_key     = var.cato_ipsec_psk
-  ha_enabled         = false
 
-  # Optional: prepend our AS on the PoP 2 connection to make it a backup (empty = active/active
-  # advertisements; Cato itself still prefers its primary PoP by default).
-  prepend_as_path = each.key == "secondary" && length(var.backup_prepend_as_path) > 0 ? var.backup_prepend_as_path : null
+  ha_enabled                = !var.single_pop_spoke
+  backup_remote_gateway_ip  = var.single_pop_spoke ? null : local.tunnels.secondary.pop
+  backup_bgp_remote_as_num  = var.single_pop_spoke ? null : tostring(var.cato_asn)
+  backup_local_tunnel_cidr  = var.single_pop_spoke ? null : join(",", [for t in local.tunnels.secondary.gw : "${t.site}/30"])
+  backup_remote_tunnel_cidr = var.single_pop_spoke ? null : join(",", [for t in local.tunnels.secondary.gw : "${t.cato}/30"])
+  backup_pre_shared_key     = var.single_pop_spoke ? null : var.cato_ipsec_psk
 
   depends_on = [cato_ipsec_site.myapp2]
 }
 
-# ------------------------------------------- Aviatrix side of the TRANSIT <-> Cato link
-# Same PSK variable (cato_ipsec_psk) as the Cato sites and the MyApp2 connection.
-# One dedicated connection per PoP; only the PoPs in var.transit_active_pops are built.
-# With an HA transit, each connection has 2 tunnels (transit primary + transit HA).
-resource "aviatrix_transit_external_device_conn" "transit" {
-  for_each = {
-    for k, v in { primary = "pop1", secondary = "pop2" } : k => v
-    if contains(var.transit_active_pops, k)
-  }
-
+resource "aviatrix_transit_external_device_conn" "cato_ha" {
   vpc_id            = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.vpc_id
   gw_name           = data.tfe_outputs.dataplane.values.transit_we.transit_gateway.gw_name
-  connection_name   = "Cato-${each.value}"
+  connection_name   = "Cato"
   connection_type   = "bgp"
   tunnel_protocol   = "IPSEC"
   enable_ikev2      = true
   bgp_local_as_num  = "65007"
   bgp_remote_as_num = tostring(var.cato_asn)
 
-  remote_gateway_ip  = local.tunnels[each.key].pop
-  local_tunnel_cidr  = join(",", [for t in local.transit_tunnels[each.key] : "${t.site}/30"])
-  remote_tunnel_cidr = join(",", [for t in local.transit_tunnels[each.key] : "${t.cato}/30"])
+  remote_gateway_ip  = local.tunnels.primary.pop
+  local_tunnel_cidr  = join(",", [for t in local.transit_tunnels.primary : "${t.site}/30"])
+  remote_tunnel_cidr = join(",", [for t in local.transit_tunnels.primary : "${t.cato}/30"])
   pre_shared_key     = var.cato_ipsec_psk
-  ha_enabled         = false
+
+  ha_enabled                = !var.single_pop_transit
+  backup_remote_gateway_ip  = var.single_pop_transit ? null : local.tunnels.secondary.pop
+  backup_bgp_remote_as_num  = var.single_pop_transit ? null : tostring(var.cato_asn)
+  backup_local_tunnel_cidr  = var.single_pop_transit ? null : join(",", [for t in local.transit_tunnels.secondary : "${t.site}/30"])
+  backup_remote_tunnel_cidr = var.single_pop_transit ? null : join(",", [for t in local.transit_tunnels.secondary : "${t.cato}/30"])
+  backup_pre_shared_key     = var.single_pop_transit ? null : var.cato_ipsec_psk
 
   depends_on = [cato_ipsec_site.spoke]
 }

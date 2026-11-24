@@ -252,6 +252,32 @@ module "azr-app1-ipv6-vm" {
 #   ]
 # }
 
+# Gatus test VM inside MyApp1: probes the MyApp2 targets through the Aviatrix dataplane.
+# Private only (reach it from the edge/ferme on its private IP, HTTP port 80).
+module "we-app1-gatus-vm" {
+  count       = var.enable_gatus_fleet ? 1 : 0
+  source      = "github.com/alexandreweiss/misc-tf-modules/azr-linux-vm"
+  environment = var.application_1
+  tags = {
+    "application" = var.application_1
+    "role"        = "gatus"
+  }
+  location             = var.azure_r1_location
+  location_short       = var.azure_r1_location_short
+  index_number         = 03
+  resource_group_name  = azurerm_resource_group.azr-r1-spoke-app1-rg.name
+  subnet_id            = azurerm_subnet.r1-azure-spoke-app1-vm-subnet.id
+  admin_ssh_key        = var.ssh_public_key
+  customer_name        = var.customer_name
+  enable_auto_shutdown = false
+  custom_data          = base64encode(file("${path.module}/app1_gatus_cloud-init.yaml"))
+}
+
+output "gatus_url" {
+  value       = var.enable_gatus_fleet ? "http://${module.we-app1-gatus-vm[0].vm_private_ip}" : null
+  description = "Gatus dashboard (private, reachable over the Aviatrix dataplane)"
+}
+
 output "spoke_app1" {
   value     = module.azr_r1_spoke_app1
   sensitive = true
